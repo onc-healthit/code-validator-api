@@ -1,0 +1,189 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.sitenv.vocabulary</groupId>
+		<artifactId>codevalidator</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>codevalidator-service</artifactId>
+	<packaging>war</packaging>
+
+	<name>Code Validator Service</name>
+	<url>http://sitenv.org</url>
+
+	<build>
+		<finalName>VocabularyServices</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>properties</id>
+						<phase>test</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<delete
+									file="${project.build.outputDirectory}/environment.properties" />
+								<copy
+									file="src/main/resources/environment.${environment.name}.properties"
+									tofile="${project.build.outputDirectory}/environment.properties" />
+								<delete>
+									<fileset dir="${project.build.outputDirectory}"
+										includes="**/environment.development-*.properties" />
+								</delete>
+								<delete
+									file="${project.build.outputDirectory}/environment.test.properties" />
+								<delete
+									file="${project.build.outputDirectory}/environment.production.properties" />
+							</tasks>
+						</configuration>
+					</execution>
+					<execution>
+						<id>scp-to-env</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<taskdef resource="net/sf/antcontrib/antlib.xml"
+									classpathref="maven.plugin.classpath" />
+								<if>
+									<equals arg1="${environment.name}" arg2="test" />
+									<then>
+										<echo
+											message="Copying file (${project.build.directory}/VocabularyServices.war) to location: ${liferay.auto.deploy.dir}" />
+										<exec executable="cp">
+											<arg value="${project.build.directory}/VocabularyServices.war" />
+											<arg value="${liferay.auto.deploy.dir}/VocabularyServices.war" />
+										</exec>
+										<echo message="Uploading file to location: ${deploy.location}" />
+										<exec executable="scp">
+											<arg value="${liferay.auto.deploy.dir}/VocabularyServices.war" />
+											<arg value="${deploy.location}" />
+										</exec>
+										<echo message="...Uploaded." />
+										<echo message="Deploying to tomcat7..." />
+										<exec executable="ssh">
+											<arg value="site-dev-ccda" />
+											<arg
+												value="echo ${deploy.password} | sudo -S mv ~/VocabularyServices.war /opt/tomcat7/webapps" />
+										</exec>
+										<echo message="...Deployed." />
+									</then>
+									<elseif>
+										<equals arg1="${environment.name}" arg2="production" />
+										<then>
+											<echo
+												message="Copying file (${project.build.directory}/VocabularyServices.war) to location: ${liferay.auto.deploy.dir}" />
+											<exec executable="cp">
+												<arg value="${project.build.directory}/VocabularyServices.war" />
+												<arg value="${liferay.auto.deploy.dir}/VocabularyServices.war" />
+											</exec>
+											<echo message="Uploading file to location: ${deploy.location}" />
+											<exec executable="scp">
+												<arg value="${liferay.auto.deploy.dir}/VocabularyServices.war" />
+												<arg value="${deploy.location}" />
+											</exec>
+											<echo message="...Uploaded." />
+											<echo message="Deploying to tomcat7..." />
+											<exec executable="ssh">
+												<arg value="site-prod-ccda" />
+												<arg
+													value="echo ${deploy.password} | sudo -S mv ~/VocabularyServices.war /opt/tomcat7/webapps" />
+											</exec>
+											<echo message="...Deployed." />
+										</then>
+									</elseif>
+									<else>
+
+										<echo message="Uploading file to location: ${deploy.location}" />
+										<copy file="target/VocabularyServices.war" todir="${deploy.location}" />
+										<echo message="...Uploaded." />
+
+									</else>
+								</if>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>ant-contrib</groupId>
+						<artifactId>ant-contrib</artifactId>
+						<version>1.0b3</version>
+						<exclusions>
+							<exclusion>
+								<groupId>ant</groupId>
+								<artifactId>ant</artifactId>
+							</exclusion>
+						</exclusions>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.ant</groupId>
+						<artifactId>ant-nodeps</artifactId>
+						<version>1.8.1</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+		<directory>${project.basedir}/target</directory>
+	</build>
+
+
+	<dependencies>
+		<!-- Core utilities used by other modules. Define this if you use Spring 
+			Utility APIs (org.springframework.core.*/org.springframework.util.*) -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<!-- Spring MVC for Servlet Environments (depends on spring-core, spring-beans, 
+			spring-context, spring-web) Define this if you use Spring MVC with a Servlet 
+			Container such as Apache Tomcat (org.springframework.web.servlet.*) -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.sitenv.vocabulary</groupId>
+			<artifactId>codevalidator-api</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+
+</project>
