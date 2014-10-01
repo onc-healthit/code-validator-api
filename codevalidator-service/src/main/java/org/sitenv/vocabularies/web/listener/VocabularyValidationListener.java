@@ -39,7 +39,9 @@ public class VocabularyValidationListener implements ServletContextListener {
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
 		logger.debug("Stopping the watchdog...");
-		watchdog.stop();
+		if (watchdog != null) {
+			watchdog.stop();
+		}
 		logger.debug("Watchdog stopped...");
 	}
 
