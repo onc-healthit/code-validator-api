@@ -70,7 +70,7 @@ The primary use cases of this system include validating that a code exists in a 
   			</p>
   			<h2>Example Usage</h2>
   			<p>
-  				The following example will validate the code value of "C-D2223", from the "SNOWMED" vocabulary value set.
+  				The following example will validate the code value of "C-D2223", from the "SNOMED" vocabulary value set.
   			</p>
   			<p>	
   				<a href="<%= rootContext %>/validateCode/SNOMED/C-D2223"><%= rootContext %>/validateCode/SNOMED/C-D2223</a>
@@ -82,7 +82,7 @@ The primary use cases of this system include validating that a code exists in a 
 		</div>
 		
 		<div id="validateNamePage" class="page">
-  			<p>Validate Code verifies the existence of a code in a specified vocabulary.</p>
+  			<p>Validate Name verifies the existence of a display name in a specified vocabulary.</p>
   			
   			<h2>URL</h2>
   			<p><%= rootContext %>/validateName/&lt;vocabulary&gt;/&lt;code&gt;  			  			
@@ -97,14 +97,14 @@ The primary use cases of this system include validating that a code exists in a 
    			</p>
   			<h2>Validation Response</h2>
   			<p>
-  				The validation response message returns a simple JSON object.  The simple object only includes a boolean attribute named "result".  If the validation passes, and the code exists in the specified vocabulary, "result" will be true.  If the validation fails and the code could not be found in the specified vocabulary, "result" will be false.
+  				The validation response message returns a simple JSON object.  The simple object only includes a boolean attribute named "result".  If the validation passes, and the display name exists in the specified vocabulary, "result" will be true.  If the validation fails and the display name could not be found in the specified vocabulary, "result" will be false.
   			</p>
   			<p>
   				Note: Display name validation is case-insensitive.
   			</p>
   			<h2>Example Usage</h2>
   			<p>
-  				The following example will validate the display name value of "CUTTER PREMISE AND STABLE SPRAY (PRODUCT)", from the "SNOWMED" vocabulary value set.
+  				The following example will validate the display name value of "CUTTER PREMISE AND STABLE SPRAY (PRODUCT)", from the "SNOMED" vocabulary value set.
   			</p>
   			<p>
   				<a href="<%= rootContext %>/validateName/SNOMED/CUTTER%20PREMISE%20AND%20STABLE%20SPRAY%20(PRODUCT)"><%= rootContext %>/validateName/SNOMED/CUTTER%20PREMISE%20AND%20STABLE%20SPRAY%20(PRODUCT)</a>
