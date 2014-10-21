@@ -1,4 +1,4 @@
-package org.sitenv.vocabularies.web.listener;
+package org.sitenv.vocabularies.servlet.listener;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class VocabularyValidationListener implements ServletContextListener {
 		}
 	}
 	
-	@Override
+	
 	public void contextDestroyed(ServletContextEvent arg0) {
 		logger.debug("Stopping the watchdog...");
 		if (watchdog != null) {
@@ -45,7 +45,7 @@ public class VocabularyValidationListener implements ServletContextListener {
 		logger.debug("Watchdog stopped...");
 	}
 
-	@Override
+	
 	public void contextInitialized(ServletContextEvent arg0) {
 		try
 		{

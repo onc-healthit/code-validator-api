@@ -12,7 +12,7 @@ import org.sitenv.vocabularies.loader.Loader;
 import org.sitenv.vocabularies.loader.LoaderManager;
 import org.sitenv.vocabularies.watchdog.RepositoryWatchdog;
 
-public class ValidationEngine {
+public abstract class ValidationEngine {
 	
 	private static Logger logger = Logger.getLogger(ValidationEngine.class);
 
