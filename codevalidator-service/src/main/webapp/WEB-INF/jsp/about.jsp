@@ -56,7 +56,7 @@ The primary use cases of this system include validating that a code exists in a 
   			<p>
   				The following vocabularies are supported:
   				<ul>
-  					<li>SNOMED</li>
+  					<li>2.16.840.1.113883.6.96 (SNOMED-CT)</li>
   				</ul>
   				
   				Datasets are loaded from the following GitHub repository:  TBD
@@ -70,10 +70,44 @@ The primary use cases of this system include validating that a code exists in a 
   			</p>
   			<h2>Example Usage</h2>
   			<p>
-  				The following example will validate the code value of "C-D2223", from the "SNOMED" vocabulary value set.
+  				The following example will validate the code value of "C-D2223", from the "2.16.840.1.113883.6.96" vocabulary value set.
   			</p>
   			<p>	
-  				<a href="<%= rootContext %>/validateCode/SNOMED/C-D2223"><%= rootContext %>/validateCode/SNOMED/C-D2223</a>
+  				<a href="<%= rootContext %>/validateCode/2.16.840.1.113883.6.96/C-D2223"><%= rootContext %>/validateCode/2.16.840.1.113883.6.96/C-D2223</a>
+  			</p>		
+		</div>
+		
+		<div id="validateCodeByCodeSystemName" class="page-header">
+  			<h1>Validate Code By Code System Name</h1>
+		</div>
+		
+		<div id="validateCodeByCodeSystemPage" class="page">
+  			<p>Validate Code By Code System Name verifies the existence of a code in a specified vocabulary (identified by name).</p>
+  			
+  			<h2>URL</h2>
+  			<p><%= rootContext %>/validateCodeByCodeSystemName/&lt;vocabularyName&gt;/&lt;code&gt;  			  			
+  			<h2>Data Sets</h2>
+  			<p>
+  				The following vocabularies are supported:
+  				<ul>
+  					<li>SNOMED-CT</li>
+  				</ul>
+  				
+  				Datasets are loaded from the following GitHub repository:  TBD
+   			</p>
+  			<h2>Validation Response</h2>
+  			<p>
+  				The validation response message returns a simple JSON object.  The simple object only includes a boolean attribute named "result".  If the validation passes, and the code exists in the specified vocabulary, "result" will be true.  If the validation fails and the code could not be found in the specified vocabulary, "result" will be false.
+  			</p>
+  			<p>
+  				Note: Display name validation is case-insensitive.
+  			</p>
+  			<h2>Example Usage</h2>
+  			<p>
+  				The following example will validate the code value of "C-D2223", from the "SNOMED-CT" vocabulary value set.
+  			</p>
+  			<p>	
+  				<a href="<%= rootContext %>/validateCodeByCodeSystemName/SNOMED-CT/C-D2223"><%= rootContext %>/validateCodeByCodeSystemName/SNOMED-CT/C-D2223</a>
   			</p>		
 		</div>
 
@@ -90,7 +124,7 @@ The primary use cases of this system include validating that a code exists in a 
   			<p>
   				The following vocabularies are supported:
   				<ul>
-  					<li>SNOMED</li>
+  					<li>2.16.840.1.113883.6.96 (SNOMED-CT)</li>
   				</ul>
   				
   				Datasets are loaded from the following GitHub repository:  TBD
@@ -104,10 +138,43 @@ The primary use cases of this system include validating that a code exists in a 
   			</p>
   			<h2>Example Usage</h2>
   			<p>
-  				The following example will validate the display name value of "CUTTER PREMISE AND STABLE SPRAY (PRODUCT)", from the "SNOMED" vocabulary value set.
+  				The following example will validate the display name value of "CUTTER PREMISE AND STABLE SPRAY (PRODUCT)", from the "2.16.840.1.113883.6.96" vocabulary value set.
   			</p>
   			<p>
-  				<a href="<%= rootContext %>/validateName/SNOMED/CUTTER%20PREMISE%20AND%20STABLE%20SPRAY%20(PRODUCT)"><%= rootContext %>/validateName/SNOMED/CUTTER%20PREMISE%20AND%20STABLE%20SPRAY%20(PRODUCT)</a>
+  				<a href="<%= rootContext %>/validateName/2.16.840.1.113883.6.96/CUTTER%20PREMISE%20AND%20STABLE%20SPRAY%20(PRODUCT)"><%= rootContext %>/validateName/2.16.840.1.113883.6.96/CUTTER%20PREMISE%20AND%20STABLE%20SPRAY%20(PRODUCT)</a>
+  			</p>
+		</div>
+		<div id="validateNameByCodeSystemName" class="page-header">
+  			<h1>Validate Display Name By Code System Name</h1>
+		</div>
+		
+		<div id="validateNamePageByCodeSystemName" class="page">
+  			<p>Validate Name By Code System Name verifies the existence of a display name in a specified vocabulary.</p>
+  			
+  			<h2>URL</h2>
+  			<p><%= rootContext %>/validateName/&lt;vocabularyName&gt;/&lt;code&gt;  			  			
+  			<h2>Data Sets</h2>
+  			<p>
+  				The following vocabularies are supported:
+  				<ul>
+  					<li>SNOMED-CT</li>
+  				</ul>
+  				
+  				Datasets are loaded from the following GitHub repository:  TBD
+   			</p>
+  			<h2>Validation Response</h2>
+  			<p>
+  				The validation response message returns a simple JSON object.  The simple object only includes a boolean attribute named "result".  If the validation passes, and the display name exists in the specified vocabulary, "result" will be true.  If the validation fails and the display name could not be found in the specified vocabulary, "result" will be false.
+  			</p>
+  			<p>
+  				Note: Display name validation is case-insensitive.
+  			</p>
+  			<h2>Example Usage</h2>
+  			<p>
+  				The following example will validate the display name value of "CUTTER PREMISE AND STABLE SPRAY (PRODUCT)", from the "SNOMED-CT" vocabulary value set.
+  			</p>
+  			<p>
+  				<a href="<%= rootContext %>/validateNameByCodeSystemName/SNOMED-CT/CUTTER%20PREMISE%20AND%20STABLE%20SPRAY%20(PRODUCT)"><%= rootContext %>/validateNameByCodeSystemName/SNOMED-CT/CUTTER%20PREMISE%20AND%20STABLE%20SPRAY%20(PRODUCT)</a>
   			</p>
 		</div>
 	</div>
@@ -115,7 +182,9 @@ The primary use cases of this system include validating that a code exists in a 
 		<ul class="nav nav-pills nav-stacked">
 			<li class="page-header"><h1>Service API</h1></li>
   			<li><a href="#validateCode">Validate Code</a></li>
+  			<li><a href="#validateCodeByCodeSystemName">Validate Code By Code System Name</a></li>
   			<li><a href="#validateName">Validate Display Name</a></li>
+  			<li><a href="#validateNameByCodeSystemName">Validate Display Name By Code System Name</a></li>
 		</ul>
 		<ul class="nav nav-pills nav-stacked">
 			<li class="page-header"><h1>Project Links</h1></li>

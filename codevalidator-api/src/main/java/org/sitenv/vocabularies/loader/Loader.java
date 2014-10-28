@@ -6,7 +6,9 @@ import org.sitenv.vocabularies.data.Vocabulary;
 
 public interface Loader {
 
-	
 	public Vocabulary load(File file);
+	
+	public String getCodeName();
+	public String getCodeSystem();
 	
 }

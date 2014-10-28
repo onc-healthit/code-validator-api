@@ -16,7 +16,7 @@
 	
 	<listener>
     	<listener-class>
-     		org.sitenv.vocabularies.web.listener.VocabularyValidationListener
+     		org.sitenv.vocabularies.servlet.listener.VocabularyValidationListener
     	</listener-class>
   	</listener>
 

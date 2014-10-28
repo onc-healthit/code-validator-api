@@ -13,21 +13,19 @@ public class DirectoryWatcher {
         
        ValidationEngine.initialize("/Users/chris/Development/code_repository/");
        
-       System.out.println("Validate Code: C-D1619 " + ValidationEngine.validateCode("SNOMED", "C-D1619"));
+       System.out.println("Validate Code: 233604007 " + ValidationEngine.validateCodeByCodeSystemName("SNOMED-CT", "233604007"));
        
-       System.out.println("Validate Code: P1-55336 " + ValidationEngine.validateCode("SNOMED", "P1-55336"));
+       System.out.println("Validate Code: 233604007 " + ValidationEngine.validateCode("2.16.840.1.113883.6.96", "233604007"));
        
-       System.out.println("Validate Code (should fail): C-ABCDE " + ValidationEngine.validateCode("SNOMED", "C-ABCDE"));
+       System.out.println("Validate Code (should fail): F1-FNAED " + ValidationEngine.validateCodeByCodeSystemName("SNOMED-CT", "F1-FNAED"));
        
-       System.out.println("Validate Code (should fail): F1-FNAED " + ValidationEngine.validateCode("SNOMED", "F1-FNAED"));
+       System.out.println("Validate Display Name: Moxostoma carinatum (organism) " + ValidationEngine.validateDisplayNameByCodeSystemName("SNOMED-CT", "Moxostoma carinatum (organism)"));
        
-       System.out.println("Validate Display Name: Moxostoma carinatum (organism) " + ValidationEngine.validateDisplayName("SNOMED", "Moxostoma carinatum (organism)"));
+       System.out.println("Validate Display Name: Duodenal ampulla structure (body structure) " + ValidationEngine.validateDisplayNameByCodeSystemName("SNOMED-CT", "Duodenal ampulla structure (body structure)"));
        
-       System.out.println("Validate Display Name: Duodenal ampulla structure (body structure) " + ValidationEngine.validateDisplayName("SNOMED", "Duodenal ampulla structure (body structure)"));
+       System.out.println("Validate Display Name (should fail): Moxostoma " + ValidationEngine.validateDisplayNameByCodeSystemName("SNOMED-CT", "Moxostoma"));
        
-       System.out.println("Validate Display Name (should fail): Moxostoma " + ValidationEngine.validateDisplayName("SNOMED", "Moxostoma"));
-       
-       System.out.println("Validate Display Name (should fail): Duodenal " + ValidationEngine.validateDisplayName("SNOMED", "Duodenal"));
+       System.out.println("Validate Display Name (should fail): Duodenal " + ValidationEngine.validateDisplayNameByCodeSystemName("SNOMED-CT", "Duodenal"));
     }
 
 }

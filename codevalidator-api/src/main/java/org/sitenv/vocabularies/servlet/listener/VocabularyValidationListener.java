@@ -17,7 +17,7 @@ public class VocabularyValidationListener implements ServletContextListener {
 	private RepositoryWatchdog watchdog = null;
 	private static Logger logger = Logger.getLogger(VocabularyValidationListener.class);
 	
-	public static final String DEFAULT_PROPERTIES_FILE = "environment.properties";
+	private static final String DEFAULT_PROPERTIES_FILE = "environment.properties";
 	
 	protected Properties props;
 	

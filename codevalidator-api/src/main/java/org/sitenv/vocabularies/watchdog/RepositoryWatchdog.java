@@ -191,7 +191,7 @@ public class RepositoryWatchdog  implements Runnable {
             		
             		@Override
                     public void run() {
-            			System.out.println("Updating Repository");
+            			logger.debug("Updating Repository");
             			timer.cancel();
             			timer = null;
             			

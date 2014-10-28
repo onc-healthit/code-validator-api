@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.sitenv.vocabularies.constants.VocabularyConstants;
+import org.sitenv.vocabularies.data.DisplayNameValidationResult;
 import org.sitenv.vocabularies.data.Vocabulary;
 import org.sitenv.vocabularies.data.VocabularyDataStore;
 import org.sitenv.vocabularies.loader.Loader;
@@ -15,23 +17,86 @@ import org.sitenv.vocabularies.watchdog.RepositoryWatchdog;
 public abstract class ValidationEngine {
 	
 	private static Logger logger = Logger.getLogger(ValidationEngine.class);
-
-	public static synchronized boolean validateCode(String vocabulary, String code)
-	{
+	
+	public static DisplayNameValidationResult validateDisplayNameForCodeByCodeSystemName(String codeSystemName, String displayName, String code) {
+		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName.toUpperCase());
+		DisplayNameValidationResult result = null;
+		
+		if (codeSystem != null)
+		{
+			result = validateDisplayNameForCode(codeSystem, displayName, code);
+		}
+		
+		return result;
+	}
+	
+	public static DisplayNameValidationResult validateDisplayNameForCode(String codeSystem, String displayName, String code) {
 		VocabularyDataStore ds = VocabularyDataStore.getInstance();
 		
-		if (ds != null && ds.getVocabulariesMap() != null) {
+		if (codeSystem != null && code != null &&  ds != null && ds.getVocabulariesMap() != null) {
 			Map<String, Map<String, Vocabulary>> activeMap = ds.getVocabulariesMap();
 			
 			if (activeMap != null) {
-				Map<String,Vocabulary> vocabularyMap = activeMap.get(vocabulary.toUpperCase());
+				Map<String,Vocabulary> vocabularyMap = activeMap.get(codeSystem.toUpperCase());
 				
-				for (String key : vocabularyMap.keySet()) 
+				if (vocabularyMap != null)
 				{
-					Vocabulary vocab = vocabularyMap.get(key);
-					if (vocab.getCodes().contains(code.toUpperCase()))
+					for (String key : vocabularyMap.keySet()) 
 					{
-						return true;
+						Vocabulary vocab = vocabularyMap.get(key);
+						String compDisplayName = vocab.getCodeMap().get(code);		
+						
+						DisplayNameValidationResult result = new DisplayNameValidationResult();
+						
+						result.setActualDisplayName(compDisplayName);
+						result.setCode(code);
+						result.setAnticipatedDisplayName(displayName);
+						
+						if (compDisplayName != null && compDisplayName.equals(displayName.toUpperCase()))
+						{
+							result.setResult(true);
+						} 
+						
+						return result;
+					}
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	public static boolean validateCodeByCodeSystemName(String codeSystemName, String code)
+	{
+		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName.toUpperCase());
+		
+		if (codeSystem != null)
+		{
+			return validateCode(codeSystem, code);
+		}
+		
+		return false;
+	}
+
+	public static synchronized boolean validateCode(String codeSystem, String code)
+	{
+		VocabularyDataStore ds = VocabularyDataStore.getInstance();
+		
+		if (codeSystem != null && code != null &&  ds != null && ds.getVocabulariesMap() != null) {
+			Map<String, Map<String, Vocabulary>> activeMap = ds.getVocabulariesMap();
+			
+			if (activeMap != null) {
+				Map<String,Vocabulary> vocabularyMap = activeMap.get(codeSystem.toUpperCase());
+				
+				if (vocabularyMap != null)
+				{
+					for (String key : vocabularyMap.keySet()) 
+					{
+						Vocabulary vocab = vocabularyMap.get(key);
+						if (vocab.getCodes().contains(code.toUpperCase()))
+						{
+							return true;
+						}
 					}
 				}
 			}
@@ -40,22 +105,36 @@ public abstract class ValidationEngine {
 		return false;
 	}
 	
-	public static synchronized boolean validateDisplayName(String vocabulary, String displayName)
+	public static boolean validateDisplayNameByCodeSystemName(String codeSystemName, String displayName)
+	{
+		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName.toUpperCase());
+		
+		if (codeSystem != null)
+		{
+			return validateDisplayName(codeSystem, displayName);
+		}
+		
+		return false;
+	}
+	
+	public static synchronized boolean validateDisplayName(String codeSystem, String displayName)
 	{
 		VocabularyDataStore ds = VocabularyDataStore.getInstance();
 		
-		if (ds != null && ds.getVocabulariesMap() != null) {
+		if (codeSystem != null && displayName != null && ds != null && ds.getVocabulariesMap() != null) {
 			Map<String, Map<String, Vocabulary>> activeMap = ds.getVocabulariesMap();
 			
 			if (activeMap != null) {
-				Map<String,Vocabulary> vocabularyMap = activeMap.get(vocabulary.toUpperCase());
-				
-				for (String key : vocabularyMap.keySet()) 
+				Map<String,Vocabulary> vocabularyMap = activeMap.get(codeSystem.toUpperCase());
+				if (vocabularyMap != null)
 				{
-					Vocabulary vocab = vocabularyMap.get(key);
-					if (vocab.getDisplayNames().contains(displayName.toUpperCase()))
+					for (String key : vocabularyMap.keySet()) 
 					{
-						return true;
+						Vocabulary vocab = vocabularyMap.get(key);
+						if (vocab.getDisplayNames().contains(displayName.toUpperCase()))
+						{
+							return true;
+						}
 					}
 				}
 			}
@@ -137,6 +216,7 @@ public abstract class ValidationEngine {
 		{
 			Map<String, Vocabulary> vocabularyMap = null;
 			File[] filesToLoad = directory.listFiles();
+			String codeSystem = null;
 			
 			for (File loadFile : filesToLoad)
 			{
@@ -151,6 +231,8 @@ public abstract class ValidationEngine {
 					Loader loader = LoaderManager.getInstance().buildLoader(directory.getName());
 					logger.debug("Loader built...");
 					
+					codeSystem = loader.getCodeSystem();
+					
 					logger.debug("Loading file: " + loadFile.getAbsolutePath() + "...");
 					Vocabulary vocab = loader.load(loadFile);
 					vocabularyMap.put(loadFile.getAbsolutePath(), vocab);
@@ -159,7 +241,7 @@ public abstract class ValidationEngine {
 				}
 			}
 			
-			vocabulariesMap.put(directory.getName().toUpperCase(), vocabularyMap);
+			vocabulariesMap.put(codeSystem.toUpperCase(), vocabularyMap);
 		}
 		
 		
