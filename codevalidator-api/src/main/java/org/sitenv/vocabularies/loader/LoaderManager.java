@@ -26,15 +26,23 @@ public class LoaderManager {
 	}
 	
 	public Loader buildLoader(String loaderName) {
+		Loader instance = null;
+		
 		try 
 		{
-			return loaderMap.get(loaderName.toUpperCase()).newInstance();
+			Class<? extends Loader> clazz = loaderMap.get(loaderName.toUpperCase());
+			
+			if (clazz != null)
+			{
+				instance = clazz.newInstance();
+			}
+			
 		} 
 		catch (Exception e)
 		{
-			// TODO: log4j
 			logger.error("Could not build the loader " + loaderName + "...", e);
-			return null;
 		}
+		
+		return instance;
 	}
 }

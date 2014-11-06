@@ -18,6 +18,32 @@ public abstract class ValidationEngine {
 	
 	private static Logger logger = Logger.getLogger(ValidationEngine.class);
 	
+	public static boolean isCodeSystemLoaded(String codeSystem) {
+		VocabularyDataStore ds = VocabularyDataStore.getInstance();
+		Map<String,Vocabulary> vocabularyMap = null;
+		if (codeSystem != null) {
+			Map<String, Map<String, Vocabulary>> activeMap = ds.getVocabulariesMap();
+			
+			if (activeMap != null) {
+				vocabularyMap = activeMap.get(codeSystem.toUpperCase());
+			}
+		}
+		
+		return (vocabularyMap != null);
+	}
+	
+	public static DisplayNameValidationResult validateCodeSystem(String codeSystemName, String displayName, String code) {
+		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName.toUpperCase());
+		DisplayNameValidationResult result = null;
+		
+		if (codeSystem != null)
+		{
+			result = validateDisplayNameForCode(codeSystem, displayName, code);
+		}
+		
+		return result;
+	}
+	
 	public static DisplayNameValidationResult validateDisplayNameForCodeByCodeSystemName(String codeSystemName, String displayName, String code) {
 		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName.toUpperCase());
 		DisplayNameValidationResult result = null;
@@ -176,6 +202,7 @@ public abstract class ValidationEngine {
 	private static void registerLoaders() {
 		try {
 			Class.forName("org.sitenv.vocabularies.loader.snomed.SnomedLoader");
+			Class.forName("org.sitenv.vocabularies.loader.loinc.LoincLoader");
 		} catch (ClassNotFoundException e) {
 			// TODO: log4j
 			logger.error("Error Initializing Loaders", e);
@@ -229,19 +256,28 @@ public abstract class ValidationEngine {
 					
 					logger.debug("Building Loader for directory: " + directory.getName() + "...");
 					Loader loader = LoaderManager.getInstance().buildLoader(directory.getName());
-					logger.debug("Loader built...");
+					if (loader != null) {
+						logger.debug("Loader built...");
 					
-					codeSystem = loader.getCodeSystem();
+						codeSystem = loader.getCodeSystem();
 					
-					logger.debug("Loading file: " + loadFile.getAbsolutePath() + "...");
-					Vocabulary vocab = loader.load(loadFile);
-					vocabularyMap.put(loadFile.getAbsolutePath(), vocab);
-					logger.debug("File loaded...");
+						logger.debug("Loading file: " + loadFile.getAbsolutePath() + "...");
+						Vocabulary vocab = loader.load(loadFile);
+						vocabularyMap.put(loadFile.getAbsolutePath(), vocab);
+						logger.debug("File loaded...");
+					}
+					else 
+					{
+						logger.debug("Building of Loader Failed.");
+					}
 					
 				}
 			}
 			
-			vocabulariesMap.put(codeSystem.toUpperCase(), vocabularyMap);
+			if (codeSystem != null)
+			{
+				vocabulariesMap.put(codeSystem.toUpperCase(), vocabularyMap);
+			}
 		}
 		
 		
