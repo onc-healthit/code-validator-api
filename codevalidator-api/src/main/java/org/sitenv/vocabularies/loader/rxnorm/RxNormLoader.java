@@ -1,4 +1,4 @@
-package org.sitenv.vocabularies.loader.loinc;
+package org.sitenv.vocabularies.loader.rxnorm;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,47 +11,40 @@ import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.data.Vocabulary;
 import org.sitenv.vocabularies.loader.Loader;
 import org.sitenv.vocabularies.loader.LoaderManager;
+import org.sitenv.vocabularies.loader.snomed.SnomedLoader;
 
-public class LoincLoader implements Loader {
+public class RxNormLoader implements Loader {
 
-	private static Logger logger = Logger.getLogger(LoincLoader.class);
+	private static Logger logger = Logger.getLogger(RxNormLoader.class);
 	
 
 	static {
 		LoaderManager.getInstance()
-				.registerLoader(VocabularyConstants.LOINC_CODE_NAME, LoincLoader.class);
-		System.out.println("Loaded: " + VocabularyConstants.LOINC_CODE_NAME + "(" + VocabularyConstants.LOINC_CODE_SYSTEM + ")");
+				.registerLoader(VocabularyConstants.RXNORM_CODE_NAME, RxNormLoader.class);
+		System.out.println("Loaded: " + VocabularyConstants.RXNORM_CODE_NAME + "(" + VocabularyConstants.RXNORM_CODE_SYSTEM + ")");
 	}
 
 	public Vocabulary load(File file) {
-		
-		Vocabulary loinc = new Vocabulary(file.getName());
+		Vocabulary rxNorm = new Vocabulary(file.getName());
 
-		logger.debug("Loading LOINC File: " + file.getName());
+		logger.debug("Loading RXNORM File: " + file.getName());
 
 		BufferedReader br = null;
 		
 		try {
 
-			
-			int count = 0;
 
 			br = new BufferedReader(new FileReader(file));
 			String available;
 			while ((available = br.readLine()) != null) {
-				if (count++ == 0) {
-					continue; // skip header row
-				} else {
-
-					String[] line = available.split(",");
-					String code = line[0].replace("\"", "").toUpperCase();
-					String name = line[1].replace("\"", "").toUpperCase();
-					
-					loinc.getCodes().add(code);
-					loinc.getDisplayNames().add(name);
-					
-					loinc.getCodeMap().put(code, name);
-				}
+				
+				String[] line = available.split("\\|");
+				
+				rxNorm.getCodes().add(line[0].toUpperCase());
+				rxNorm.getDisplayNames().add(line[14].toUpperCase());
+				
+				rxNorm.getCodeMap().put(line[0].toUpperCase(), line[14].toUpperCase());
+			
 
 
 			}
@@ -67,23 +60,20 @@ public class LoincLoader implements Loader {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				
 			}
 			
 			Runtime r = Runtime.getRuntime();
 			r.gc();
 		}
 
-		return loinc;
-		
+		return rxNorm;
 	}
 	
-	
 	public String getCodeName() {
-		return VocabularyConstants.LOINC_CODE_NAME;
+		return VocabularyConstants.RXNORM_CODE_NAME;
 	}
 
 	public String getCodeSystem() {
-		return VocabularyConstants.LOINC_CODE_SYSTEM;
+		return VocabularyConstants.RXNORM_CODE_SYSTEM;
 	}
 }

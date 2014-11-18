@@ -1,4 +1,4 @@
-package org.sitenv.vocabularies.loader.loinc;
+package org.sitenv.vocabularies.loader.icd9;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,22 +12,21 @@ import org.sitenv.vocabularies.data.Vocabulary;
 import org.sitenv.vocabularies.loader.Loader;
 import org.sitenv.vocabularies.loader.LoaderManager;
 
-public class LoincLoader implements Loader {
+public class Icd9CmSgLoader implements Loader {
 
-	private static Logger logger = Logger.getLogger(LoincLoader.class);
+	private static Logger logger = Logger.getLogger(Icd9CmSgLoader.class);
 	
 
 	static {
 		LoaderManager.getInstance()
-				.registerLoader(VocabularyConstants.LOINC_CODE_NAME, LoincLoader.class);
-		System.out.println("Loaded: " + VocabularyConstants.LOINC_CODE_NAME + "(" + VocabularyConstants.LOINC_CODE_SYSTEM + ")");
+				.registerLoader(VocabularyConstants.ICD9CM_PROCEDURE_CODE_NAME, Icd9CmSgLoader.class);
+		System.out.println("Loaded: " + VocabularyConstants.ICD9CM_PROCEDURE_CODE_NAME + "(" + VocabularyConstants.ICD9CM_PROCEDURE_CODE_SYSTEM + ")");
 	}
 
 	public Vocabulary load(File file) {
-		
-		Vocabulary loinc = new Vocabulary(file.getName());
+		Vocabulary icd9CmSg = new Vocabulary(file.getName());
 
-		logger.debug("Loading LOINC File: " + file.getName());
+		logger.debug("Loading ICD9CM_SG File: " + file.getName());
 
 		BufferedReader br = null;
 		
@@ -43,14 +42,12 @@ public class LoincLoader implements Loader {
 					continue; // skip header row
 				} else {
 
-					String[] line = available.split(",");
-					String code = line[0].replace("\"", "").toUpperCase();
-					String name = line[1].replace("\"", "").toUpperCase();
+					String[] line = available.split("\t");
 					
-					loinc.getCodes().add(code);
-					loinc.getDisplayNames().add(name);
+					icd9CmSg.getCodes().add(line[0].toUpperCase());
+					icd9CmSg.getDisplayNames().add(line[1].toUpperCase());
 					
-					loinc.getCodeMap().put(code, name);
+					icd9CmSg.getCodeMap().put(line[0].toUpperCase(), line[1].toUpperCase());
 				}
 
 
@@ -67,23 +64,21 @@ public class LoincLoader implements Loader {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				
 			}
 			
 			Runtime r = Runtime.getRuntime();
 			r.gc();
 		}
 
-		return loinc;
-		
+		return icd9CmSg;
 	}
 	
-	
 	public String getCodeName() {
-		return VocabularyConstants.LOINC_CODE_NAME;
+		return VocabularyConstants.ICD9CM_PROCEDURE_CODE_NAME;
 	}
 
 	public String getCodeSystem() {
-		return VocabularyConstants.LOINC_CODE_SYSTEM;
+		return VocabularyConstants.ICD9CM_PROCEDURE_CODE_SYSTEM;
 	}
+
 }

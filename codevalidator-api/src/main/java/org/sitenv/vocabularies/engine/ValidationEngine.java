@@ -193,8 +193,12 @@ public abstract class ValidationEngine {
 		// TODO: Perform Validation/Verification, if needed
 		
 		logger.info("Activating new Vocabularies Map...");
+		VocabularyDataStore.getInstance().setVocabulariesMap(null);
 		VocabularyDataStore.getInstance().setVocabulariesMap(vocabulariesMap);
+		Runtime.getRuntime().gc();
 		logger.info("New vocabulary Map Activated...");
+		
+		
 		
 		return watchdog;
 	}
@@ -203,6 +207,11 @@ public abstract class ValidationEngine {
 		try {
 			Class.forName("org.sitenv.vocabularies.loader.snomed.SnomedLoader");
 			Class.forName("org.sitenv.vocabularies.loader.loinc.LoincLoader");
+			Class.forName("org.sitenv.vocabularies.loader.rxnorm.RxNormLoader");
+			Class.forName("org.sitenv.vocabularies.loader.icd9.Icd9CmDxLoader");
+			Class.forName("org.sitenv.vocabularies.loader.icd9.Icd9CmSgLoader");
+			Class.forName("org.sitenv.vocabularies.loader.icd10.Icd10CmLoader");
+			Class.forName("org.sitenv.vocabularies.loader.icd10.Icd10PcsLoader");
 		} catch (ClassNotFoundException e) {
 			// TODO: log4j
 			logger.error("Error Initializing Loaders", e);

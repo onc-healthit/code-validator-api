@@ -65,6 +65,9 @@ public class SnomedLoader implements Loader {
 					e.printStackTrace();
 				}
 			}
+			
+			Runtime r = Runtime.getRuntime();
+			r.gc();
 		}
 
 		return snomed;

@@ -1,4 +1,4 @@
-package org.sitenv.vocabularies.loader.loinc;
+package org.sitenv.vocabularies.loader.icd10;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,46 +12,39 @@ import org.sitenv.vocabularies.data.Vocabulary;
 import org.sitenv.vocabularies.loader.Loader;
 import org.sitenv.vocabularies.loader.LoaderManager;
 
-public class LoincLoader implements Loader {
+public class Icd10PcsLoader implements Loader {
 
-	private static Logger logger = Logger.getLogger(LoincLoader.class);
+	private static Logger logger = Logger.getLogger(Icd10PcsLoader.class);
 	
 
 	static {
 		LoaderManager.getInstance()
-				.registerLoader(VocabularyConstants.LOINC_CODE_NAME, LoincLoader.class);
-		System.out.println("Loaded: " + VocabularyConstants.LOINC_CODE_NAME + "(" + VocabularyConstants.LOINC_CODE_SYSTEM + ")");
+				.registerLoader(VocabularyConstants.ICD10PCS_CODE_NAME, Icd10PcsLoader.class);
+		System.out.println("Loaded: " + VocabularyConstants.ICD10PCS_CODE_NAME + "(" + VocabularyConstants.ICD10PCS_CODE_SYSTEM + ")");
 	}
 
 	public Vocabulary load(File file) {
-		
-		Vocabulary loinc = new Vocabulary(file.getName());
+		Vocabulary icd10Pcs = new Vocabulary(file.getName());
 
-		logger.debug("Loading LOINC File: " + file.getName());
+		logger.debug("Loading ICD10PCS File: " + file.getName());
 
 		BufferedReader br = null;
 		
-		try {
-
+		try {			
 			
-			int count = 0;
 
 			br = new BufferedReader(new FileReader(file));
 			String available;
 			while ((available = br.readLine()) != null) {
-				if (count++ == 0) {
-					continue; // skip header row
-				} else {
-
-					String[] line = available.split(",");
-					String code = line[0].replace("\"", "").toUpperCase();
-					String name = line[1].replace("\"", "").toUpperCase();
-					
-					loinc.getCodes().add(code);
-					loinc.getDisplayNames().add(name);
-					
-					loinc.getCodeMap().put(code, name);
-				}
+				
+				String code = available.substring(6, 13).trim();
+				String displayName = available.substring(77).trim();
+			
+				icd10Pcs.getCodes().add(code);
+				icd10Pcs.getDisplayNames().add(displayName);
+				
+				icd10Pcs.getCodeMap().put(code, displayName);
+				
 
 
 			}
@@ -67,23 +60,23 @@ public class LoincLoader implements Loader {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				
 			}
 			
 			Runtime r = Runtime.getRuntime();
 			r.gc();
 		}
 
-		return loinc;
-		
+		return icd10Pcs;
 	}
 	
-	
 	public String getCodeName() {
-		return VocabularyConstants.LOINC_CODE_NAME;
+		return VocabularyConstants.ICD10PCS_CODE_NAME;
 	}
 
 	public String getCodeSystem() {
-		return VocabularyConstants.LOINC_CODE_SYSTEM;
+		return VocabularyConstants.ICD10PCS_CODE_SYSTEM;
 	}
+
+
+
 }
