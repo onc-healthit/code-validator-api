@@ -1,15 +1,14 @@
-package org.sitenv.vocabularies.data;
+package org.sitenv.vocabularies.model;
 
-import org.sitenv.vocabularies.model.CodeModel;
 
-public class Vocabulary {
+public class VocabularyModelDefinition {
 
 	private Class<? extends CodeModel> clazz;
 	private String codeSystem;
 	
 	
 
-	public Vocabulary(Class<? extends CodeModel> clazz, String codeSystem) {
+	public VocabularyModelDefinition(Class<? extends CodeModel> clazz, String codeSystem) {
 		super();
 		this.clazz = clazz;
 		this.codeSystem = codeSystem;

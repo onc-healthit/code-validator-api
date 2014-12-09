@@ -8,13 +8,13 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
-import org.sitenv.vocabularies.data.Vocabulary;
-import org.sitenv.vocabularies.data.VocabularyDataStore;
 import org.sitenv.vocabularies.loader.Loader;
 import org.sitenv.vocabularies.loader.LoaderManager;
+import org.sitenv.vocabularies.model.VocabularyModelDefinition;
 import org.sitenv.vocabularies.model.impl.LoincModel;
 import org.sitenv.vocabularies.model.impl.RxNormModel;
 import org.sitenv.vocabularies.model.impl.SnomedModel;
+import org.sitenv.vocabularies.repository.VocabularyRepository;
 
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -30,9 +30,11 @@ public class RxNormLoader implements Loader {
 		System.out.println("Loaded: " + VocabularyConstants.RXNORM_CODE_NAME + "(" + VocabularyConstants.RXNORM_CODE_SYSTEM + ")");
 	}
 
-	public Vocabulary load(File file, OObjectDatabaseTx dbConnection) {
-		Vocabulary rxNorm = new Vocabulary(RxNormModel.class, this.getCodeSystem());
+	public VocabularyModelDefinition load(File file) {
+		VocabularyModelDefinition rxNorm = new VocabularyModelDefinition(RxNormModel.class, this.getCodeSystem());
 
+		OObjectDatabaseTx dbConnection = VocabularyRepository.getInstance().getInactiveDbConnection();
+		
 		logger.debug("Loading RXNORM File: " + file.getName());
 
 		BufferedReader br = null;
@@ -40,9 +42,9 @@ public class RxNormLoader implements Loader {
 		try {
 			logger.info("Truncating RxNormModel Datastore...");
 			
-			VocabularyDataStore.truncateModel(dbConnection, RxNormModel.class);
+			VocabularyRepository.truncateModel(dbConnection, RxNormModel.class);
 			
-			logger.info("RxNormModel Datastore Truncated... records remaining: " + VocabularyDataStore.getRecordCount(dbConnection, RxNormModel.class));
+			logger.info(dbConnection.getName() + ".RxNormModel Datastore Truncated... records remaining: " + VocabularyRepository.getRecordCount(dbConnection, RxNormModel.class));
 			
 
 
@@ -60,10 +62,10 @@ public class RxNormLoader implements Loader {
 
 
 			}
-			VocabularyDataStore.updateIndexProperties(dbConnection, RxNormModel.class);
+			VocabularyRepository.updateIndexProperties(dbConnection, RxNormModel.class);
 			
 			
-			logger.info("RxNormModel Loading complete... records existing: " + VocabularyDataStore.getRecordCount(dbConnection, RxNormModel.class));
+			logger.info("RxNormModel Loading complete... records existing: " + VocabularyRepository.getRecordCount(dbConnection, RxNormModel.class));
 			
 		} catch (FileNotFoundException e) {
 			// TODO: log4j

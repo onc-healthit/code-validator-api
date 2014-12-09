@@ -10,9 +10,9 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
-import org.sitenv.vocabularies.data.OrientDbCredentials;
-import org.sitenv.vocabularies.data.VocabularyDataStore;
 import org.sitenv.vocabularies.engine.ValidationEngine;
+import org.sitenv.vocabularies.repository.VocabularyRepositoryConnectionInfo;
+import org.sitenv.vocabularies.repository.VocabularyRepository;
 import org.sitenv.vocabularies.watchdog.RepositoryWatchdog;
 
 import com.orientechnologies.orient.object.db.OObjectDatabasePool;
@@ -22,7 +22,6 @@ import com.orientechnologies.orient.server.OServerMain;
 
 public class VocabularyValidationListener implements ServletContextListener {
 
-	private RepositoryWatchdog watchdog = null;
 	private static Logger logger = Logger.getLogger(VocabularyValidationListener.class);
 	
 	private static final String DEFAULT_PROPERTIES_FILE = "environment.properties";
@@ -47,14 +46,14 @@ public class VocabularyValidationListener implements ServletContextListener {
 	
 	public void contextDestroyed(ServletContextEvent arg0) {
 		logger.debug("Stopping the watchdog...");
-		if (watchdog != null) {
-			watchdog.stop();
+		if (ValidationEngine.getWatchdogThread() != null) {
+			ValidationEngine.getWatchdogThread().stop();
 		}
 		logger.debug("Watchdog stopped...");
 		
 		logger.debug("Stopping the Orient DB server...");
-		VocabularyDataStore.getInstance().getOrientDbServer().shutdown();
-		VocabularyDataStore.getInstance().setOrientDbServer(null);
+		VocabularyRepository.getInstance().getOrientDbServer().shutdown();
+		VocabularyRepository.getInstance().setOrientDbServer(null);
 		logger.debug("Orient DB server stopped...");
 	}
 
@@ -76,21 +75,21 @@ public class VocabularyValidationListener implements ServletContextListener {
 				
 				server.activate();
 				
-				VocabularyDataStore.getInstance().setOrientDbServer(server);
+				VocabularyRepository.getInstance().setOrientDbServer(server);
 				logger.debug("Orient DB server initialized...");
 
-				OrientDbCredentials primary = new OrientDbCredentials ();
+				VocabularyRepositoryConnectionInfo primary = new VocabularyRepositoryConnectionInfo ();
 				primary.setConnectionInfo("remote:localhost/primary");
 				primary.setPassword("admin");
 				primary.setUsername("admin");
-				VocabularyDataStore.getInstance().setPrimaryNodeCredentials(primary);
+				VocabularyRepository.getInstance().setPrimaryNodeCredentials(primary);
 				
 
-				OrientDbCredentials secondary = new OrientDbCredentials ();
+				VocabularyRepositoryConnectionInfo secondary = new VocabularyRepositoryConnectionInfo ();
 				secondary.setConnectionInfo("remote:localhost/secondary");
 				secondary.setPassword("admin");
 				secondary.setUsername("admin");
-				VocabularyDataStore.getInstance().setSecondaryNodeCredentials(secondary);
+				VocabularyRepository.getInstance().setSecondaryNodeCredentials(secondary);
 				
 			}
 			catch (Exception e)
@@ -99,7 +98,7 @@ public class VocabularyValidationListener implements ServletContextListener {
 			}
 			
 			logger.debug("Initializing the validation engine...");
-			watchdog = ValidationEngine.initialize(props.getProperty("vocabulary.localRepositoryDir"));
+			ValidationEngine.initialize(props.getProperty("vocabulary.localRepositoryDir"));
 			logger.debug("Validation Engine initialized...");
 			
 			

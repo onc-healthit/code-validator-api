@@ -9,11 +9,11 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.data.DisplayNameValidationResult;
-import org.sitenv.vocabularies.data.Vocabulary;
-import org.sitenv.vocabularies.data.VocabularyDataStore;
 import org.sitenv.vocabularies.loader.Loader;
 import org.sitenv.vocabularies.loader.LoaderManager;
 import org.sitenv.vocabularies.model.CodeModel;
+import org.sitenv.vocabularies.model.VocabularyModelDefinition;
+import org.sitenv.vocabularies.repository.VocabularyRepository;
 import org.sitenv.vocabularies.watchdog.RepositoryWatchdog;
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -21,12 +21,18 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 public abstract class ValidationEngine {
 	
 	private static Logger logger = Logger.getLogger(ValidationEngine.class);
+	private static RepositoryWatchdog watchdog = null;
+	
+	public static RepositoryWatchdog getWatchdogThread()
+	{
+		return watchdog;
+	}
 	
 	public static boolean isCodeSystemLoaded(String codeSystem) {
-		VocabularyDataStore ds = VocabularyDataStore.getInstance();
-		Vocabulary vocabulary = null;
+		VocabularyRepository ds = VocabularyRepository.getInstance();
+		VocabularyModelDefinition vocabulary = null;
 		if (codeSystem != null) {
-			Map<String, Vocabulary> vocabMap = ds.getVocabularyMap();
+			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
 			
 			if (vocabMap != null) {
 				vocabulary = vocabMap.get(codeSystem.toUpperCase());
@@ -61,12 +67,12 @@ public abstract class ValidationEngine {
 	}
 	
 	public static DisplayNameValidationResult validateDisplayNameForCode(String codeSystem, String displayName, String code) {
-		VocabularyDataStore ds = VocabularyDataStore.getInstance();
+		VocabularyRepository ds = VocabularyRepository.getInstance();
 		
 		if (codeSystem != null && code != null &&  ds != null && ds.getVocabularyMap() != null) {
-			Map<String, Vocabulary> vocabMap = ds.getVocabularyMap();
+			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
 			
-			Vocabulary vocab = vocabMap.get(codeSystem.toUpperCase());
+			VocabularyModelDefinition vocab = vocabMap.get(codeSystem.toUpperCase());
 			
 			List<? extends CodeModel> results = ds.fetchByCode(vocab.getClazz(), code);
 			
@@ -108,12 +114,12 @@ public abstract class ValidationEngine {
 
 	public static synchronized boolean validateCode(String codeSystem, String code)
 	{
-		VocabularyDataStore ds = VocabularyDataStore.getInstance();
+		VocabularyRepository ds = VocabularyRepository.getInstance();
 		
 		if (codeSystem != null && code != null &&  ds != null && ds.getVocabularyMap() != null) {
-			Map<String, Vocabulary> vocabMap = ds.getVocabularyMap();
+			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
 			
-			Vocabulary vocab = vocabMap.get(codeSystem.toUpperCase());
+			VocabularyModelDefinition vocab = vocabMap.get(codeSystem.toUpperCase());
 			
 			List<? extends CodeModel> results = ds.fetchByCode(vocab.getClazz(), code);
 			
@@ -141,12 +147,12 @@ public abstract class ValidationEngine {
 	
 	public static synchronized boolean validateDisplayName(String codeSystem, String displayName)
 	{
-		VocabularyDataStore ds = VocabularyDataStore.getInstance();
+		VocabularyRepository ds = VocabularyRepository.getInstance();
 		
 		if (codeSystem != null && displayName != null &&  ds != null && ds.getVocabularyMap() != null) {
-			Map<String, Vocabulary> vocabMap = ds.getVocabularyMap();
+			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
 			
-			Vocabulary vocab = vocabMap.get(codeSystem.toUpperCase());
+			VocabularyModelDefinition vocab = vocabMap.get(codeSystem.toUpperCase());
 			
 			List<? extends CodeModel> results = ds.fetchByDisplayName(vocab.getClazz(), displayName);
 			
@@ -160,7 +166,7 @@ public abstract class ValidationEngine {
 		return false;
 	}
 	
-	public static RepositoryWatchdog initialize(String directory) throws IOException {
+	public static void initialize(String directory) throws IOException {
 		boolean recursive = true;
 
 		logger.info("Registering Loaders...");
@@ -168,44 +174,15 @@ public abstract class ValidationEngine {
 		registerLoaders();
 		logger.info("Loaders Registered...");
 		
+		// Validation Engine should load using the primary database (existing). This will kick off the loading of the secondary database and swap configs
+		// Once the secondary dB is loaded, the watchdog thread will be initialized to monitor future changes.
+		// Putting this initialization code in a separate thread will dramatically speed up the tomcat launch time
+		InitializerThread initializer = new InitializerThread();
 		
-		// Get inactive repository (hopefully this opens a new connection)
-		OObjectDatabaseTx dbConnection = VocabularyDataStore.getInstance().getInactiveDbConnection();
-				
+		initializer.setDirectory(directory);
+		initializer.setRecursive(recursive);
 		
-		logger.info("Starting Watchdog...");
-		RepositoryWatchdog watchdog = new RepositoryWatchdog(directory, recursive);
-		watchdog.start();
-		logger.info("Watchdog started...");
-		
-		
-		
-		try 
-		{
-			logger.info("Loading vocabularies at: " + directory + "...");
-			loadDirectory(directory, dbConnection);
-			logger.info("Vocabularies loaded...");
-		}
-		catch (Exception e)
-		{
-			logger.error("Failed to load configured vocabulary directory.", e);
-		}
-		finally
-		{
-			dbConnection.close();
-		}
-		
-		// TODO: Perform Validation/Verification, if needed
-		
-		logger.info("Activating new Vocabularies Map...");
-		
-		VocabularyDataStore.getInstance().toggleActiveDatabase();
-		
-		Runtime.getRuntime().gc();
-		logger.info("New vocabulary Map Activated...");
-		
-		
-		return watchdog;
+		initializer.start();
 	}
 	
 	private static void registerLoaders() {
@@ -223,7 +200,7 @@ public abstract class ValidationEngine {
 		}
 	}
 	
-	public static void loadDirectory(String directory, OObjectDatabaseTx dbConnection) throws IOException
+	public static void loadDirectory(String directory) throws IOException
 	{
 		File dir = new File(directory);
 		
@@ -237,16 +214,16 @@ public abstract class ValidationEngine {
 			
 			File[] list = dir.listFiles();
 			
-			VocabularyDataStore.getInstance().setVocabularyMap(new HashMap<String,Vocabulary>());
+			VocabularyRepository.getInstance().setVocabularyMap(new HashMap<String,VocabularyModelDefinition>());
 			
 			for (File file : list)
 			{
-				loadFiles(file, dbConnection);
+				loadFiles(file);
 			}
 		}
 	}
 	
-	private static void loadFiles(File directory, OObjectDatabaseTx dbConnection) throws IOException
+	private static void loadFiles(File directory) throws IOException
 	{
 		if (directory.isDirectory() && !directory.isHidden()) 
 		{
@@ -269,11 +246,11 @@ public abstract class ValidationEngine {
 						codeSystem = loader.getCodeSystem();
 					
 						logger.debug("Loading file: " + loadFile.getAbsolutePath() + "...");
-						Vocabulary vocab = loader.load(loadFile, dbConnection);
+						VocabularyModelDefinition vocab = loader.load(loadFile);
 						
 						// TODO: Make this a passed in parameter:
 						
-						VocabularyDataStore.getInstance().getVocabularyMap().put(codeSystem.toUpperCase(), vocab);
+						VocabularyRepository.getInstance().getVocabularyMap().put(codeSystem.toUpperCase(), vocab);
 						
 						logger.debug("File loaded...");
 					}
@@ -289,6 +266,74 @@ public abstract class ValidationEngine {
 		
 		
 
+	}
+	
+	private static class InitializerThread extends Thread {
+		
+		private String directory = null;
+		private boolean recursive = true;
+		
+		
+		
+		public String getDirectory() {
+			return directory;
+		}
+
+
+
+		public void setDirectory(String directory) {
+			this.directory = directory;
+		}
+
+
+
+		public boolean isRecursive() {
+			return recursive;
+		}
+
+
+
+		public void setRecursive(boolean recursive) {
+			this.recursive = recursive;
+		}
+
+
+
+		public void run() {
+			
+			// Get inactive repository (hopefully this opens a new connection)
+			OObjectDatabaseTx dbConnection = VocabularyRepository.getInstance().getInactiveDbConnection();
+			
+			try 
+			{
+				logger.info("Loading vocabularies at: " + directory + "...");
+				loadDirectory(directory);
+				logger.info("Vocabularies loaded...");
+				
+				logger.info("Starting Watchdog...");
+				ValidationEngine.watchdog = new RepositoryWatchdog(this.getDirectory(), this.isRecursive());
+				watchdog.start();
+				logger.info("Watchdog started...");
+			}
+			catch (Exception e)
+			{
+				logger.error("Failed to load configured vocabulary directory.", e);
+			}
+			finally
+			{
+				dbConnection.close();
+			}
+			
+			// TODO: Perform Validation/Verification, if needed
+			
+			logger.info("Activating new Vocabularies Map...");
+			
+			VocabularyRepository.getInstance().toggleActiveDatabase();
+			
+			Runtime.getRuntime().gc();
+			logger.info("New vocabulary Map Activated...");
+		}
+		
 	}
 
 }

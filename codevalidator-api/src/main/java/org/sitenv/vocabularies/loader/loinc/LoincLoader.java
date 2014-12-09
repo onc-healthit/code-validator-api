@@ -8,14 +8,14 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
-import org.sitenv.vocabularies.data.Vocabulary;
-import org.sitenv.vocabularies.data.VocabularyDataStore;
 import org.sitenv.vocabularies.loader.Loader;
 import org.sitenv.vocabularies.loader.LoaderManager;
+import org.sitenv.vocabularies.model.VocabularyModelDefinition;
 import org.sitenv.vocabularies.model.impl.Icd9CmDxModel;
 import org.sitenv.vocabularies.model.impl.Icd9CmSgModel;
 import org.sitenv.vocabularies.model.impl.LoincModel;
 import org.sitenv.vocabularies.model.impl.SnomedModel;
+import org.sitenv.vocabularies.repository.VocabularyRepository;
 
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -31,10 +31,12 @@ public class LoincLoader implements Loader {
 		System.out.println("Loaded: " + VocabularyConstants.LOINC_CODE_NAME + "(" + VocabularyConstants.LOINC_CODE_SYSTEM + ")");
 	}
 
-	public Vocabulary load(File file, OObjectDatabaseTx dbConnection) {
+	public VocabularyModelDefinition load(File file) {
 		
-		Vocabulary loinc = new Vocabulary(LoincModel.class, this.getCodeSystem());
+		VocabularyModelDefinition loinc = new VocabularyModelDefinition(LoincModel.class, this.getCodeSystem());
 
+		OObjectDatabaseTx dbConnection = VocabularyRepository.getInstance().getInactiveDbConnection();
+		
 		logger.debug("Loading LOINC File: " + file.getName());
 
 		BufferedReader br = null;
@@ -42,9 +44,9 @@ public class LoincLoader implements Loader {
 		try {
 			logger.info("Truncating LoincModel Datastore...");
 			
-			VocabularyDataStore.truncateModel(dbConnection, LoincModel.class);
+			VocabularyRepository.truncateModel(dbConnection, LoincModel.class);
 			
-			logger.info("LoincModel Datastore Truncated... records remaining: " + VocabularyDataStore.getRecordCount(dbConnection, LoincModel.class));
+			logger.info(dbConnection.getName() + ".LoincModel Datastore Truncated... records remaining: " + VocabularyRepository.getRecordCount(dbConnection, LoincModel.class));
 			
 
 			
@@ -71,10 +73,10 @@ public class LoincLoader implements Loader {
 
 			}
 			
-			VocabularyDataStore.updateIndexProperties(dbConnection, LoincModel.class);
+			VocabularyRepository.updateIndexProperties(dbConnection, LoincModel.class);
 			
 			
-			logger.info("LoincModel Loading complete... records existing: " + VocabularyDataStore.getRecordCount(dbConnection, LoincModel.class));
+			logger.info("LoincModel Loading complete... records existing: " + VocabularyRepository.getRecordCount(dbConnection, LoincModel.class));
 			
 			
 		} catch (FileNotFoundException e) {

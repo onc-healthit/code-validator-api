@@ -20,8 +20,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
-import org.sitenv.vocabularies.data.VocabularyDataStore;
 import org.sitenv.vocabularies.engine.ValidationEngine;
+import org.sitenv.vocabularies.repository.VocabularyRepository;
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
@@ -200,18 +200,16 @@ public class RepositoryWatchdog  implements Runnable {
             			
             			try {
             				
-            				// Get inactive repository
-            				OObjectDatabaseTx dbConnection = VocabularyDataStore.getInstance().getInactiveDbConnection();            				
             				
             				logger.info("Loading vocabularies at: " + rootDirectory + "...");
-            				ValidationEngine.loadDirectory(rootDirectory, dbConnection);
+            				ValidationEngine.loadDirectory(rootDirectory);
             				logger.info("Vocabularies loaded...");
             				
             				// TODO: Perform Validation/Verification, if needed
             				
             				logger.info("Activating new Vocabularies Map...");
             				
-            				VocabularyDataStore.getInstance().toggleActiveDatabase();
+            				VocabularyRepository.getInstance().toggleActiveDatabase();
             				
             				Runtime.getRuntime().gc();
             				logger.info("New vocabulary Map Activated...");

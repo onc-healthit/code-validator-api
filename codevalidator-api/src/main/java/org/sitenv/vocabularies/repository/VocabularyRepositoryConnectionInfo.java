@@ -1,6 +1,6 @@
-package org.sitenv.vocabularies.data;
+package org.sitenv.vocabularies.repository;
 
-public class OrientDbCredentials {
+public class VocabularyRepositoryConnectionInfo {
 
 	private String connectionInfo;
 	private String username;
@@ -25,7 +25,7 @@ public class OrientDbCredentials {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		OrientDbCredentials other = (OrientDbCredentials) obj;
+		VocabularyRepositoryConnectionInfo other = (VocabularyRepositoryConnectionInfo) obj;
 		if (connectionInfo == null) {
 			if (other.connectionInfo != null)
 				return false;

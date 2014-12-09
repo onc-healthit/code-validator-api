@@ -8,13 +8,13 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
-import org.sitenv.vocabularies.data.Vocabulary;
-import org.sitenv.vocabularies.data.VocabularyDataStore;
 import org.sitenv.vocabularies.loader.Loader;
 import org.sitenv.vocabularies.loader.LoaderManager;
+import org.sitenv.vocabularies.model.VocabularyModelDefinition;
 import org.sitenv.vocabularies.model.impl.Icd9CmDxModel;
 import org.sitenv.vocabularies.model.impl.Icd9CmSgModel;
 import org.sitenv.vocabularies.model.impl.SnomedModel;
+import org.sitenv.vocabularies.repository.VocabularyRepository;
 
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -30,9 +30,11 @@ public class Icd9CmSgLoader implements Loader {
 		System.out.println("Loaded: " + VocabularyConstants.ICD9CM_PROCEDURE_CODE_NAME + "(" + VocabularyConstants.ICD9CM_PROCEDURE_CODE_SYSTEM + ")");
 	}
 
-	public Vocabulary load(File file, OObjectDatabaseTx dbConnection) {
-		Vocabulary icd9CmSg = new Vocabulary(Icd9CmSgModel.class, this.getCodeSystem());
+	public VocabularyModelDefinition load(File file) {
+		VocabularyModelDefinition icd9CmSg = new VocabularyModelDefinition(Icd9CmSgModel.class, this.getCodeSystem());
 
+		OObjectDatabaseTx dbConnection = VocabularyRepository.getInstance().getInactiveDbConnection();
+		
 		logger.debug("Loading ICD9CM_SG File: " + file.getName());
 
 		BufferedReader br = null;
@@ -40,9 +42,9 @@ public class Icd9CmSgLoader implements Loader {
 		try {
 			logger.info("Truncating Icd9CmSgModel Datastore...");
 			
-			VocabularyDataStore.truncateModel(dbConnection, Icd9CmSgModel.class);
+			VocabularyRepository.truncateModel(dbConnection, Icd9CmSgModel.class);
 			
-			logger.info("Icd9CmSgModel Datastore Truncated... records remaining: " + VocabularyDataStore.getRecordCount(dbConnection, Icd9CmSgModel.class));
+			logger.info(dbConnection.getName() + ".Icd9CmSgModel Datastore Truncated... records remaining: " + VocabularyRepository.getRecordCount(dbConnection, Icd9CmSgModel.class));
 			
 			
 			int count = 0;
@@ -67,10 +69,10 @@ public class Icd9CmSgLoader implements Loader {
 			}
 			
 
-			VocabularyDataStore.updateIndexProperties(dbConnection, Icd9CmSgModel.class);
+			VocabularyRepository.updateIndexProperties(dbConnection, Icd9CmSgModel.class);
 			
 			
-			logger.info("Icd9CmSgModel Loading complete... records existing: " + VocabularyDataStore.getRecordCount(dbConnection, Icd9CmSgModel.class));
+			logger.info("Icd9CmSgModel Loading complete... records existing: " + VocabularyRepository.getRecordCount(dbConnection, Icd9CmSgModel.class));
 			
 			
 		} catch (FileNotFoundException e) {

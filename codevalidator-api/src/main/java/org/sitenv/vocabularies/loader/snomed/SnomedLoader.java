@@ -8,12 +8,12 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
-import org.sitenv.vocabularies.data.Vocabulary;
-import org.sitenv.vocabularies.data.VocabularyDataStore;
 import org.sitenv.vocabularies.loader.Loader;
 import org.sitenv.vocabularies.loader.LoaderManager;
+import org.sitenv.vocabularies.model.VocabularyModelDefinition;
 import org.sitenv.vocabularies.model.impl.RxNormModel;
 import org.sitenv.vocabularies.model.impl.SnomedModel;
+import org.sitenv.vocabularies.repository.VocabularyRepository;
 
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -29,9 +29,11 @@ public class SnomedLoader implements Loader {
 		System.out.println("Loaded: " + VocabularyConstants.SNOMEDCT_CODE_NAME + "(" + VocabularyConstants.SNOMEDCT_CODE_SYSTEM + ")");
 	}
 
-	public Vocabulary load(File file, OObjectDatabaseTx dbConnection) {
-		Vocabulary snomed = new Vocabulary(SnomedModel.class, this.getCodeSystem());
+	public VocabularyModelDefinition load(File file) {
+		VocabularyModelDefinition snomed = new VocabularyModelDefinition(SnomedModel.class, this.getCodeSystem());
 
+		OObjectDatabaseTx dbConnection = VocabularyRepository.getInstance().getInactiveDbConnection();
+		
 		logger.debug("Loading SNOMED File: " + file.getName());
 
 		BufferedReader br = null;
@@ -39,9 +41,9 @@ public class SnomedLoader implements Loader {
 		try {
 			logger.info("Truncating SnomedModel Datastore...");
 			
-			VocabularyDataStore.truncateModel(dbConnection, SnomedModel.class);
+			VocabularyRepository.truncateModel(dbConnection, SnomedModel.class);
 			
-			logger.info("SnomedModel Datastore Truncated... records remaining: " + VocabularyDataStore.getRecordCount(dbConnection, SnomedModel.class));
+			logger.info(dbConnection.getName() + ".SnomedModel Datastore Truncated... records remaining: " + VocabularyRepository.getRecordCount(dbConnection, SnomedModel.class));
 			
 			
 			int count = 0;
@@ -64,10 +66,10 @@ public class SnomedLoader implements Loader {
 
 
 			}
-			VocabularyDataStore.updateIndexProperties(dbConnection, SnomedModel.class);
+			VocabularyRepository.updateIndexProperties(dbConnection, SnomedModel.class);
 			
 			
-			logger.info("SnomedModel Loading complete... records existing: " + VocabularyDataStore.getRecordCount(dbConnection, SnomedModel.class));
+			logger.info("SnomedModel Loading complete... records existing: " + VocabularyRepository.getRecordCount(dbConnection, SnomedModel.class));
 			
 		} catch (FileNotFoundException e) {
 			// TODO: log4j

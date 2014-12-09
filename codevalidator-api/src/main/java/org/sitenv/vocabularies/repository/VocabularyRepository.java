@@ -1,10 +1,11 @@
-package org.sitenv.vocabularies.data;
+package org.sitenv.vocabularies.repository;
 
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.model.CodeModel;
+import org.sitenv.vocabularies.model.VocabularyModelDefinition;
 
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
@@ -14,84 +15,108 @@ import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.orientechnologies.orient.server.OServer;
 
-public class VocabularyDataStore {
+public class VocabularyRepository {
 	
-	private static Logger logger = Logger.getLogger(VocabularyDataStore.class);
+	private static Logger logger = Logger.getLogger(VocabularyRepository.class);
 	
 
 	
 	// Singleton self reference
-	private static final VocabularyDataStore ACTIVE_INSTANCE = new VocabularyDataStore();
+	private static final VocabularyRepository ACTIVE_INSTANCE = new VocabularyRepository();
 	
-	private Map<String, Vocabulary> vocabularyMap;
+	private Map<String, VocabularyModelDefinition> vocabularyMap;
 	
-	private OServer orientDbServer;
-	private OrientDbCredentials primaryNodeCredentials;
-	private OrientDbCredentials secondaryNodeCredentials;
-	private boolean isPrimaryActive = false;  // default to false so we first write to the primary at startups
+	private OServer primaryOrientDbServer;
+	private VocabularyRepositoryConnectionInfo primaryNodeCredentials;
+	private OObjectDatabasePool primaryConnectionPool;
+	private OObjectDatabasePool secondaryConnectionPool;
+	private VocabularyRepositoryConnectionInfo secondaryNodeCredentials;
+	private boolean isPrimaryActive = true;  // default to true server starts using the secondary, loads the primary and swaps to primary
 	
-	private VocabularyDataStore () {}
+	private VocabularyRepository () {}
 	
 	
-	public static VocabularyDataStore getInstance() {
+	public static VocabularyRepository getInstance() {
 		return ACTIVE_INSTANCE;
 	}
 
 
 	public OServer getOrientDbServer() {
-		return orientDbServer;
+		return primaryOrientDbServer;
 	}
 
 
 	public void setOrientDbServer(OServer orientDbServer) {
-		this.orientDbServer = orientDbServer;
+		this.primaryOrientDbServer = orientDbServer;
 	}
 
 
-	public synchronized OrientDbCredentials getPrimaryNodeCredentials() {
+	public synchronized VocabularyRepositoryConnectionInfo getPrimaryNodeCredentials() {
 		return primaryNodeCredentials;
 	}
 
 
-	public synchronized void setPrimaryNodeCredentials(OrientDbCredentials primaryNodeCredentials) {
+	public synchronized void setPrimaryNodeCredentials(VocabularyRepositoryConnectionInfo primaryNodeCredentials) {
 		this.primaryNodeCredentials = primaryNodeCredentials;
+		
+		this.primaryConnectionPool = new OObjectDatabasePool(primaryNodeCredentials.getConnectionInfo(), primaryNodeCredentials.getUsername(), primaryNodeCredentials.getPassword());
 	}
 
 
-	public synchronized OrientDbCredentials getSecondaryNodeCredentials() {
+	public synchronized VocabularyRepositoryConnectionInfo getSecondaryNodeCredentials() {
 		return secondaryNodeCredentials;
 	}
 
 
 	public synchronized void setSecondaryNodeCredentials(
-			OrientDbCredentials secondaryNodeCredentials) {
+			VocabularyRepositoryConnectionInfo secondaryNodeCredentials) {
 		this.secondaryNodeCredentials = secondaryNodeCredentials;
+	
+		this.secondaryConnectionPool = new OObjectDatabasePool(secondaryNodeCredentials.getConnectionInfo(), secondaryNodeCredentials.getUsername(), secondaryNodeCredentials.getPassword());
 	}
 	
-	public synchronized OObjectDatabaseTx getActiveDbConnection() {
-		OrientDbCredentials creds;
-		if (isPrimaryActive) {
-			creds = primaryNodeCredentials;
-		} else {
-			creds = secondaryNodeCredentials;
+	public OObjectDatabaseTx getActiveDbConnection() {
+		
+		if (isPrimaryActive)
+		{
+			logger.info("PRIMARY IS ACTIVE");
+		}
+		else
+		{
+			logger.info("SECONDARY IS ACTIVE");
 		}
 		
-		OObjectDatabaseTx connection = OObjectDatabasePool.global().acquire(creds.getConnectionInfo(), creds.getUsername(), creds.getPassword());
+		OObjectDatabaseTx connection;
+		
+		if (isPrimaryActive) {
+			connection = primaryConnectionPool.acquire();
+		} else {
+			connection = secondaryConnectionPool.acquire();
+		}
 		
 		registerModels(connection);
 		
 		return connection;
 	}
 	
-	public synchronized OObjectDatabaseTx getInactiveDbConnection() {
-		OrientDbCredentials creds;
-		if (isPrimaryActive) {
-			creds = secondaryNodeCredentials;
-		} else {
-			creds = primaryNodeCredentials;
+	public OObjectDatabaseTx getInactiveDbConnection() {
+		
+		if (isPrimaryActive)
+		{
+			logger.info("PRIMARY IS ACTIVE");
+		}
+		else
+		{
+			logger.info("SECONDARY IS ACTIVE");
 		}
 		
-		OObjectDatabaseTx connection = OObjectDatabasePool.global().acquire(creds.getConnectionInfo(), creds.getUsername(), creds.getPassword());
+		OObjectDatabaseTx connection;
+		
+		if (!isPrimaryActive) {
+			connection = primaryConnectionPool.acquire();
+		} else {
+			connection = secondaryConnectionPool.acquire();
+		}
 		
 		registerModels(connection);
 		
@@ -102,8 +127,6 @@ public class VocabularyDataStore {
 	{
 		dbConnection.command(new OCommandSQL("TRUNCATE CLASS " + clazz.getSimpleName())).execute();
 		dbConnection.commit();
-		
-		OClass target = dbConnection.getMetadata().getSchema().getOrCreateClass(clazz.getSimpleName());
 	}
 	
 	public static void updateIndexProperties(OObjectDatabaseTx dbConnection, Class<? extends CodeModel> clazz)
@@ -140,12 +163,15 @@ public class VocabularyDataStore {
 	
 	public synchronized void toggleActiveDatabase()
 	{
-		this.isPrimaryActive = !this.isPrimaryActive;
+		this.isPrimaryActive = !(this.isPrimaryActive);
+		
+		logger.info("TOGGLING ACTIVE DATABASE");
 	}
 	
 	
 	public <T extends CodeModel> List<T> fetchByCode(Class<T> clazz, String code)
 	{
+		
 		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT * FROM " + clazz.getSimpleName() + " where code = '" + code.toUpperCase() + "'");
 		OObjectDatabaseTx dbConnection = null;
 		List<T> result = null;
@@ -194,12 +220,12 @@ public class VocabularyDataStore {
 	}
 
 
-	public Map<String, Vocabulary> getVocabularyMap() {
+	public Map<String, VocabularyModelDefinition> getVocabularyMap() {
 		return vocabularyMap;
 	}
 
 
-	public void setVocabularyMap(Map<String, Vocabulary> vocabularyMap) {
+	public void setVocabularyMap(Map<String, VocabularyModelDefinition> vocabularyMap) {
 		this.vocabularyMap = vocabularyMap;
 	}
 	
