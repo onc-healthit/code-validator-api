@@ -1,5 +1,6 @@
 package org.sitenv.vocabularies.servlet.listener;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,8 +10,15 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
+import org.sitenv.vocabularies.data.OrientDbCredentials;
+import org.sitenv.vocabularies.data.VocabularyDataStore;
 import org.sitenv.vocabularies.engine.ValidationEngine;
 import org.sitenv.vocabularies.watchdog.RepositoryWatchdog;
+
+import com.orientechnologies.orient.object.db.OObjectDatabasePool;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.server.OServer;
+import com.orientechnologies.orient.server.OServerMain;
 
 public class VocabularyValidationListener implements ServletContextListener {
 
@@ -43,6 +51,11 @@ public class VocabularyValidationListener implements ServletContextListener {
 			watchdog.stop();
 		}
 		logger.debug("Watchdog stopped...");
+		
+		logger.debug("Stopping the Orient DB server...");
+		VocabularyDataStore.getInstance().getOrientDbServer().shutdown();
+		VocabularyDataStore.getInstance().setOrientDbServer(null);
+		logger.debug("Orient DB server stopped...");
 	}
 
 	
@@ -54,9 +67,43 @@ public class VocabularyValidationListener implements ServletContextListener {
 				this.loadProperties();
 			}
 			
+			try
+			{
+				logger.debug("Intializing the Orient DB server...");
+				OServer server = OServerMain.create();
+				
+				server.startup(new File(props.getProperty("vocabulary.orientDbConfigFile")));
+				
+				server.activate();
+				
+				VocabularyDataStore.getInstance().setOrientDbServer(server);
+				logger.debug("Orient DB server initialized...");
+
+				OrientDbCredentials primary = new OrientDbCredentials ();
+				primary.setConnectionInfo("remote:localhost/primary");
+				primary.setPassword("admin");
+				primary.setUsername("admin");
+				VocabularyDataStore.getInstance().setPrimaryNodeCredentials(primary);
+				
+
+				OrientDbCredentials secondary = new OrientDbCredentials ();
+				secondary.setConnectionInfo("remote:localhost/secondary");
+				secondary.setPassword("admin");
+				secondary.setUsername("admin");
+				VocabularyDataStore.getInstance().setSecondaryNodeCredentials(secondary);
+				
+			}
+			catch (Exception e)
+			{
+				logger.error("Could not initialize the DataStore repository", e);
+			}
+			
 			logger.debug("Initializing the validation engine...");
 			watchdog = ValidationEngine.initialize(props.getProperty("vocabulary.localRepositoryDir"));
 			logger.debug("Validation Engine initialized...");
+			
+			
+			
 		}
 		catch (IOException e)
 		{

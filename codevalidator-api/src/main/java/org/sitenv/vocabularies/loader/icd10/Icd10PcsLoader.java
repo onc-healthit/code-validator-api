@@ -9,8 +9,14 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.data.Vocabulary;
+import org.sitenv.vocabularies.data.VocabularyDataStore;
 import org.sitenv.vocabularies.loader.Loader;
 import org.sitenv.vocabularies.loader.LoaderManager;
+import org.sitenv.vocabularies.model.impl.Icd10CmModel;
+import org.sitenv.vocabularies.model.impl.Icd10PcsModel;
+
+import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 public class Icd10PcsLoader implements Loader {
 
@@ -23,15 +29,21 @@ public class Icd10PcsLoader implements Loader {
 		System.out.println("Loaded: " + VocabularyConstants.ICD10PCS_CODE_NAME + "(" + VocabularyConstants.ICD10PCS_CODE_SYSTEM + ")");
 	}
 
-	public Vocabulary load(File file) {
-		Vocabulary icd10Pcs = new Vocabulary(file.getName());
+	public Vocabulary load(File file, OObjectDatabaseTx dbConnection) {
+		Vocabulary icd10Pcs = new Vocabulary(Icd10PcsModel.class, this.getCodeSystem());
 
 		logger.debug("Loading ICD10PCS File: " + file.getName());
 
 		BufferedReader br = null;
 		
 		try {			
+			logger.info("Truncating Icd10PcsModel Datastore...");
 			
+			VocabularyDataStore.truncateModel(dbConnection, Icd10PcsModel.class);
+			
+			logger.info("Icd10PcsModel Datastore Truncated... records remaining: " + VocabularyDataStore.getRecordCount(dbConnection, Icd10PcsModel.class));
+			
+
 
 			br = new BufferedReader(new FileReader(file));
 			String available;
@@ -40,14 +52,21 @@ public class Icd10PcsLoader implements Loader {
 				String code = available.substring(6, 13).trim();
 				String displayName = available.substring(77).trim();
 			
-				icd10Pcs.getCodes().add(code);
-				icd10Pcs.getDisplayNames().add(displayName);
+				Icd10PcsModel model = dbConnection.newInstance(Icd10PcsModel.class);;
 				
-				icd10Pcs.getCodeMap().put(code, displayName);
+				model.setCode(code);
+				model.setDisplayName(displayName);
 				
-
-
+				dbConnection.save(model);
+				
 			}
+			
+
+			VocabularyDataStore.updateIndexProperties(dbConnection, Icd10PcsModel.class);
+			
+			
+			logger.info("Icd10PcsModel Loading complete... records existing: " + VocabularyDataStore.getRecordCount(dbConnection, Icd10PcsModel.class));
+			
 		} catch (FileNotFoundException e) {
 			// TODO: log4j
 			e.printStackTrace();

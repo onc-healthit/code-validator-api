@@ -9,8 +9,15 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.data.Vocabulary;
+import org.sitenv.vocabularies.data.VocabularyDataStore;
 import org.sitenv.vocabularies.loader.Loader;
 import org.sitenv.vocabularies.loader.LoaderManager;
+import org.sitenv.vocabularies.model.impl.Icd9CmDxModel;
+import org.sitenv.vocabularies.model.impl.Icd9CmSgModel;
+import org.sitenv.vocabularies.model.impl.SnomedModel;
+
+import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 public class Icd9CmSgLoader implements Loader {
 
@@ -23,15 +30,20 @@ public class Icd9CmSgLoader implements Loader {
 		System.out.println("Loaded: " + VocabularyConstants.ICD9CM_PROCEDURE_CODE_NAME + "(" + VocabularyConstants.ICD9CM_PROCEDURE_CODE_SYSTEM + ")");
 	}
 
-	public Vocabulary load(File file) {
-		Vocabulary icd9CmSg = new Vocabulary(file.getName());
+	public Vocabulary load(File file, OObjectDatabaseTx dbConnection) {
+		Vocabulary icd9CmSg = new Vocabulary(Icd9CmSgModel.class, this.getCodeSystem());
 
 		logger.debug("Loading ICD9CM_SG File: " + file.getName());
 
 		BufferedReader br = null;
 		
 		try {
-
+			logger.info("Truncating Icd9CmSgModel Datastore...");
+			
+			VocabularyDataStore.truncateModel(dbConnection, Icd9CmSgModel.class);
+			
+			logger.info("Icd9CmSgModel Datastore Truncated... records remaining: " + VocabularyDataStore.getRecordCount(dbConnection, Icd9CmSgModel.class));
+			
 			
 			int count = 0;
 
@@ -44,14 +56,23 @@ public class Icd9CmSgLoader implements Loader {
 
 					String[] line = available.split("\t");
 					
-					icd9CmSg.getCodes().add(line[0].toUpperCase());
-					icd9CmSg.getDisplayNames().add(line[1].toUpperCase());
+					Icd9CmSgModel model = dbConnection.newInstance(Icd9CmSgModel.class);;
+					model.setCode(line[0].toUpperCase());
+					model.setDisplayName(line[1].toUpperCase());
 					
-					icd9CmSg.getCodeMap().put(line[0].toUpperCase(), line[1].toUpperCase());
+					dbConnection.save(model);
 				}
 
 
 			}
+			
+
+			VocabularyDataStore.updateIndexProperties(dbConnection, Icd9CmSgModel.class);
+			
+			
+			logger.info("Icd9CmSgModel Loading complete... records existing: " + VocabularyDataStore.getRecordCount(dbConnection, Icd9CmSgModel.class));
+			
+			
 		} catch (FileNotFoundException e) {
 			// TODO: log4j
 			e.printStackTrace();

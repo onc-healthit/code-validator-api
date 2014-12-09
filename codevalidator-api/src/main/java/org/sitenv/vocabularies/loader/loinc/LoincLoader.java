@@ -9,8 +9,16 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.data.Vocabulary;
+import org.sitenv.vocabularies.data.VocabularyDataStore;
 import org.sitenv.vocabularies.loader.Loader;
 import org.sitenv.vocabularies.loader.LoaderManager;
+import org.sitenv.vocabularies.model.impl.Icd9CmDxModel;
+import org.sitenv.vocabularies.model.impl.Icd9CmSgModel;
+import org.sitenv.vocabularies.model.impl.LoincModel;
+import org.sitenv.vocabularies.model.impl.SnomedModel;
+
+import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 public class LoincLoader implements Loader {
 
@@ -23,15 +31,21 @@ public class LoincLoader implements Loader {
 		System.out.println("Loaded: " + VocabularyConstants.LOINC_CODE_NAME + "(" + VocabularyConstants.LOINC_CODE_SYSTEM + ")");
 	}
 
-	public Vocabulary load(File file) {
+	public Vocabulary load(File file, OObjectDatabaseTx dbConnection) {
 		
-		Vocabulary loinc = new Vocabulary(file.getName());
+		Vocabulary loinc = new Vocabulary(LoincModel.class, this.getCodeSystem());
 
 		logger.debug("Loading LOINC File: " + file.getName());
 
 		BufferedReader br = null;
 		
 		try {
+			logger.info("Truncating LoincModel Datastore...");
+			
+			VocabularyDataStore.truncateModel(dbConnection, LoincModel.class);
+			
+			logger.info("LoincModel Datastore Truncated... records remaining: " + VocabularyDataStore.getRecordCount(dbConnection, LoincModel.class));
+			
 
 			
 			int count = 0;
@@ -47,14 +61,22 @@ public class LoincLoader implements Loader {
 					String code = line[0].replace("\"", "").toUpperCase();
 					String name = line[1].replace("\"", "").toUpperCase();
 					
-					loinc.getCodes().add(code);
-					loinc.getDisplayNames().add(name);
+					LoincModel model = dbConnection.newInstance(LoincModel.class);;
+					model.setCode(code);
+					model.setDisplayName(name);
 					
-					loinc.getCodeMap().put(code, name);
+					dbConnection.save(model);
 				}
 
 
 			}
+			
+			VocabularyDataStore.updateIndexProperties(dbConnection, LoincModel.class);
+			
+			
+			logger.info("LoincModel Loading complete... records existing: " + VocabularyDataStore.getRecordCount(dbConnection, LoincModel.class));
+			
+			
 		} catch (FileNotFoundException e) {
 			// TODO: log4j
 			e.printStackTrace();
