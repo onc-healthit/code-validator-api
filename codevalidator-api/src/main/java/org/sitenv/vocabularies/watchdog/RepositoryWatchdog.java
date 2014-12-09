@@ -205,14 +205,17 @@ public class RepositoryWatchdog  implements Runnable {
             				ValidationEngine.loadDirectory(rootDirectory);
             				logger.info("Vocabularies loaded...");
             				
-            				// TODO: Perform Validation/Verification, if needed
             				
             				logger.info("Activating new Vocabularies Map...");
-            				
             				VocabularyRepository.getInstance().toggleActiveDatabase();
-            				
-            				Runtime.getRuntime().gc();
             				logger.info("New vocabulary Map Activated...");
+            				
+            				logger.info("Loading vocabularies to new inactive repository at: " + rootDirectory + "...");
+            				ValidationEngine.loadDirectory(rootDirectory);
+            				logger.info("Vocabularies loaded...");
+            				
+
+            				Runtime.getRuntime().gc();
             				
             			} catch (IOException e) {
             				// TODO: log4j

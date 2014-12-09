@@ -301,14 +301,22 @@ public abstract class ValidationEngine {
 
 		public void run() {
 			
-			// Get inactive repository (hopefully this opens a new connection)
-			OObjectDatabaseTx dbConnection = VocabularyRepository.getInstance().getInactiveDbConnection();
 			
 			try 
 			{
 				logger.info("Loading vocabularies at: " + directory + "...");
 				loadDirectory(directory);
 				logger.info("Vocabularies loaded...");
+				
+				logger.info("Activating new Vocabularies Map...");
+				VocabularyRepository.getInstance().toggleActiveDatabase();
+				logger.info("New vocabulary Map Activated...");
+				
+				logger.info("Loading vocabularies to new inactive repository at: " + directory + "...");
+				loadDirectory(directory);
+				logger.info("Vocabularies loaded...");
+				
+				// recommendation from cwatson: load files back in the primary so both db's are 
 				
 				logger.info("Starting Watchdog...");
 				ValidationEngine.watchdog = new RepositoryWatchdog(this.getDirectory(), this.isRecursive());
@@ -319,19 +327,10 @@ public abstract class ValidationEngine {
 			{
 				logger.error("Failed to load configured vocabulary directory.", e);
 			}
-			finally
-			{
-				dbConnection.close();
-			}
 			
 			// TODO: Perform Validation/Verification, if needed
-			
-			logger.info("Activating new Vocabularies Map...");
-			
-			VocabularyRepository.getInstance().toggleActiveDatabase();
-			
 			Runtime.getRuntime().gc();
-			logger.info("New vocabulary Map Activated...");
+			
 		}
 		
 	}

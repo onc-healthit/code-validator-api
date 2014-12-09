@@ -77,15 +77,6 @@ public class VocabularyRepository {
 	
 	public OObjectDatabaseTx getActiveDbConnection() {
 		
-		if (isPrimaryActive)
-		{
-			logger.info("PRIMARY IS ACTIVE");
-		}
-		else
-		{
-			logger.info("SECONDARY IS ACTIVE");
-		}
-		
 		OObjectDatabaseTx connection;
 		
 		if (isPrimaryActive) {
@@ -100,15 +91,6 @@ public class VocabularyRepository {
 	}
 	
 	public OObjectDatabaseTx getInactiveDbConnection() {
-		
-		if (isPrimaryActive)
-		{
-			logger.info("PRIMARY IS ACTIVE");
-		}
-		else
-		{
-			logger.info("SECONDARY IS ACTIVE");
-		}
 		
 		OObjectDatabaseTx connection;
 		
