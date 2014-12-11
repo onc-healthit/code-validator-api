@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
@@ -28,10 +29,19 @@ public class Icd9CmSgLoader implements Loader {
 		LoaderManager.getInstance()
 				.registerLoader(VocabularyConstants.ICD9CM_PROCEDURE_CODE_NAME, Icd9CmSgLoader.class);
 		System.out.println("Loaded: " + VocabularyConstants.ICD9CM_PROCEDURE_CODE_NAME + "(" + VocabularyConstants.ICD9CM_PROCEDURE_CODE_SYSTEM + ")");
+
+		if (VocabularyRepository.getInstance().getVocabularyMap() == null)
+		{
+			VocabularyRepository.getInstance().setVocabularyMap(new HashMap<String,VocabularyModelDefinition>());
+		}
+			
+		VocabularyModelDefinition icd9CmSg = new VocabularyModelDefinition(Icd9CmSgModel.class, VocabularyConstants.ICD9CM_PROCEDURE_CODE_SYSTEM);
+			
+		VocabularyRepository.getInstance().getVocabularyMap().put(VocabularyConstants.ICD9CM_PROCEDURE_CODE_SYSTEM, icd9CmSg);
+		
 	}
 
-	public VocabularyModelDefinition load(File file) {
-		VocabularyModelDefinition icd9CmSg = new VocabularyModelDefinition(Icd9CmSgModel.class, this.getCodeSystem());
+	public void load(File file) {
 
 		OObjectDatabaseTx dbConnection = VocabularyRepository.getInstance().getInactiveDbConnection();
 		
@@ -93,7 +103,6 @@ public class Icd9CmSgLoader implements Loader {
 			r.gc();
 		}
 
-		return icd9CmSg;
 	}
 	
 	public String getCodeName() {

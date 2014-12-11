@@ -214,8 +214,6 @@ public abstract class ValidationEngine {
 			
 			File[] list = dir.listFiles();
 			
-			VocabularyRepository.getInstance().setVocabularyMap(new HashMap<String,VocabularyModelDefinition>());
-			
 			for (File file : list)
 			{
 				loadFiles(file);
@@ -246,11 +244,8 @@ public abstract class ValidationEngine {
 						codeSystem = loader.getCodeSystem();
 					
 						logger.debug("Loading file: " + loadFile.getAbsolutePath() + "...");
-						VocabularyModelDefinition vocab = loader.load(loadFile);
+						loader.load(loadFile);
 						
-						// TODO: Make this a passed in parameter:
-						
-						VocabularyRepository.getInstance().getVocabularyMap().put(codeSystem.toUpperCase(), vocab);
 						
 						logger.debug("File loaded...");
 					}
@@ -307,11 +302,12 @@ public abstract class ValidationEngine {
 				logger.info("Loading vocabularies at: " + directory + "...");
 				loadDirectory(directory);
 				logger.info("Vocabularies loaded...");
-				
+					
+					
 				logger.info("Activating new Vocabularies Map...");
 				VocabularyRepository.getInstance().toggleActiveDatabase();
 				logger.info("New vocabulary Map Activated...");
-				
+					
 				logger.info("Loading vocabularies to new inactive repository at: " + directory + "...");
 				loadDirectory(directory);
 				logger.info("Vocabularies loaded...");

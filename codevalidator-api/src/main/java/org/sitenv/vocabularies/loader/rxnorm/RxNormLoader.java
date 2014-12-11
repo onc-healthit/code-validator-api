@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
@@ -28,10 +29,21 @@ public class RxNormLoader implements Loader {
 		LoaderManager.getInstance()
 				.registerLoader(VocabularyConstants.RXNORM_CODE_NAME, RxNormLoader.class);
 		System.out.println("Loaded: " + VocabularyConstants.RXNORM_CODE_NAME + "(" + VocabularyConstants.RXNORM_CODE_SYSTEM + ")");
+		
+
+		if (VocabularyRepository.getInstance().getVocabularyMap() == null)
+		{
+			VocabularyRepository.getInstance().setVocabularyMap(new HashMap<String,VocabularyModelDefinition>());
+		}
+		
+		VocabularyModelDefinition rxNorm = new VocabularyModelDefinition(RxNormModel.class, VocabularyConstants.RXNORM_CODE_SYSTEM);
+			
+
+		VocabularyRepository.getInstance().getVocabularyMap().put(VocabularyConstants.RXNORM_CODE_SYSTEM, rxNorm);
+		
 	}
 
-	public VocabularyModelDefinition load(File file) {
-		VocabularyModelDefinition rxNorm = new VocabularyModelDefinition(RxNormModel.class, this.getCodeSystem());
+	public void load(File file) {
 
 		OObjectDatabaseTx dbConnection = VocabularyRepository.getInstance().getInactiveDbConnection();
 		
@@ -85,7 +97,6 @@ public class RxNormLoader implements Loader {
 			r.gc();
 		}
 
-		return rxNorm;
 	}
 	
 	public String getCodeName() {

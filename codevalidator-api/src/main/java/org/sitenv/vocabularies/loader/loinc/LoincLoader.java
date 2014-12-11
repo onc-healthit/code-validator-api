@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
@@ -29,11 +30,20 @@ public class LoincLoader implements Loader {
 		LoaderManager.getInstance()
 				.registerLoader(VocabularyConstants.LOINC_CODE_NAME, LoincLoader.class);
 		System.out.println("Loaded: " + VocabularyConstants.LOINC_CODE_NAME + "(" + VocabularyConstants.LOINC_CODE_SYSTEM + ")");
+
+		if (VocabularyRepository.getInstance().getVocabularyMap() == null)
+		{
+			VocabularyRepository.getInstance().setVocabularyMap(new HashMap<String,VocabularyModelDefinition>());
+		}
+			
+		VocabularyModelDefinition loinc = new VocabularyModelDefinition(LoincModel.class, VocabularyConstants.LOINC_CODE_SYSTEM);
+			
+		VocabularyRepository.getInstance().getVocabularyMap().put(VocabularyConstants.LOINC_CODE_SYSTEM, loinc);
+		
 	}
 
-	public VocabularyModelDefinition load(File file) {
+	public void load(File file) {
 		
-		VocabularyModelDefinition loinc = new VocabularyModelDefinition(LoincModel.class, this.getCodeSystem());
 
 		OObjectDatabaseTx dbConnection = VocabularyRepository.getInstance().getInactiveDbConnection();
 		
@@ -98,7 +108,6 @@ public class LoincLoader implements Loader {
 			r.gc();
 		}
 
-		return loinc;
 		
 	}
 	

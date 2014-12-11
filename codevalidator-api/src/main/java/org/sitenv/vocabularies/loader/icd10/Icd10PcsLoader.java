@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
@@ -27,10 +28,19 @@ public class Icd10PcsLoader implements Loader {
 		LoaderManager.getInstance()
 				.registerLoader(VocabularyConstants.ICD10PCS_CODE_NAME, Icd10PcsLoader.class);
 		System.out.println("Loaded: " + VocabularyConstants.ICD10PCS_CODE_NAME + "(" + VocabularyConstants.ICD10PCS_CODE_SYSTEM + ")");
+		
+		if (VocabularyRepository.getInstance().getVocabularyMap() == null)
+		{
+			VocabularyRepository.getInstance().setVocabularyMap(new HashMap<String,VocabularyModelDefinition>());
+		}
+		
+		VocabularyModelDefinition icd10Pcs = new VocabularyModelDefinition(Icd10PcsModel.class, VocabularyConstants.ICD10PCS_CODE_SYSTEM);
+		
+		VocabularyRepository.getInstance().getVocabularyMap().put(VocabularyConstants.ICD10PCS_CODE_SYSTEM, icd10Pcs);
+		
 	}
 
-	public VocabularyModelDefinition load(File file) {
-		VocabularyModelDefinition icd10Pcs = new VocabularyModelDefinition(Icd10PcsModel.class, this.getCodeSystem());
+	public void load(File file) {
 
 		OObjectDatabaseTx dbConnection = VocabularyRepository.getInstance().getInactiveDbConnection();
 		
@@ -87,7 +97,6 @@ public class Icd10PcsLoader implements Loader {
 			r.gc();
 		}
 
-		return icd10Pcs;
 	}
 	
 	public String getCodeName() {

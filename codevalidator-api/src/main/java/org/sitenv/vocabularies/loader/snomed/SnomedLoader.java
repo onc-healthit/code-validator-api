@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
@@ -27,10 +28,21 @@ public class SnomedLoader implements Loader {
 		LoaderManager.getInstance()
 				.registerLoader(VocabularyConstants.SNOMEDCT_CODE_NAME, SnomedLoader.class);
 		System.out.println("Loaded: " + VocabularyConstants.SNOMEDCT_CODE_NAME + "(" + VocabularyConstants.SNOMEDCT_CODE_SYSTEM + ")");
+		
+
+		if (VocabularyRepository.getInstance().getVocabularyMap() == null)
+		{
+			VocabularyRepository.getInstance().setVocabularyMap(new HashMap<String,VocabularyModelDefinition>());
+		}
+		
+		VocabularyModelDefinition snomed = new VocabularyModelDefinition(SnomedModel.class, VocabularyConstants.SNOMEDCT_CODE_SYSTEM);
+			
+
+		VocabularyRepository.getInstance().getVocabularyMap().put(VocabularyConstants.SNOMEDCT_CODE_SYSTEM, snomed);
+		
 	}
 
-	public VocabularyModelDefinition load(File file) {
-		VocabularyModelDefinition snomed = new VocabularyModelDefinition(SnomedModel.class, this.getCodeSystem());
+	public void load(File file) {
 
 		OObjectDatabaseTx dbConnection = VocabularyRepository.getInstance().getInactiveDbConnection();
 		
@@ -89,7 +101,6 @@ public class SnomedLoader implements Loader {
 			r.gc();
 		}
 
-		return snomed;
 	}
 	
 	public String getCodeName() {

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
@@ -28,10 +29,20 @@ public class Icd10CmLoader  implements Loader {
 		LoaderManager.getInstance()
 				.registerLoader(VocabularyConstants.ICD10CM_CODE_NAME, Icd10CmLoader.class);
 		System.out.println("Loaded: " + VocabularyConstants.ICD10CM_CODE_NAME + "(" + VocabularyConstants.ICD10CM_CODE_SYSTEM + ")");
+		
+		if (VocabularyRepository.getInstance().getVocabularyMap() == null)
+		{
+			VocabularyRepository.getInstance().setVocabularyMap(new HashMap<String,VocabularyModelDefinition>());
+		}
+			
+		VocabularyModelDefinition icd10Cm = new VocabularyModelDefinition(Icd10CmModel.class, VocabularyConstants.ICD10CM_CODE_SYSTEM);
+			
+		VocabularyRepository.getInstance().getVocabularyMap().put(VocabularyConstants.ICD10CM_CODE_SYSTEM, icd10Cm);
+		
 	}
 
-	public VocabularyModelDefinition load(File file) {
-		VocabularyModelDefinition icd10Cm = new VocabularyModelDefinition(Icd10CmModel.class, this.getCodeSystem());
+	public void load(File file) {
+		
 
 		OObjectDatabaseTx dbConnection = VocabularyRepository.getInstance().getInactiveDbConnection();
 		
@@ -43,11 +54,8 @@ public class Icd10CmLoader  implements Loader {
 		
 		try {
 			logger.info("Truncating Icd10CmModel Datastore...");
-			
 			VocabularyRepository.truncateModel(dbConnection, Icd10CmModel.class);
-			
 			logger.info(dbConnection.getName() + ".Icd10CmModel Datastore Truncated... records remaining: " + VocabularyRepository.getRecordCount(dbConnection, Icd10CmModel.class));
-			
 
 			br = new BufferedReader(new FileReader(file));
 			String available;
@@ -85,7 +93,6 @@ public class Icd10CmLoader  implements Loader {
 			r.gc();
 		}
 
-		return icd10Cm;
 	}
 	
 	public String getCodeName() {

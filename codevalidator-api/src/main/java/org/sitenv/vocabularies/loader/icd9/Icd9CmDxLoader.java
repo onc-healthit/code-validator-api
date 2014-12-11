@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
@@ -29,12 +30,19 @@ public class Icd9CmDxLoader implements Loader {
 		LoaderManager.getInstance()
 				.registerLoader(VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_NAME, Icd9CmDxLoader.class);
 		System.out.println("Loaded: " + VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_NAME + "(" + VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_SYSTEM + ")");
+		
+		if (VocabularyRepository.getInstance().getVocabularyMap() == null)
+		{
+			VocabularyRepository.getInstance().setVocabularyMap(new HashMap<String,VocabularyModelDefinition>());
+		}
+		VocabularyModelDefinition icd9CmDx = new VocabularyModelDefinition(Icd9CmDxModel.class, VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_SYSTEM);
+			
+		VocabularyRepository.getInstance().getVocabularyMap().put(VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_SYSTEM, icd9CmDx);
+		
 	}
 
-	public VocabularyModelDefinition load(File file) {
+	public void load(File file) {
 		
-		VocabularyModelDefinition icd9CmDx = new VocabularyModelDefinition(Icd9CmDxModel.class, this.getCodeSystem());
-
 		OObjectDatabaseTx dbConnection = VocabularyRepository.getInstance().getInactiveDbConnection();
 		
 		logger.debug("Loading ICD9CM_DX File: " + file.getName());
@@ -96,7 +104,6 @@ public class Icd9CmDxLoader implements Loader {
 			r.gc();
 		}
 
-		return icd9CmDx;
 	}
 	
 	public String getCodeName() {

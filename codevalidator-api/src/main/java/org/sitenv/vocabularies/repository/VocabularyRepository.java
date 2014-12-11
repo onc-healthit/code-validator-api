@@ -10,6 +10,7 @@ import org.sitenv.vocabularies.model.VocabularyModelDefinition;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.orientechnologies.orient.core.sql.OCommandSQLParsingException;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -31,7 +32,7 @@ public class VocabularyRepository {
 	private OObjectDatabasePool primaryConnectionPool;
 	private OObjectDatabasePool secondaryConnectionPool;
 	private VocabularyRepositoryConnectionInfo secondaryNodeCredentials;
-	private boolean isPrimaryActive = true;  // default to true server starts using the secondary, loads the primary and swaps to primary
+	private boolean isPrimaryActive = true; 
 	
 	private VocabularyRepository () {}
 	
@@ -51,24 +52,24 @@ public class VocabularyRepository {
 	}
 
 
-	public synchronized VocabularyRepositoryConnectionInfo getPrimaryNodeCredentials() {
+	public VocabularyRepositoryConnectionInfo getPrimaryNodeCredentials() {
 		return primaryNodeCredentials;
 	}
 
 
-	public synchronized void setPrimaryNodeCredentials(VocabularyRepositoryConnectionInfo primaryNodeCredentials) {
+	public void setPrimaryNodeCredentials(VocabularyRepositoryConnectionInfo primaryNodeCredentials) {
 		this.primaryNodeCredentials = primaryNodeCredentials;
 		
 		this.primaryConnectionPool = new OObjectDatabasePool(primaryNodeCredentials.getConnectionInfo(), primaryNodeCredentials.getUsername(), primaryNodeCredentials.getPassword());
 	}
 
 
-	public synchronized VocabularyRepositoryConnectionInfo getSecondaryNodeCredentials() {
+	public VocabularyRepositoryConnectionInfo getSecondaryNodeCredentials() {
 		return secondaryNodeCredentials;
 	}
 
 
-	public synchronized void setSecondaryNodeCredentials(
+	public void setSecondaryNodeCredentials(
 			VocabularyRepositoryConnectionInfo secondaryNodeCredentials) {
 		this.secondaryNodeCredentials = secondaryNodeCredentials;
 	
@@ -107,8 +108,12 @@ public class VocabularyRepository {
 	
 	public static void truncateModel(OObjectDatabaseTx dbConnection, Class<? extends CodeModel> clazz) 
 	{
+		try {
 		dbConnection.command(new OCommandSQL("TRUNCATE CLASS " + clazz.getSimpleName())).execute();
 		dbConnection.commit();
+		} catch (OCommandSQLParsingException e) {
+			logger.error("Could not truncate the class " + clazz.getSimpleName() + ".  Perhaps it doesn't exist in " + dbConnection.getName());
+		}
 	}
 	
 	public static void updateIndexProperties(OObjectDatabaseTx dbConnection, Class<? extends CodeModel> clazz)
@@ -143,7 +148,7 @@ public class VocabularyRepository {
 		return target.count();
 	}
 	
-	public synchronized void toggleActiveDatabase()
+	public void toggleActiveDatabase()
 	{
 		this.isPrimaryActive = !(this.isPrimaryActive);
 		
