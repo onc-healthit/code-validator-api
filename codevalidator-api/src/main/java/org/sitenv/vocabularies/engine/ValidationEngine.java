@@ -68,6 +68,7 @@ public abstract class ValidationEngine {
 	
 	public static DisplayNameValidationResult validateDisplayNameForCode(String codeSystem, String displayName, String code) {
 		VocabularyRepository ds = VocabularyRepository.getInstance();
+		DisplayNameValidationResult result = null;
 		
 		if (codeSystem != null && code != null &&  ds != null && ds.getVocabularyMap() != null) {
 			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
@@ -78,26 +79,26 @@ public abstract class ValidationEngine {
 			
 			for(CodeModel instance : results)
 			{
-				DisplayNameValidationResult result = new DisplayNameValidationResult();
+				result = new DisplayNameValidationResult();
 				result.setCode(code);
 				result.setActualDisplayName(instance.getDisplayName());
 				result.setAnticipatedDisplayName(displayName);
 				if (instance.getDisplayName() != null && instance.getDisplayName().equalsIgnoreCase(displayName))
 				{
+					// we found a match for the code where the display name matches
 					result.setResult(true);
+					return result;
 				}
 				else
 				{
 					result.setResult(false);
 				}
 				
-				return result;
-				
 			}
 			
 		}
 		
-		return null;
+		return result;
 	}
 	
 	public static boolean validateCodeByCodeSystemName(String codeSystemName, String code)
