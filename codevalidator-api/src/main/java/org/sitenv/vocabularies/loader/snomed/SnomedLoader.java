@@ -70,7 +70,7 @@ public class SnomedLoader implements Loader {
 					String[] line = available.split("\t");
 					
 					SnomedModel model = dbConnection.newInstance(SnomedModel.class);
-					model.setCode(line[0].toUpperCase());
+					model.setCode(line[4].toUpperCase());
 					model.setDisplayName(line[2].toUpperCase());
 					
 					dbConnection.save(model);
