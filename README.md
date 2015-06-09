@@ -1,4 +1,4 @@
-The Code Validator API and Service allows individuals to validate codes and display name for Health IT value sets that are used in clinical documents, such as the Consolidate Clinical Document Architecture (C-CDA).
+The Code Validator API and Service allows individuals to validate codes and display name for Health IT value sets that are used in clinical documents, such as the Consolidated Clinical Document Architecture (C-CDA).
 
 This project repository contains both code validator API as well as a simple Spring-based Restful web service wrapper.
 
