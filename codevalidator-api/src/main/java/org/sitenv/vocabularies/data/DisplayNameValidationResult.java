@@ -1,10 +1,13 @@
 package org.sitenv.vocabularies.data;
 
+import java.util.List;
+
 public class DisplayNameValidationResult {
 	private String code;
 	private String anticipatedDisplayName;
-	private String actualDisplayName;
+	private	List<String> actualDisplayName;
 	private boolean result = false;
+	
 	
 	@Override
 	public int hashCode() {
@@ -50,6 +53,7 @@ public class DisplayNameValidationResult {
 			return false;
 		return true;
 	}
+	
 	public String getCode() {
 		return code;
 	}
@@ -62,10 +66,10 @@ public class DisplayNameValidationResult {
 	public void setAnticipatedDisplayName(String anticipatedDisplayName) {
 		this.anticipatedDisplayName = anticipatedDisplayName;
 	}
-	public String getActualDisplayName() {
+	public List<String> getActualDisplayName() {
 		return actualDisplayName;
 	}
-	public void setActualDisplayName(String actualDisplayName) {
+	public void setActualDisplayName(List<String> actualDisplayName) {
 		this.actualDisplayName = actualDisplayName;
 	}
 	public boolean isResult() {
@@ -74,6 +78,8 @@ public class DisplayNameValidationResult {
 	public void setResult(boolean result) {
 		this.result = result;
 	}
+	
+	
 	
 	
 }

@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.model.CodeModel;
+import org.sitenv.vocabularies.model.ValueSetModel;
+import org.sitenv.vocabularies.model.ValueSetModelDefinition;
 import org.sitenv.vocabularies.model.VocabularyModelDefinition;
 
 import com.orientechnologies.orient.core.metadata.schema.OClass;
@@ -26,6 +28,8 @@ public class VocabularyRepository {
 	private static final VocabularyRepository ACTIVE_INSTANCE = new VocabularyRepository();
 	
 	private Map<String, VocabularyModelDefinition> vocabularyMap;
+
+	private Map<String, ValueSetModelDefinition> valueSetMap;
 	
 	private OServer primaryOrientDbServer;
 	private VocabularyRepositoryConnectionInfo primaryNodeCredentials;
@@ -116,6 +120,16 @@ public class VocabularyRepository {
 		}
 	}
 	
+	public static void truncateValueSetModel(OObjectDatabaseTx dbConnection, Class<? extends ValueSetModel> clazz) 
+	{
+		try {
+		dbConnection.command(new OCommandSQL("TRUNCATE CLASS " + clazz.getSimpleName())).execute();
+		dbConnection.commit();
+		} catch (OCommandSQLParsingException e) {
+			logger.error("Could not truncate the class " + clazz.getSimpleName() + ".  Perhaps it doesn't exist in " + dbConnection.getName());
+		}
+	}
+	
 	public static void updateIndexProperties(OObjectDatabaseTx dbConnection, Class<? extends CodeModel> clazz)
 	{
 		OClass target = dbConnection.getMetadata().getSchema().getOrCreateClass(clazz.getSimpleName());
@@ -141,7 +155,39 @@ public class VocabularyRepository {
 		}
 	}
 	
+	public static void updateValueSetIndexProperties(OObjectDatabaseTx dbConnection, Class<? extends ValueSetModel> clazz)
+	{
+		OClass target = dbConnection.getMetadata().getSchema().getOrCreateClass(clazz.getSimpleName());
+		
+		if (!target.areIndexed("code"))
+		{
+			if (target.getProperty("code") == null)
+			{
+				target.createProperty("code", OType.STRING);
+			}
+			target.createIndex(clazz.getSimpleName() + ".code", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "code");
+			dbConnection.getMetadata().getSchema().save();
+		}
+		
+		if (!target.areIndexed("displayName"))
+		{
+			if (target.getProperty("displayName") == null)
+			{
+				target.createProperty("displayName", OType.STRING);
+			}
+			target.createIndex(clazz.getSimpleName() + ".displayName", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "displayName");
+			dbConnection.getMetadata().getSchema().save();
+		}
+	}
+	
 	public static long getRecordCount (OObjectDatabaseTx dbConnection, Class<? extends CodeModel> clazz)
+	{
+		OClass target = dbConnection.getMetadata().getSchema().getOrCreateClass(clazz.getSimpleName());
+		
+		return target.count();
+	}
+	
+	public static long getValueSetRecordCount (OObjectDatabaseTx dbConnection, Class<? extends ValueSetModel> clazz)
 	{
 		OClass target = dbConnection.getMetadata().getSchema().getOrCreateClass(clazz.getSimpleName());
 		
@@ -215,6 +261,17 @@ public class VocabularyRepository {
 	public void setVocabularyMap(Map<String, VocabularyModelDefinition> vocabularyMap) {
 		this.vocabularyMap = vocabularyMap;
 	}
+
+
+	public Map<String, ValueSetModelDefinition> getValueSetMap() {
+		return valueSetMap;
+	}
+
+
+	public void setValueSetMap(Map<String, ValueSetModelDefinition> valueSetMap) {
+		this.valueSetMap = valueSetMap;
+	}
+	
 	
 	
 }

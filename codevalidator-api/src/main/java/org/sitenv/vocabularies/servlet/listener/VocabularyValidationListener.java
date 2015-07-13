@@ -84,6 +84,7 @@ public class VocabularyValidationListener implements ServletContextListener {
 				String primaryDbName = props.getProperty("vocabulary.primaryDbName");
 				String secondaryDbName = props.getProperty("vocabulary.secondaryDbName");
 				
+				
 				server.startup(new File(configFileName));
 				
 				server.activate();
@@ -117,8 +118,16 @@ public class VocabularyValidationListener implements ServletContextListener {
 				logger.error("Could not initialize the DataStore repository", e);
 			}
 			
+			String loadAtStartup = props.getProperty("vocabulary.loadVocabulariesAtStartup");
+			boolean startupLoader = true;
+			
+			if (loadAtStartup != null)
+			{
+				startupLoader = Boolean.parseBoolean(loadAtStartup);
+			}
+			
 			logger.debug("Initializing the validation engine...");
-			ValidationEngine.initialize(props.getProperty("vocabulary.localRepositoryDir"));
+			ValidationEngine.initialize(props.getProperty("vocabulary.localCodeRepositoryDir"), props.getProperty("vocabulary.localValueSetRepositoryDir"), startupLoader);
 			logger.debug("Validation Engine initialized...");
 			
 		}

@@ -1,4 +1,4 @@
-package org.sitenv.vocabularies.loader.rxnorm;
+package org.sitenv.vocabularies.loader.code.rxnorm;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,27 +6,25 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
-import org.sitenv.vocabularies.loader.Loader;
-import org.sitenv.vocabularies.loader.LoaderManager;
+import org.sitenv.vocabularies.loader.code.CodeLoader;
+import org.sitenv.vocabularies.loader.code.CodeLoaderManager;
 import org.sitenv.vocabularies.model.VocabularyModelDefinition;
-import org.sitenv.vocabularies.model.impl.LoincModel;
 import org.sitenv.vocabularies.model.impl.RxNormModel;
-import org.sitenv.vocabularies.model.impl.SnomedModel;
 import org.sitenv.vocabularies.repository.VocabularyRepository;
 
-import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
-public class RxNormLoader implements Loader {
+public class RxNormLoader implements CodeLoader {
 
 	private static Logger logger = Logger.getLogger(RxNormLoader.class);
 	
 
 	static {
-		LoaderManager.getInstance()
+		CodeLoaderManager.getInstance()
 				.registerLoader(VocabularyConstants.RXNORM_CODE_NAME, RxNormLoader.class);
 		System.out.println("Loaded: " + VocabularyConstants.RXNORM_CODE_NAME + "(" + VocabularyConstants.RXNORM_CODE_SYSTEM + ")");
 		
@@ -43,61 +41,67 @@ public class RxNormLoader implements Loader {
 		
 	}
 
-	public void load(File file) {
+	public void load(List<File> filesToLoad) {
+		
 
 		OObjectDatabaseTx dbConnection = VocabularyRepository.getInstance().getInactiveDbConnection();
-		
-		logger.debug("Loading RXNORM File: " + file.getName());
-
 		BufferedReader br = null;
 		
 		try {
+			
 			logger.info("Truncating RxNormModel Datastore...");
-			
 			VocabularyRepository.truncateModel(dbConnection, RxNormModel.class);
-			
 			logger.info(dbConnection.getName() + ".RxNormModel Datastore Truncated... records remaining: " + VocabularyRepository.getRecordCount(dbConnection, RxNormModel.class));
-			
+
+		
+			for (File file : filesToLoad)
+			{
+				if (file.isFile() && !file.isHidden())
+				{
+					
+					logger.debug("Loading RXNORM File: " + file.getName());
+	
+					br = new BufferedReader(new FileReader(file));
+					String available;
+					while ((available = br.readLine()) != null) {
+						
+						String[] line = available.split("\\|");
+						
+						RxNormModel model = dbConnection.newInstance(RxNormModel.class);;
+						model.setCode(line[0].toUpperCase());
+						model.setDisplayName(line[14].toUpperCase());
+						
+						dbConnection.save(model);
 
 
-			br = new BufferedReader(new FileReader(file));
-			String available;
-			while ((available = br.readLine()) != null) {
-				
-				String[] line = available.split("\\|");
-				
-				RxNormModel model = dbConnection.newInstance(RxNormModel.class);;
-				model.setCode(line[0].toUpperCase());
-				model.setDisplayName(line[14].toUpperCase());
-				
-				dbConnection.save(model);
-
-
+					}
+					
+				}
 			}
+			
 			VocabularyRepository.updateIndexProperties(dbConnection, RxNormModel.class);
 			
-			
 			logger.info("RxNormModel Loading complete... records existing: " + VocabularyRepository.getRecordCount(dbConnection, RxNormModel.class));
-			
 		} catch (FileNotFoundException e) {
-			// TODO: log4j
-			e.printStackTrace();
+			logger.error(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} finally {
 			if (br != null) {
 				try {
 					br.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 			}
 			
 			Runtime r = Runtime.getRuntime();
 			r.gc();
 		}
+		
 
 	}
+	
 	
 	public String getCodeName() {
 		return VocabularyConstants.RXNORM_CODE_NAME;

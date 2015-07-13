@@ -40,6 +40,7 @@ public class RepositoryWatchdog  implements Runnable {
     private final Map<WatchKey,Path> pathMap;
     private final Boolean recursive;
     private final String rootDirectory;
+    private final Boolean valueSetDirectory;
    
 	
     @SuppressWarnings("unchecked")
@@ -79,13 +80,14 @@ public class RepositoryWatchdog  implements Runnable {
         });
     }
     
-    public RepositoryWatchdog(String directory, boolean recursive) throws IOException {
+    public RepositoryWatchdog(String directory, boolean recursive, boolean valueSetDirectory) throws IOException {
     	// register directory and process its events
     	Path dir = Paths.get(directory);
     	this.watchService = FileSystems.getDefault().newWatchService();
         this.pathMap = new HashMap<WatchKey,Path>();
         this.recursive = recursive;
         this.rootDirectory = directory;
+        this.valueSetDirectory = valueSetDirectory;
 
         if (recursive) {
         	// TODO: log4j
@@ -200,20 +202,37 @@ public class RepositoryWatchdog  implements Runnable {
             			
             			try {
             				
+            				if (!valueSetDirectory)
+            				{
             				
-            				logger.info("Loading vocabularies at: " + rootDirectory + "...");
-            				ValidationEngine.loadDirectory(rootDirectory);
-            				logger.info("Vocabularies loaded...");
-            				
-            				
-            				logger.info("Activating new Vocabularies Map...");
-            				VocabularyRepository.getInstance().toggleActiveDatabase();
-            				logger.info("New vocabulary Map Activated...");
-            				
-            				logger.info("Loading vocabularies to new inactive repository at: " + rootDirectory + "...");
-            				ValidationEngine.loadDirectory(rootDirectory);
-            				logger.info("Vocabularies loaded...");
-            				
+	            				logger.info("Loading vocabularies at: " + rootDirectory + "...");
+	            				ValidationEngine.loadCodeDirectory(rootDirectory);
+	            				logger.info("Vocabularies loaded...");
+	            				
+	            				
+	            				logger.info("Activating new Vocabularies Map...");
+	            				VocabularyRepository.getInstance().toggleActiveDatabase();
+	            				logger.info("New vocabulary Map Activated...");
+	            				
+	            				logger.info("Loading vocabularies to new inactive repository at: " + rootDirectory + "...");
+	            				ValidationEngine.loadCodeDirectory(rootDirectory);
+	            				logger.info("Vocabularies loaded...");
+            				}
+            				else
+            				{
+            					logger.info("Loading vocabularies at: " + rootDirectory + "...");
+	            				ValidationEngine.loadValueSetDirectory(rootDirectory);
+	            				logger.info("Vocabularies loaded...");
+	            				
+	            				
+	            				logger.info("Activating new Vocabularies Map...");
+	            				VocabularyRepository.getInstance().toggleActiveDatabase();
+	            				logger.info("New vocabulary Map Activated...");
+	            				
+	            				logger.info("Loading vocabularies to new inactive repository at: " + rootDirectory + "...");
+	            				ValidationEngine.loadValueSetDirectory(rootDirectory);
+	            				logger.info("Vocabularies loaded...");
+            				}
 
             				Runtime.getRuntime().gc();
             				

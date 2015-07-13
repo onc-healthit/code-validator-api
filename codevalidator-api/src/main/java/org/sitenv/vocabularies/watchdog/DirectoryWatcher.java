@@ -11,7 +11,7 @@ public class DirectoryWatcher {
     
     public static void main(String[] args) throws IOException {
         
-       ValidationEngine.initialize("/Users/chris/Development/code_repository/");
+       ValidationEngine.initialize("/Users/chris/Development/code_repository/", "/Users/chris/Development/valueset_repository/", true);
        
        System.out.println("Validate Code: 233604007 " + ValidationEngine.validateCodeByCodeSystemName("SNOMED-CT", "233604007"));
        

@@ -25,6 +25,8 @@ public class VocabularyConstants {
 	public static final String RXNORM_CODE_NAME = "RXNORM";
 	public static final String RXNORM_CODE_SYSTEM = "2.16.840.1.113883.6.88";
 	
+	public static final String VSAC_VALUESET_NAME = "VSAC";
+	
 	public static final Map<String, String> CODE_SYSTEM_MAP = new HashMap<String,String>();
 	
 	static {

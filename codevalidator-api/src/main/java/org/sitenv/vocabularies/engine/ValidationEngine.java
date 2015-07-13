@@ -2,21 +2,22 @@ package org.sitenv.vocabularies.engine;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.data.DisplayNameValidationResult;
-import org.sitenv.vocabularies.loader.Loader;
-import org.sitenv.vocabularies.loader.LoaderManager;
+import org.sitenv.vocabularies.loader.code.CodeLoader;
+import org.sitenv.vocabularies.loader.code.CodeLoaderManager;
+import org.sitenv.vocabularies.loader.valueset.ValueSetLoader;
+import org.sitenv.vocabularies.loader.valueset.ValueSetLoaderManager;
 import org.sitenv.vocabularies.model.CodeModel;
 import org.sitenv.vocabularies.model.VocabularyModelDefinition;
 import org.sitenv.vocabularies.repository.VocabularyRepository;
 import org.sitenv.vocabularies.watchdog.RepositoryWatchdog;
-
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 public abstract class ValidationEngine {
 	
@@ -75,23 +76,22 @@ public abstract class ValidationEngine {
 			
 			VocabularyModelDefinition vocab = vocabMap.get(codeSystem.toUpperCase());
 			
+			result = new DisplayNameValidationResult();
+			result.setCode(code);
+			result.setAnticipatedDisplayName(displayName);
+			result.setActualDisplayName(new ArrayList<String>());
 			List<? extends CodeModel> results = ds.fetchByCode(vocab.getClazz(), code);
+			
+			result.setResult(false);
 			
 			for(CodeModel instance : results)
 			{
-				result = new DisplayNameValidationResult();
-				result.setCode(code);
-				result.setActualDisplayName(instance.getDisplayName());
-				result.setAnticipatedDisplayName(displayName);
+				
+				result.getActualDisplayName().add(instance.getDisplayName());
 				if (instance.getDisplayName() != null && instance.getDisplayName().equalsIgnoreCase(displayName))
 				{
 					// we found a match for the code where the display name matches
 					result.setResult(true);
-					return result;
-				}
-				else
-				{
-					result.setResult(false);
 				}
 				
 			}
@@ -167,7 +167,7 @@ public abstract class ValidationEngine {
 		return false;
 	}
 	
-	public static void initialize(String directory) throws IOException {
+	public static void initialize(String codeDirectory, String valueSetDirectory, boolean loadAtStartup) throws IOException {
 		boolean recursive = true;
 
 		logger.info("Registering Loaders...");
@@ -180,28 +180,31 @@ public abstract class ValidationEngine {
 		// Putting this initialization code in a separate thread will dramatically speed up the tomcat launch time
 		InitializerThread initializer = new InitializerThread();
 		
-		initializer.setDirectory(directory);
+		initializer.setCodeDirectory(codeDirectory);
+		initializer.setValueSetDirectory(valueSetDirectory);
 		initializer.setRecursive(recursive);
+		initializer.setLoadAtStartup(loadAtStartup);
 		
 		initializer.start();
 	}
 	
 	private static void registerLoaders() {
 		try {
-			Class.forName("org.sitenv.vocabularies.loader.snomed.SnomedLoader");
-			Class.forName("org.sitenv.vocabularies.loader.loinc.LoincLoader");
-			Class.forName("org.sitenv.vocabularies.loader.rxnorm.RxNormLoader");
-			Class.forName("org.sitenv.vocabularies.loader.icd9.Icd9CmDxLoader");
-			Class.forName("org.sitenv.vocabularies.loader.icd9.Icd9CmSgLoader");
-			Class.forName("org.sitenv.vocabularies.loader.icd10.Icd10CmLoader");
-			Class.forName("org.sitenv.vocabularies.loader.icd10.Icd10PcsLoader");
+			Class.forName("org.sitenv.vocabularies.loader.code.snomed.SnomedLoader");
+			Class.forName("org.sitenv.vocabularies.loader.code.loinc.LoincLoader");
+			Class.forName("org.sitenv.vocabularies.loader.code.rxnorm.RxNormLoader");
+			Class.forName("org.sitenv.vocabularies.loader.code.icd9.Icd9CmDxLoader");
+			Class.forName("org.sitenv.vocabularies.loader.code.icd9.Icd9CmSgLoader");
+			Class.forName("org.sitenv.vocabularies.loader.code.icd10.Icd10CmLoader");
+			Class.forName("org.sitenv.vocabularies.loader.code.icd10.Icd10PcsLoader");
+			Class.forName("org.sitenv.vocabularies.loader.valueset.vsac.VsacLoader");
 		} catch (ClassNotFoundException e) {
 			// TODO: log4j
 			logger.error("Error Initializing Loaders", e);
 		}
 	}
 	
-	public static void loadDirectory(String directory) throws IOException
+	public static void loadValueSetDirectory(String directory) throws IOException
 	{
 		File dir = new File(directory);
 		
@@ -217,46 +220,92 @@ public abstract class ValidationEngine {
 			
 			for (File file : list)
 			{
-				loadFiles(file);
+				loadValueSetFiles(file);
 			}
 		}
 	}
 	
-	private static void loadFiles(File directory) throws IOException
+	private static void loadCodeFiles(File directory) throws IOException
 	{
 		if (directory.isDirectory() && !directory.isHidden()) 
 		{
 			File[] filesToLoad = directory.listFiles();
 			String codeSystem = null;
 			
-			for (File loadFile : filesToLoad)
-			{
-				if (loadFile.isFile() && !loadFile.isHidden())
-				{
-					
-					
-
-					
-					logger.debug("Building Loader for directory: " + directory.getName() + "...");
-					Loader loader = LoaderManager.getInstance().buildLoader(directory.getName());
-					if (loader != null) {
-						logger.debug("Loader built...");
-					
-						codeSystem = loader.getCodeSystem();
-					
-						logger.debug("Loading file: " + loadFile.getAbsolutePath() + "...");
-						loader.load(loadFile);
-						
-						
-						logger.debug("File loaded...");
-					}
-					else 
-					{
-						logger.debug("Building of Loader Failed.");
-					}
-					
-				}
+			logger.debug("Building Loader for directory: " + directory.getName() + "...");
+			CodeLoader loader = CodeLoaderManager.getInstance().buildLoader(directory.getName());
+			if (loader != null && filesToLoad != null) {
+				logger.debug("Loader built...");
+			
+				codeSystem = loader.getCodeSystem();
+			
+				//logger.debug("Loading file: " + loadFile.getAbsolutePath() + "...");
+				loader.load(Arrays.asList(filesToLoad));
+				
+				
+				logger.debug("File loaded...");
 			}
+			else 
+			{
+				logger.debug("Building of Loader Failed.");
+			}
+			
+			
+			
+		}
+		
+		
+
+	}
+	
+	
+	public static void loadCodeDirectory(String directory) throws IOException
+	{
+		File dir = new File(directory);
+		
+		if (dir.isFile())
+		{
+			logger.debug("Directory to Load is a file and not a directory");
+			throw new IOException("Directory to Load is a file and not a directory");
+		}
+		else
+		{
+			
+			File[] list = dir.listFiles();
+			
+			for (File file : list)
+			{
+				loadCodeFiles(file);
+			}
+		}
+	}
+	
+	private static void loadValueSetFiles(File directory) throws IOException
+	{
+		if (directory.isDirectory() && !directory.isHidden()) 
+		{
+			File[] filesToLoad = directory.listFiles();
+			String valueSet = null;
+			
+			logger.debug("Building Loader for directory: " + directory.getName() + "...");
+			ValueSetLoader loader = ValueSetLoaderManager.getInstance().buildLoader(directory.getName());
+			if (loader != null && filesToLoad != null) {
+				logger.debug("Loader built...");
+			
+				valueSet = loader.getValueSetAuthorName();
+			
+				//logger.debug("Loading file: " + loadFile.getAbsolutePath() + "...");
+				loader.load(Arrays.asList(filesToLoad));
+				
+				
+				logger.debug("File loaded...");
+			}
+			else 
+			{
+				logger.debug("Building of Loader Failed.");
+			}
+			
+			
 			
 		}
 		
@@ -266,19 +315,36 @@ public abstract class ValidationEngine {
 	
 	private static class InitializerThread extends Thread {
 		
-		private String directory = null;
+		private String codeDirectory = null;
+		private String valueSetDirectory = null;
 		private boolean recursive = true;
+		private boolean loadAtStartup = false;
 		
 		
 		
-		public String getDirectory() {
-			return directory;
+
+
+
+		public String getCodeDirectory() {
+			return codeDirectory;
 		}
 
 
 
-		public void setDirectory(String directory) {
-			this.directory = directory;
+		public void setCodeDirectory(String codeDirectory) {
+			this.codeDirectory = codeDirectory;
+		}
+
+
+
+		public String getValueSetDirectory() {
+			return valueSetDirectory;
+		}
+
+
+
+		public void setValueSetDirectory(String valueSetDirectory) {
+			this.valueSetDirectory = valueSetDirectory;
 		}
 
 
@@ -292,6 +358,20 @@ public abstract class ValidationEngine {
 		public void setRecursive(boolean recursive) {
 			this.recursive = recursive;
 		}
+		
+		
+
+
+
+		public boolean isLoadAtStartup() {
+			return loadAtStartup;
+		}
+
+
+
+		public void setLoadAtStartup(boolean loadAtStartup) {
+			this.loadAtStartup = loadAtStartup;
+		}
 
 
 
@@ -300,25 +380,46 @@ public abstract class ValidationEngine {
 			
 			try 
 			{
-				logger.info("Loading vocabularies at: " + directory + "...");
-				loadDirectory(directory);
-				logger.info("Vocabularies loaded...");
+				if (loadAtStartup)
+				{
+					if (codeDirectory != null && !codeDirectory.trim().equals(""))
+					{
+						logger.info("Loading vocabularies at: " + codeDirectory + "...");
+						loadCodeDirectory(codeDirectory);
+						logger.info("Vocabularies loaded...");
+					}
 					
+					if (valueSetDirectory != null && !valueSetDirectory.trim().equals(""))
+					{
+						logger.info("Loading value sets at: " + valueSetDirectory + "...");
+						loadValueSetDirectory(valueSetDirectory);
+						logger.info("Value Sets loaded...");
+					}	
+						
+					logger.info("Activating new Vocabularies Map...");
+					VocabularyRepository.getInstance().toggleActiveDatabase();
+					logger.info("New vocabulary Map Activated...");
 					
-				logger.info("Activating new Vocabularies Map...");
-				VocabularyRepository.getInstance().toggleActiveDatabase();
-				logger.info("New vocabulary Map Activated...");
+					if (codeDirectory != null && !codeDirectory.trim().equals(""))
+					{
+						logger.info("Loading vocabularies to new inactive repository at: " + codeDirectory + "...");
+						loadCodeDirectory(codeDirectory);
+						logger.info("Vocabularies loaded...");
+					}
 					
-				logger.info("Loading vocabularies to new inactive repository at: " + directory + "...");
-				loadDirectory(directory);
-				logger.info("Vocabularies loaded...");
-				
+					if (valueSetDirectory != null && !valueSetDirectory.trim().equals(""))
+					{
+						logger.info("Loading value sets to new inactive repository at: " + valueSetDirectory + "...");
+						loadValueSetDirectory(valueSetDirectory);
+						logger.info("Value Sets loaded...");
+					}
+				}
 				// recommendation from cwatson: load files back in the primary so both db's are 
 				
-				logger.info("Starting Watchdog...");
-				ValidationEngine.watchdog = new RepositoryWatchdog(this.getDirectory(), this.isRecursive());
+				logger.info("Starting Vocabulary Watchdog...");
+				ValidationEngine.watchdog = new RepositoryWatchdog(this.getCodeDirectory(), this.isRecursive(), false);
 				watchdog.start();
-				logger.info("Watchdog started...");
+				logger.info("Vocabulary Watchdog started...");
 			}
 			catch (Exception e)
 			{
