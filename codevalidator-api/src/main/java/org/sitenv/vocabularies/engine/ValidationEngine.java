@@ -22,11 +22,17 @@ import org.sitenv.vocabularies.watchdog.RepositoryWatchdog;
 public abstract class ValidationEngine {
 	
 	private static Logger logger = Logger.getLogger(ValidationEngine.class);
-	private static RepositoryWatchdog watchdog = null;
+	private static RepositoryWatchdog codeWatchdog = null;
+	private static RepositoryWatchdog valueSetWatchdog = null;
 	
-	public static RepositoryWatchdog getWatchdogThread()
+	public static RepositoryWatchdog getCodeWatchdogThread()
 	{
-		return watchdog;
+		return codeWatchdog;
+	}
+	
+	public static RepositoryWatchdog getValueSetWatchdogThread()
+	{
+		return valueSetWatchdog;
 	}
 	
 	public static boolean isCodeSystemLoaded(String codeSystem) {
@@ -417,9 +423,14 @@ public abstract class ValidationEngine {
 				// recommendation from cwatson: load files back in the primary so both db's are 
 				
 				logger.info("Starting Vocabulary Watchdog...");
-				ValidationEngine.watchdog = new RepositoryWatchdog(this.getCodeDirectory(), this.isRecursive(), false);
-				watchdog.start();
+				ValidationEngine.codeWatchdog = new RepositoryWatchdog(this.getCodeDirectory(), this.isRecursive(), false);
+				ValidationEngine.codeWatchdog.start();
 				logger.info("Vocabulary Watchdog started...");
+				
+				logger.info("Starting Value Set Watchdog...");
+				ValidationEngine.valueSetWatchdog = new RepositoryWatchdog(this.getValueSetDirectory(), this.isRecursive(), false);
+				ValidationEngine.valueSetWatchdog.start();
+				logger.info("Vocabulary ValueSet started...");
 			}
 			catch (Exception e)
 			{

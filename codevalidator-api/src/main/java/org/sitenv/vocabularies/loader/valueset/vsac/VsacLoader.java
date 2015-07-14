@@ -1,20 +1,29 @@
 package org.sitenv.vocabularies.loader.valueset.vsac;
 
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.loader.code.icd10.Icd10CmLoader;
 import org.sitenv.vocabularies.loader.valueset.ValueSetLoader;
 import org.sitenv.vocabularies.loader.valueset.ValueSetLoaderManager;
 import org.sitenv.vocabularies.model.ValueSetModelDefinition;
-import org.sitenv.vocabularies.model.impl.Icd10CmModel;
 import org.sitenv.vocabularies.model.impl.VsacValueSetModel;
 import org.sitenv.vocabularies.repository.VocabularyRepository;
 
@@ -22,7 +31,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 public class VsacLoader implements ValueSetLoader {
 
-	private static Logger logger = Logger.getLogger(Icd10CmLoader.class);
+	private static Logger logger = Logger.getLogger(VsacLoader.class);
 	
 
 	static {
@@ -40,14 +49,13 @@ public class VsacLoader implements ValueSetLoader {
 		VocabularyRepository.getInstance().getValueSetMap().put(VocabularyConstants.VSAC_VALUESET_NAME, vsacValueSet);
 		
 	}
+	
 
 	public void load(List<File> filesToLoad) {
 		
 
-		
-
 		OObjectDatabaseTx dbConnection = VocabularyRepository.getInstance().getInactiveDbConnection();
-		BufferedReader br = null;
+		HSSFWorkbook workBook = null;
 		
 		try {
 			
@@ -62,47 +70,79 @@ public class VsacLoader implements ValueSetLoader {
 				{
 					
 					logger.debug("Loading Value Set File: " + file.getName());
-	
+
+					InputStream inputStream = null;
+
+				
+					inputStream = new FileInputStream(file);
+				
+
+					POIFSFileSystem fileSystem = null;
+
 					
-					// parse value set file:
-					
-					br = new BufferedReader(new FileReader(file));
-					/*
-					String available;
-					while ((available = br.readLine()) != null) {
+					fileSystem = new POIFSFileSystem(inputStream);
+
+					workBook = new HSSFWorkbook(fileSystem);
+					HSSFSheet sheet = workBook.getSheet("Code List");
 						
-						String code = available.substring(6, 13).trim();
-						String displayName = available.substring(77).trim();
+						
+					String valueSetName = sheet.getRow(1).getCell(1).getStringCellValue();
+					String oid = sheet.getRow(2).getCell(1).getStringCellValue();
+					String type = sheet.getRow(3).getCell(1).getStringCellValue();
+					String version = sheet.getRow(4).getCell(1).getStringCellValue();
+					String steward = sheet.getRow(5).getCell(1).getStringCellValue();
+				
 					
-						VsacValueSetModel model = dbConnection.newInstance(VsacValueSetModel.class);;
+					for (int count = 11; count <= sheet.getLastRowNum(); count++)
+					{
+						String code = sheet.getRow(count).getCell(0).getStringCellValue();
+						String description = sheet.getRow(count).getCell(1).getStringCellValue();
+						String codeSystem = sheet.getRow(count).getCell(2).getStringCellValue();
+						String codeSystemVersion = sheet.getRow(count).getCell(3).getStringCellValue();
+						String codeSystemOid = sheet.getRow(count).getCell(4).getStringCellValue();
+						String tty = sheet.getRow(count).getCell(5).getStringCellValue();
+						
+						//System.out.println(code+":"+description+":"+codeSystem+":"+codeSystemVersion+":"+codeSystemOid+":"+tty);
+						
+						VsacValueSetModel model = dbConnection.newInstance(VsacValueSetModel.class);
 						model.setCode(code);
-						model.setDisplayName(displayName);
+						model.setCodeSystem(codeSystemOid);
+						model.setCodeSystemName(codeSystem);
+						model.setCodeSystemVersion(codeSystemVersion);
+						model.setDescription(description);
+						model.setDefinitionVersion(version);
+						model.setSteward(steward);
+						model.setTty(tty);
+						model.setType(type);
+						model.setValueSet(oid);
+						model.setValueSetName(valueSetName);
 						
 						dbConnection.save(model);
 					}
-					*/
+					
+					workBook.close();
+					
 						
 				}
 			}
 			
-			VocabularyRepository.updateValueSetIndexProperties(dbConnection, VsacValueSetModel.class);
+				VocabularyRepository.updateValueSetIndexProperties(dbConnection, VsacValueSetModel.class);
 			
 			
-			logger.info("VsacValueSetModel Loading complete... records existing: " + VocabularyRepository.getValueSetRecordCount(dbConnection, VsacValueSetModel.class));
+				logger.info("VsacValueSetModel Loading complete... records existing: " + VocabularyRepository.getValueSetRecordCount(dbConnection, VsacValueSetModel.class));
 			} catch (FileNotFoundException e) {
-				// TODO: log4j
+				
 				logger.error(e);
 			} catch (IOException e) {
 				logger.error(e);
 			} finally {
-				if (br != null) {
+				if (workBook != null) {
 					try {
-						br.close();
+						workBook.close();
 					} catch (IOException e) {
 						logger.error(e);
 					}
 				}
-				
 				Runtime r = Runtime.getRuntime();
 				r.gc();
 			}

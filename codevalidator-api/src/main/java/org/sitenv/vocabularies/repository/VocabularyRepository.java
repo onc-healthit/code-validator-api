@@ -169,13 +169,23 @@ public class VocabularyRepository {
 			dbConnection.getMetadata().getSchema().save();
 		}
 		
-		if (!target.areIndexed("displayName"))
+		if (!target.areIndexed("codeSystem"))
 		{
-			if (target.getProperty("displayName") == null)
+			if (target.getProperty("codeSystem") == null)
 			{
-				target.createProperty("displayName", OType.STRING);
+				target.createProperty("codeSystem", OType.STRING);
 			}
-			target.createIndex(clazz.getSimpleName() + ".displayName", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "displayName");
+			target.createIndex(clazz.getSimpleName() + ".codeSystem", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "codeSystem");
+			dbConnection.getMetadata().getSchema().save();
+		}
+		
+		if (!target.areIndexed("valueSet"))
+		{
+			if (target.getProperty("valueSet") == null)
+			{
+				target.createProperty("valueSet", OType.STRING);
+			}
+			target.createIndex(clazz.getSimpleName() + ".valueSet", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "valueSet");
 			dbConnection.getMetadata().getSchema().save();
 		}
 	}

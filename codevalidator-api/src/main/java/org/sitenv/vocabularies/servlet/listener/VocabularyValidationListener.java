@@ -55,11 +55,17 @@ public class VocabularyValidationListener implements ServletContextListener {
 	
 	
 	public void contextDestroyed(ServletContextEvent arg0) {
-		logger.debug("Stopping the watchdog...");
-		if (ValidationEngine.getWatchdogThread() != null) {
-			ValidationEngine.getWatchdogThread().stop();
+		logger.debug("Stopping the vocabulary watchdog...");
+		if (ValidationEngine.getCodeWatchdogThread() != null) {
+			ValidationEngine.getCodeWatchdogThread().stop();
 		}
-		logger.debug("Watchdog stopped...");
+		logger.debug("Vocabulary watchdog stopped...");
+		
+		logger.debug("Stopping the value set watchdog...");
+		if (ValidationEngine.getValueSetWatchdogThread() != null) {
+			ValidationEngine.getValueSetWatchdogThread().stop();
+		}
+		logger.debug("Value set watchdog stopped...");
 		
 		logger.debug("Stopping the Orient DB server...");
 		VocabularyRepository.getInstance().getOrientDbServer().shutdown();
