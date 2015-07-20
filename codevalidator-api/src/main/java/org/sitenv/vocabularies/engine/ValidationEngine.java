@@ -15,6 +15,7 @@ import org.sitenv.vocabularies.loader.code.CodeLoaderManager;
 import org.sitenv.vocabularies.loader.valueset.ValueSetLoader;
 import org.sitenv.vocabularies.loader.valueset.ValueSetLoaderManager;
 import org.sitenv.vocabularies.model.CodeModel;
+import org.sitenv.vocabularies.model.ValueSetModel;
 import org.sitenv.vocabularies.model.VocabularyModelDefinition;
 import org.sitenv.vocabularies.repository.VocabularyRepository;
 import org.sitenv.vocabularies.watchdog.RepositoryWatchdog;
@@ -119,7 +120,7 @@ public abstract class ValidationEngine {
 		return false;
 	}
 
-	public static synchronized boolean validateCode(String codeSystem, String code)
+	public static boolean validateCode(String codeSystem, String code)
 	{
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		
@@ -152,7 +153,7 @@ public abstract class ValidationEngine {
 		return false;
 	}
 	
-	public static synchronized boolean validateDisplayName(String codeSystem, String displayName)
+	public static boolean validateDisplayName(String codeSystem, String displayName)
 	{
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		
@@ -173,7 +174,51 @@ public abstract class ValidationEngine {
 		return false;
 	}
 	
-	public static void initialize(String codeDirectory, String valueSetDirectory, boolean loadAtStartup) throws IOException {
+	public static boolean validateValueSetCode(String valueSet, String code)
+	{
+		VocabularyRepository ds = VocabularyRepository.getInstance();
+		
+		if (valueSet != null && code != null &&  ds != null && ds.getValueSetModelClassList() != null) {
+			
+			
+			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+			{
+				List<? extends ValueSetModel> modelList = ds.fetchByValueSetAndCode(clazz, valueSet, code);
+				
+				if (modelList != null && modelList.size() > 0)
+				{
+					return true;
+				}
+			}
+					
+		}
+		
+		return false;
+	}
+	
+	public static boolean validateValueSetCodeForCodeSystem(String valueSet, String code, String codeSystem)
+	{
+		VocabularyRepository ds = VocabularyRepository.getInstance();
+		
+		if (valueSet != null && code != null &&  ds != null && ds.getValueSetModelClassList() != null) {
+			
+			
+			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+			{
+				List<? extends ValueSetModel> modelList = ds.fetchByValueSetCodeSystemAndCode(clazz, valueSet, codeSystem, code);
+				
+				if (modelList != null && modelList.size() > 0)
+				{
+					return true;
+				}
+			}
+					
+		}
+		
+		return false;
+	}
+	
+	public static synchronized void initialize(String codeDirectory, String valueSetDirectory, boolean loadAtStartup) throws IOException {
 		boolean recursive = true;
 
 		logger.info("Registering Loaders...");

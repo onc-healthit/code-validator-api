@@ -15,7 +15,6 @@ public class VsacValueSetModel implements ValueSetModel {
 	private String codeSystemVersion;
 	private String codeSystem;
 	private String tty;
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -44,7 +43,6 @@ public class VsacValueSetModel implements ValueSetModel {
 				+ ((valueSetName == null) ? 0 : valueSetName.hashCode());
 		return result;
 	}
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -110,11 +108,6 @@ public class VsacValueSetModel implements ValueSetModel {
 		} else if (!valueSetName.equals(other.valueSetName))
 			return false;
 		return true;
-	}
-	
-	public VsacValueSetModel() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 	public String getValueSet() {
 		return valueSet;
@@ -183,5 +176,6 @@ public class VsacValueSetModel implements ValueSetModel {
 		this.tty = tty;
 	}
 	
-		
+	
+
 }

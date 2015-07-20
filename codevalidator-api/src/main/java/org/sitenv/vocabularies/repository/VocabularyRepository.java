@@ -1,5 +1,6 @@
 package org.sitenv.vocabularies.repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ public class VocabularyRepository {
 	
 	private Map<String, VocabularyModelDefinition> vocabularyMap;
 
-	private Map<String, ValueSetModelDefinition> valueSetMap;
+	List<Class<? extends ValueSetModel>> valueSetModelClassList = null;
 	
 	private OServer primaryOrientDbServer;
 	private VocabularyRepositoryConnectionInfo primaryNodeCredentials;
@@ -43,6 +44,20 @@ public class VocabularyRepository {
 	
 	public static VocabularyRepository getInstance() {
 		return ACTIVE_INSTANCE;
+	}
+
+	
+	
+
+
+	public List<Class<? extends ValueSetModel>> getValueSetModelClassList() {
+		return valueSetModelClassList;
+	}
+
+
+	public void setValueSetModelClassList(
+			List<Class<? extends ValueSetModel>> valueSetModelClassList) {
+		this.valueSetModelClassList = valueSetModelClassList;
 	}
 
 
@@ -215,14 +230,17 @@ public class VocabularyRepository {
 	public <T extends CodeModel> List<T> fetchByCode(Class<T> clazz, String code)
 	{
 		
-		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT * FROM " + clazz.getSimpleName() + " where code = '" + code.toUpperCase() + "'");
+		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT * FROM " + clazz.getSimpleName() + " where code = :code");
 		OObjectDatabaseTx dbConnection = null;
 		List<T> result = null;
+		
+		Map<String, Object> params = new HashMap<String,Object> ();
+		params.put("code", code.toUpperCase());
 		
 		try 
 		{
 			dbConnection = this.getActiveDbConnection();
-			result = dbConnection.query(query);
+			result = dbConnection.command(query).execute(params);
 		}
 		catch (Exception e)
 		{
@@ -237,14 +255,71 @@ public class VocabularyRepository {
 	
 	public <T extends CodeModel> List<T> fetchByDisplayName(Class<T> clazz, String displayName)
 	{
-		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT * FROM " + clazz.getSimpleName() + " where displayName = '" + displayName.toUpperCase() + "'");
+		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT * FROM " + clazz.getSimpleName() + " where displayName = :displayName");
 		OObjectDatabaseTx dbConnection = null;
 		List<T> result = null;
+		
+		Map<String, Object> params = new HashMap<String,Object> ();
+		params.put("displayName", displayName.toUpperCase());
 		
 		try 
 		{
 			dbConnection = this.getActiveDbConnection();
-			result = dbConnection.query(query);
+			result = dbConnection.command(query).execute(params);
+		}
+		catch (Exception e)
+		{
+			logger.error("Could not execute query against active database.", e);
+		}
+		finally
+		{
+			dbConnection.close();
+		}
+		return result;
+	}
+	
+	public <T extends ValueSetModel> List<T> fetchByValueSetAndCode(Class<T> clazz, String valueSet, String code)
+	{
+		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT * FROM "+clazz.getSimpleName()+" where valueSet = :valueSet AND code = :code");
+		OObjectDatabaseTx dbConnection = null;
+		List<T> result = null;
+		
+		Map<String, Object> params = new HashMap<String,Object> ();
+		params.put("valueSet", valueSet.toUpperCase());
+		params.put("code", code.toUpperCase());
+		
+		
+		try 
+		{
+			dbConnection = this.getActiveDbConnection();
+			result = dbConnection.command(query).execute(params);
+		}
+		catch (Exception e)
+		{
+			logger.error("Could not execute query against active database.", e);
+		}
+		finally
+		{
+			dbConnection.close();
+		}
+		return result;
+	}
+	
+	public <T extends ValueSetModel> List<T> fetchByValueSetCodeSystemAndCode(Class<T> clazz, String valueSet, String codeSystem, String code)
+	{
+		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT * FROM " + clazz.getSimpleName() + " where valueSet = :valueSet AND codeSystem = :codeSystem AND code = :code");
+		OObjectDatabaseTx dbConnection = null;
+		List<T> result = null;
+		
+		Map<String, Object> params = new HashMap<String,Object> ();
+		params.put("valueSet", valueSet.toUpperCase());
+		params.put("codeSystem", codeSystem.toUpperCase());
+		params.put("code", code.toUpperCase());
+		
+		try 
+		{
+			dbConnection = this.getActiveDbConnection();
+			result = dbConnection.command(query).execute(params);
 		}
 		catch (Exception e)
 		{
@@ -273,15 +348,6 @@ public class VocabularyRepository {
 	}
 
 
-	public Map<String, ValueSetModelDefinition> getValueSetMap() {
-		return valueSetMap;
-	}
-
-
-	public void setValueSetMap(Map<String, ValueSetModelDefinition> valueSetMap) {
-		this.valueSetMap = valueSetMap;
-	}
-	
 	
 	
 }

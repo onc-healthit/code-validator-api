@@ -5,24 +5,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
-import org.sitenv.vocabularies.loader.code.icd10.Icd10CmLoader;
 import org.sitenv.vocabularies.loader.valueset.ValueSetLoader;
 import org.sitenv.vocabularies.loader.valueset.ValueSetLoaderManager;
+import org.sitenv.vocabularies.model.ValueSetModel;
 import org.sitenv.vocabularies.model.ValueSetModelDefinition;
 import org.sitenv.vocabularies.model.impl.VsacValueSetModel;
 import org.sitenv.vocabularies.repository.VocabularyRepository;
@@ -39,14 +33,13 @@ public class VsacLoader implements ValueSetLoader {
 				.registerLoader(VocabularyConstants.VSAC_VALUESET_NAME, VsacLoader.class);
 		System.out.println("Loaded: " + VocabularyConstants.VSAC_VALUESET_NAME + " (value set)");
 		
-		if (VocabularyRepository.getInstance().getValueSetMap() == null)
+		
+		if (VocabularyRepository.getInstance().getValueSetModelClassList() == null) 
 		{
-			VocabularyRepository.getInstance().setValueSetMap(new HashMap<String,ValueSetModelDefinition>());
+			VocabularyRepository.getInstance().setValueSetModelClassList(new ArrayList<Class<? extends ValueSetModel>>());
 		}
-			
-		ValueSetModelDefinition vsacValueSet = new ValueSetModelDefinition(VsacValueSetModel.class, VocabularyConstants.VSAC_VALUESET_NAME);
-			
-		VocabularyRepository.getInstance().getValueSetMap().put(VocabularyConstants.VSAC_VALUESET_NAME, vsacValueSet);
+		
+		VocabularyRepository.getInstance().getValueSetModelClassList().add(VsacValueSetModel.class);
 		
 	}
 	
@@ -105,16 +98,16 @@ public class VsacLoader implements ValueSetLoader {
 						//System.out.println(code+":"+description+":"+codeSystem+":"+codeSystemVersion+":"+codeSystemOid+":"+tty);
 						
 						VsacValueSetModel model = dbConnection.newInstance(VsacValueSetModel.class);
-						model.setCode(code);
-						model.setCodeSystem(codeSystemOid);
-						model.setCodeSystemName(codeSystem);
+						model.setCode(code.toUpperCase());
+						model.setCodeSystem(codeSystemOid.toUpperCase());
+						model.setCodeSystemName(codeSystem.toUpperCase());
 						model.setCodeSystemVersion(codeSystemVersion);
 						model.setDescription(description);
 						model.setDefinitionVersion(version);
 						model.setSteward(steward);
 						model.setTty(tty);
 						model.setType(type);
-						model.setValueSet(oid);
+						model.setValueSet(oid.toUpperCase());
 						model.setValueSetName(valueSetName);
 						
 						dbConnection.save(model);
