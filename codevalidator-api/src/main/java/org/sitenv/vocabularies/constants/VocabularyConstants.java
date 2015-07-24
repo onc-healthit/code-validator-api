@@ -2,6 +2,7 @@ package org.sitenv.vocabularies.constants;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class VocabularyConstants {
 	public static final String SNOMEDCT_CODE_NAME = "SNOMED-CT";
@@ -27,7 +28,7 @@ public class VocabularyConstants {
 	
 	public static final String VSAC_VALUESET_NAME = "VSAC";
 	
-	public static final Map<String, String> CODE_SYSTEM_MAP = new HashMap<String,String>();
+	public static final Map<String, String> CODE_SYSTEM_MAP = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
 	
 	static {
 		CODE_SYSTEM_MAP.put(SNOMEDCT_CODE_NAME, SNOMEDCT_CODE_SYSTEM);

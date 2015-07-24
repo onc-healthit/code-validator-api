@@ -43,7 +43,7 @@ public abstract class ValidationEngine {
 			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
 			
 			if (vocabMap != null) {
-				vocabulary = vocabMap.get(codeSystem.toUpperCase());
+				vocabulary = vocabMap.get(codeSystem);
 			}
 		}
 		
@@ -51,7 +51,7 @@ public abstract class ValidationEngine {
 	}
 	
 	public static DisplayNameValidationResult validateCodeSystem(String codeSystemName, String displayName, String code) {
-		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName.toUpperCase());
+		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName);
 		DisplayNameValidationResult result = null;
 		
 		if (codeSystem != null)
@@ -63,7 +63,7 @@ public abstract class ValidationEngine {
 	}
 	
 	public static DisplayNameValidationResult validateDisplayNameForCodeByCodeSystemName(String codeSystemName, String displayName, String code) {
-		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName.toUpperCase());
+		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName);
 		DisplayNameValidationResult result = null;
 		
 		if (codeSystem != null)
@@ -81,7 +81,7 @@ public abstract class ValidationEngine {
 		if (codeSystem != null && code != null &&  ds != null && ds.getVocabularyMap() != null) {
 			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
 			
-			VocabularyModelDefinition vocab = vocabMap.get(codeSystem.toUpperCase());
+			VocabularyModelDefinition vocab = vocabMap.get(codeSystem);
 			
 			result = new DisplayNameValidationResult();
 			result.setCode(code);
@@ -110,7 +110,7 @@ public abstract class ValidationEngine {
 	
 	public static boolean validateCodeByCodeSystemName(String codeSystemName, String code)
 	{
-		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName.toUpperCase());
+		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName);
 		
 		if (codeSystem != null)
 		{
@@ -127,7 +127,7 @@ public abstract class ValidationEngine {
 		if (codeSystem != null && code != null &&  ds != null && ds.getVocabularyMap() != null) {
 			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
 			
-			VocabularyModelDefinition vocab = vocabMap.get(codeSystem.toUpperCase());
+			VocabularyModelDefinition vocab = vocabMap.get(codeSystem);
 			
 			List<? extends CodeModel> results = ds.fetchByCode(vocab.getClazz(), code);
 			
@@ -143,7 +143,7 @@ public abstract class ValidationEngine {
 	
 	public static boolean validateDisplayNameByCodeSystemName(String codeSystemName, String displayName)
 	{
-		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName.toUpperCase());
+		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName);
 		
 		if (codeSystem != null)
 		{
@@ -160,7 +160,7 @@ public abstract class ValidationEngine {
 		if (codeSystem != null && displayName != null &&  ds != null && ds.getVocabularyMap() != null) {
 			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
 			
-			VocabularyModelDefinition vocab = vocabMap.get(codeSystem.toUpperCase());
+			VocabularyModelDefinition vocab = vocabMap.get(codeSystem);
 			
 			List<? extends CodeModel> results = ds.fetchByDisplayName(vocab.getClazz(), displayName);
 			
@@ -239,7 +239,7 @@ public abstract class ValidationEngine {
 		initializer.start();
 	}
 	
-	private static void registerLoaders() {
+	public static void registerLoaders() {
 		try {
 			Class.forName("org.sitenv.vocabularies.loader.code.snomed.SnomedLoader");
 			Class.forName("org.sitenv.vocabularies.loader.code.loinc.LoincLoader");

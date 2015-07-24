@@ -1,5 +1,7 @@
 package org.sitenv.vocabularies.loader.code.loinc;
 
+import com.orientechnologies.common.io.OIOUtils;
+import com.orientechnologies.orient.core.intent.OIntentMassiveInsert;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,11 +10,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.loader.code.CodeLoader;
 import org.sitenv.vocabularies.loader.code.CodeLoaderManager;
 import org.sitenv.vocabularies.model.VocabularyModelDefinition;
+import org.sitenv.vocabularies.model.impl.Icd10PcsModel;
 import org.sitenv.vocabularies.model.impl.Icd9CmDxModel;
 import org.sitenv.vocabularies.model.impl.LoincModel;
 import org.sitenv.vocabularies.model.impl.LoincModel;
@@ -30,12 +35,7 @@ public class LoincLoader implements CodeLoader {
 	static {
 		CodeLoaderManager.getInstance()
 				.registerLoader(VocabularyConstants.LOINC_CODE_NAME, LoincLoader.class);
-		System.out.println("Loaded: " + VocabularyConstants.LOINC_CODE_NAME + "(" + VocabularyConstants.LOINC_CODE_SYSTEM + ")");
-
-		if (VocabularyRepository.getInstance().getVocabularyMap() == null)
-		{
-			VocabularyRepository.getInstance().setVocabularyMap(new HashMap<String,VocabularyModelDefinition>());
-		}
+		logger.info("Loaded: " + VocabularyConstants.LOINC_CODE_NAME + "(" + VocabularyConstants.LOINC_CODE_SYSTEM + ")");
 			
 		VocabularyModelDefinition loinc = new VocabularyModelDefinition(LoincModel.class, VocabularyConstants.LOINC_CODE_SYSTEM);
 			
@@ -55,7 +55,17 @@ public class LoincLoader implements CodeLoader {
 			VocabularyRepository.truncateModel(dbConnection, LoincModel.class);
 			logger.info(dbConnection.getName() + ".LoincModel Datastore Truncated... records remaining: " + VocabularyRepository.getRecordCount(dbConnection, LoincModel.class));
 
-		
+			VocabularyRepository.updateIndexProperties(dbConnection, LoincModel.class, true);
+			
+			String insertQueryPrefix = "insert into " + LoincModel.class.getSimpleName() + " (code, displayName) values ";
+			
+			StrBuilder insertQueryBuilder = new StrBuilder(insertQueryPrefix);
+			insertQueryBuilder.ensureCapacity(1000);
+			
+			int totalCount = 0, pendingCount = 0;
+			
+			dbConnection.declareIntent(new OIntentMassiveInsert());
+			
 			for (File file : filesToLoad)
 			{
 				if (file.isFile() && !file.isHidden())
@@ -72,22 +82,37 @@ public class LoincLoader implements CodeLoader {
 							continue; // skip header row
 						} else {
 
-							String[] line = available.split(",");
-							String code = line[0].replace("\"", "").toUpperCase();
-							String name = line[1].replace("\"", "").toUpperCase();
+							String[] line = StringUtils.splitPreserveAllTokens(available, ",", 3);
 							
-							LoincModel model = dbConnection.newInstance(LoincModel.class);;
-							model.setCode(code);
-							model.setDisplayName(name);
+							if (pendingCount++ > 0) {
+								insertQueryBuilder.append(",");
+							}
 							
-							dbConnection.save(model);
+							insertQueryBuilder.append("(\"");
+							insertQueryBuilder.append(OIOUtils.encode(StringUtils.strip(line[0], "\"")));
+							insertQueryBuilder.append("\",\"");
+							insertQueryBuilder.append(OIOUtils.encode(StringUtils.strip(line[1], "\"")));
+							insertQueryBuilder.append("\")");
+							
+							if ((totalCount % 5000) == 0) {
+								dbConnection.command(new OCommandSQL(insertQueryBuilder.toString())).execute();
+								dbConnection.commit();
+								
+								insertQueryBuilder.clear();
+								insertQueryBuilder.append(insertQueryPrefix);
+								
+								pendingCount = 0;
+							}
 						}
 					}
 					
 				}
 			}
 			
-			VocabularyRepository.updateIndexProperties(dbConnection, LoincModel.class);
+			if (pendingCount > 0) {
+				dbConnection.command(new OCommandSQL(insertQueryBuilder.toString())).execute();
+				dbConnection.commit();
+			}
 			
 			logger.info("LoincModel Loading complete... records existing: " + VocabularyRepository.getRecordCount(dbConnection, LoincModel.class));
 		} catch (FileNotFoundException e) {
@@ -102,6 +127,8 @@ public class LoincLoader implements CodeLoader {
 					logger.error(e);
 				}
 			}
+			
+			dbConnection.declareIntent(null);
 			
 			Runtime r = Runtime.getRuntime();
 			r.gc();
