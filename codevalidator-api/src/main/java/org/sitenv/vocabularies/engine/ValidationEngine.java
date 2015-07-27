@@ -50,6 +50,28 @@ public abstract class ValidationEngine {
 		return (vocabulary != null);
 	}
 	
+	public static boolean validateValueSetLoaded(String valueSet)
+	{
+		VocabularyRepository ds = VocabularyRepository.getInstance();
+		
+		if (valueSet != null  &&  ds != null && ds.getValueSetModelClassList() != null) {
+			
+			
+			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+			{
+				Boolean model = ds.valueSetExists(clazz, valueSet);
+				
+				if (model != null && model)
+				{
+					return true;
+				}
+			}
+					
+		}
+		
+		return false;
+	}
+	
 	public static DisplayNameValidationResult validateCodeSystem(String codeSystemName, String displayName, String code) {
 		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName.toUpperCase());
 		DisplayNameValidationResult result = null;
@@ -173,6 +195,35 @@ public abstract class ValidationEngine {
 		
 		return false;
 	}
+	
+	public static List<ValueSetModel> getValueSetCode(String valueSet, String code, String codeSystem)
+	{
+		VocabularyRepository ds = VocabularyRepository.getInstance();
+		List<ValueSetModel> result = null;
+		
+		if (valueSet != null && code != null &&  ds != null && ds.getValueSetModelClassList() != null) {
+			
+			
+			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+			{
+				List<? extends ValueSetModel> modelList = ds.fetchByValueSetAndCode(clazz, valueSet, code);
+				
+				if (modelList != null)
+				{
+					if (result == null)
+					{
+						result = new ArrayList<ValueSetModel>();
+					}
+					
+					result.addAll(modelList);
+				}
+			}
+					
+		}
+		
+		return result;
+	}
+		
 	
 	public static boolean validateValueSetCode(String valueSet, String code)
 	{
