@@ -223,6 +223,24 @@ public abstract class ValidationEngine {
 		
 		return result;
 	}
+	
+	public static List<? extends CodeModel> getCode(String codeSystem, String code)
+	{
+		VocabularyRepository ds = VocabularyRepository.getInstance();
+		List<? extends CodeModel> results = null;
+		
+		if (codeSystem != null && code != null &&  ds != null && ds.getVocabularyMap() != null) {
+			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
+			
+			VocabularyModelDefinition vocab = vocabMap.get(codeSystem);
+			
+			results = ds.fetchByCode(vocab.getClazz(), code);
+			
+			
+		}
+		
+		return results;
+	}
 		
 	
 	public static boolean validateValueSetCode(String valueSet, String code)
