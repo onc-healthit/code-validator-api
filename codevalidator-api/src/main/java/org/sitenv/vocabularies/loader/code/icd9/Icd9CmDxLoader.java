@@ -1,5 +1,8 @@
 package org.sitenv.vocabularies.loader.code.icd9;
 
+import com.orientechnologies.common.io.OIOUtils;
+import com.orientechnologies.orient.core.intent.OIntentMassiveInsert;
+import com.orientechnologies.orient.core.sql.OCommandSQL;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,6 +11,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.loader.code.CodeLoader;
@@ -26,12 +31,8 @@ public class Icd9CmDxLoader implements CodeLoader {
 	static {
 		CodeLoaderManager.getInstance()
 				.registerLoader(VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_NAME, Icd9CmDxLoader.class);
-		System.out.println("Loaded: " + VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_NAME + "(" + VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_SYSTEM + ")");
+		logger.info("Loaded: " + VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_NAME + "(" + VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_SYSTEM + ")");
 		
-		if (VocabularyRepository.getInstance().getVocabularyMap() == null)
-		{
-			VocabularyRepository.getInstance().setVocabularyMap(new HashMap<String,VocabularyModelDefinition>());
-		}
 		VocabularyModelDefinition icd9CmDx = new VocabularyModelDefinition(Icd9CmDxModel.class, VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_SYSTEM);
 			
 		VocabularyRepository.getInstance().getVocabularyMap().put(VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_SYSTEM, icd9CmDx);
@@ -50,7 +51,17 @@ public class Icd9CmDxLoader implements CodeLoader {
 			VocabularyRepository.truncateModel(dbConnection, Icd9CmDxModel.class);
 			logger.info(dbConnection.getName() + ".Icd9CmDxModel Datastore Truncated... records remaining: " + VocabularyRepository.getRecordCount(dbConnection, Icd9CmDxModel.class));
 
+			VocabularyRepository.updateIndexProperties(dbConnection, Icd9CmDxModel.class, true);
 		
+			String insertQueryPrefix = "insert into " + Icd9CmDxModel.class.getSimpleName() + " (code, displayName) values ";
+			
+			StrBuilder insertQueryBuilder = new StrBuilder(insertQueryPrefix);
+			insertQueryBuilder.ensureCapacity(1000);
+			
+			int totalCount = 0, pendingCount = 0;
+			
+			dbConnection.declareIntent(new OIntentMassiveInsert());
+			
 			for (File file : filesToLoad)
 			{
 				if (file.isFile() && !file.isHidden())
@@ -63,18 +74,31 @@ public class Icd9CmDxLoader implements CodeLoader {
 					br = new BufferedReader(new FileReader(file));
 					String available;
 					while ((available = br.readLine()) != null) {
-						if (count++ == 0) {
+						if ((count++ == 0) || available.isEmpty()) {
 							continue; // skip header row
 						} else {
 
-							String[] line = available.split("\t");
+							String[] line = StringUtils.splitPreserveAllTokens(available, "\t", 2);
 							
-							Icd9CmDxModel model = dbConnection.newInstance(Icd9CmDxModel.class);;
+							if (pendingCount++ > 0) {
+								insertQueryBuilder.append(",");
+							}
 							
-							model.setCode(line[0].toUpperCase());
-							model.setDisplayName(line[1].toUpperCase());
+							insertQueryBuilder.append("(\"");
+							insertQueryBuilder.append(OIOUtils.encode(line[0].trim()));
+							insertQueryBuilder.append("\",\"");
+							insertQueryBuilder.append(OIOUtils.encode(line[1].trim()));
+							insertQueryBuilder.append("\")");
 							
-							dbConnection.save(model);
+							if ((totalCount % 5000) == 0) {
+								dbConnection.command(new OCommandSQL(insertQueryBuilder.toString())).execute();
+								dbConnection.commit();
+								
+								insertQueryBuilder.clear();
+								insertQueryBuilder.append(insertQueryPrefix);
+								
+								pendingCount = 0;
+							}
 						}
 
 
@@ -83,7 +107,10 @@ public class Icd9CmDxLoader implements CodeLoader {
 				}
 			}
 			
-			VocabularyRepository.updateIndexProperties(dbConnection, Icd9CmDxModel.class);
+			if (pendingCount > 0) {
+				dbConnection.command(new OCommandSQL(insertQueryBuilder.toString())).execute();
+				dbConnection.commit();
+			}
 			
 			logger.info("Icd9CmDxModel Loading complete... records existing: " + VocabularyRepository.getRecordCount(dbConnection, Icd9CmDxModel.class));
 		} catch (FileNotFoundException e) {
@@ -98,6 +125,8 @@ public class Icd9CmDxLoader implements CodeLoader {
 					logger.error(e);
 				}
 			}
+			
+			dbConnection.declareIntent(null);
 			
 			Runtime r = Runtime.getRuntime();
 			r.gc();

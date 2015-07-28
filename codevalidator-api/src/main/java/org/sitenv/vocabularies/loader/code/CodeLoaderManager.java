@@ -3,6 +3,7 @@ package org.sitenv.vocabularies.loader.code;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.TreeMap;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.model.CodeModel;
 
@@ -15,11 +16,11 @@ public class CodeLoaderManager {
 	private Map<String, Class<? extends CodeLoader>> loaderMap;
 	
 	private CodeLoaderManager() {
-		loaderMap = new HashMap<String, Class<? extends CodeLoader>>();
+		loaderMap = new TreeMap<String, Class<? extends CodeLoader>>(String.CASE_INSENSITIVE_ORDER);
 	}
 	
 	public void registerLoader(String key, Class<? extends CodeLoader> clazz) {
-		loaderMap.put(key.toUpperCase(), clazz);
+		loaderMap.put(key, clazz);
 	}
 	
 	public static CodeLoaderManager getInstance() {
@@ -31,7 +32,7 @@ public class CodeLoaderManager {
 		
 		try 
 		{
-			Class<? extends CodeLoader> clazz = loaderMap.get(loaderName.toUpperCase());
+			Class<? extends CodeLoader> clazz = loaderMap.get(loaderName);
 			
 			if (clazz != null)
 			{
