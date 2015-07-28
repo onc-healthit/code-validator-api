@@ -53,7 +53,7 @@ public class Icd9CmDxLoader implements CodeLoader {
 
 			VocabularyRepository.updateIndexProperties(dbConnection, Icd9CmDxModel.class, true);
 		
-			String insertQueryPrefix = "insert into " + Icd9CmDxModel.class.getSimpleName() + " (code, displayName) values ";
+			String insertQueryPrefix = "insert into " + Icd9CmDxModel.class.getSimpleName() + " (codeIndex, displayNameIndex, code, displayName) values ";
 			
 			StrBuilder insertQueryBuilder = new StrBuilder(insertQueryPrefix);
 			insertQueryBuilder.ensureCapacity(1000);
@@ -85,6 +85,10 @@ public class Icd9CmDxLoader implements CodeLoader {
 							}
 							
 							insertQueryBuilder.append("(\"");
+							insertQueryBuilder.append(OIOUtils.encode(line[0].trim().toUpperCase()));
+							insertQueryBuilder.append("\",\"");
+							insertQueryBuilder.append(OIOUtils.encode(line[1].trim().toUpperCase()));
+							insertQueryBuilder.append("\",\"");
 							insertQueryBuilder.append(OIOUtils.encode(line[0].trim()));
 							insertQueryBuilder.append("\",\"");
 							insertQueryBuilder.append(OIOUtils.encode(line[1].trim()));

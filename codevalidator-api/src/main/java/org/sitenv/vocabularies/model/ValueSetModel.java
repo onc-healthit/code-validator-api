@@ -3,8 +3,27 @@ package org.sitenv.vocabularies.model;
 
 public interface ValueSetModel {
 	
+	public String getValueSetIndex();
+
+	public void setValueSetIndex(String valueSetIndex);
+
+	public String getValueSetNameIndex();
+
+	public void setValueSetNameIndex(String valueSetNameIndex);
 	
+
+	public String getCodeIndex();
+
+	public void setCodeIndex(String codeIndex);
+
+	public String getDescriptionIndex();
+
+	public void setDescriptionIndex(String descriptionIndex);
 	
+	public String getCodeSystemIndex();
+
+	public void setCodeSystemIndex(String codeSystemIndex);
+
 
 	public String getValueSet();
 

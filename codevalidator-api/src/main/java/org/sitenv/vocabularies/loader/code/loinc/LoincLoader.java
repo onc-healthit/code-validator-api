@@ -57,7 +57,7 @@ public class LoincLoader implements CodeLoader {
 
 			VocabularyRepository.updateIndexProperties(dbConnection, LoincModel.class, true);
 			
-			String insertQueryPrefix = "insert into " + LoincModel.class.getSimpleName() + " (code, displayName) values ";
+			String insertQueryPrefix = "insert into " + LoincModel.class.getSimpleName() + " (codeIndex, displayNameIndex, code, displayName) values ";
 			
 			StrBuilder insertQueryBuilder = new StrBuilder(insertQueryPrefix);
 			insertQueryBuilder.ensureCapacity(1000);
@@ -89,6 +89,10 @@ public class LoincLoader implements CodeLoader {
 							}
 							
 							insertQueryBuilder.append("(\"");
+							insertQueryBuilder.append(OIOUtils.encode(StringUtils.strip(line[0], "\"").toUpperCase()));
+							insertQueryBuilder.append("\",\"");
+							insertQueryBuilder.append(OIOUtils.encode(StringUtils.strip(line[1], "\"").toUpperCase()));
+							insertQueryBuilder.append("\",\"");
 							insertQueryBuilder.append(OIOUtils.encode(StringUtils.strip(line[0], "\"")));
 							insertQueryBuilder.append("\",\"");
 							insertQueryBuilder.append(OIOUtils.encode(StringUtils.strip(line[1], "\"")));

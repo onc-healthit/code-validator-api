@@ -1,19 +1,17 @@
 package org.sitenv.vocabularies.repository;
 
-import com.orientechnologies.orient.core.collate.OCaseInsensitiveCollate;
-import com.orientechnologies.orient.core.index.OIndex;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import java.util.TreeMap;
+
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.model.CodeModel;
 import org.sitenv.vocabularies.model.ValueSetModel;
-import org.sitenv.vocabularies.model.ValueSetModelDefinition;
 import org.sitenv.vocabularies.model.VocabularyModelDefinition;
 
+import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
@@ -148,28 +146,28 @@ public class VocabularyRepository {
 		OClass target = dbConnection.getMetadata().getSchema().getOrCreateClass(clazz.getSimpleName());
 		
 		if (clear) {
-			for (OIndex<?> index : target.getInvolvedIndexes("code", "displayName")) {
+			for (OIndex<?> index : target.getInvolvedIndexes("codeIndex", "displayNameIndex")) {
 				index.clear();
 			}
 		}
 		
-		if (!target.areIndexed("code"))
+		if (!target.areIndexed("codeIndex"))
 		{
-			if (target.getProperty("code") == null)
+			if (target.getProperty("codeIndex") == null)
 			{
-				target.createProperty("code", OType.STRING).setCollate(OCaseInsensitiveCollate.NAME);
+				target.createProperty("codeIndex", OType.STRING);
 			}
-			target.createIndex(clazz.getSimpleName() + ".code", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "code");
+			target.createIndex(clazz.getSimpleName() + ".codeIndex", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "codeIndex");
 			dbConnection.getMetadata().getSchema().save();
 		}
 		
-		if (!target.areIndexed("displayName"))
+		if (!target.areIndexed("displayNameIndex"))
 		{
-			if (target.getProperty("displayName") == null)
+			if (target.getProperty("displayNameIndex") == null)
 			{
-				target.createProperty("displayName", OType.STRING).setCollate(OCaseInsensitiveCollate.NAME);
+				target.createProperty("displayNameIndex", OType.STRING);
 			}
-			target.createIndex(clazz.getSimpleName() + ".displayName", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "displayName");
+			target.createIndex(clazz.getSimpleName() + ".displayNameIndex", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "displayNameIndex");
 			dbConnection.getMetadata().getSchema().save();
 		}
 	}
@@ -179,38 +177,59 @@ public class VocabularyRepository {
 		OClass target = dbConnection.getMetadata().getSchema().getOrCreateClass(clazz.getSimpleName());
 		
 		if (clear) {
-			for (OIndex<?> index : target.getInvolvedIndexes("code", "displayName")) {
+			for (OIndex<?> index : target.getInvolvedIndexes("codeIndex", "codeSystemIndex", "valueSetIndex", "valueSetNameIndex", "descriptionIndex")) {
 				index.clear();
 			}
 		}
 		
-		if (!target.areIndexed("code"))
+		if (!target.areIndexed("codeIndex"))
 		{
-			if (target.getProperty("code") == null)
+			if (target.getProperty("codeIndex") == null)
 			{
-				target.createProperty("code", OType.STRING).setCollate(OCaseInsensitiveCollate.NAME);
+				target.createProperty("codeIndex", OType.STRING);
 			}
-			target.createIndex(clazz.getSimpleName() + ".code", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "code");
+			target.createIndex(clazz.getSimpleName() + ".codeIndex", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "codeIndex");
 			dbConnection.getMetadata().getSchema().save();
 		}
 		
-		if (!target.areIndexed("codeSystem"))
+		if (!target.areIndexed("codeSystemIndex"))
 		{
-			if (target.getProperty("codeSystem") == null)
+			if (target.getProperty("codeSystemIndex") == null)
 			{
-				target.createProperty("codeSystem", OType.STRING).setCollate(OCaseInsensitiveCollate.NAME);
+				target.createProperty("codeSystemIndex", OType.STRING);
 			}
-			target.createIndex(clazz.getSimpleName() + ".codeSystem", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "codeSystem");
+			target.createIndex(clazz.getSimpleName() + ".codeSystemIndex", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "codeSystemIndex");
 			dbConnection.getMetadata().getSchema().save();
 		}
 		
-		if (!target.areIndexed("valueSet"))
+		if (!target.areIndexed("valueSetIndex"))
 		{
-			if (target.getProperty("valueSet") == null)
+			if (target.getProperty("valueSetIndex") == null)
 			{
-				target.createProperty("valueSet", OType.STRING).setCollate(OCaseInsensitiveCollate.NAME);
+				target.createProperty("valueSetIndex", OType.STRING);
 			}
-			target.createIndex(clazz.getSimpleName() + ".valueSet", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "valueSet");
+			target.createIndex(clazz.getSimpleName() + ".valueSetIndex", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "valueSetIndex");
+			dbConnection.getMetadata().getSchema().save();
+		}
+		
+		if (!target.areIndexed("valueSetNameIndex"))
+		{
+			if (target.getProperty("valueSetNameIndex") == null)
+			{
+				target.createProperty("valueSetNameIndex", OType.STRING);
+			}
+			target.createIndex(clazz.getSimpleName() + ".valueSetNameIndex", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "valueSetNameIndex");
+			dbConnection.getMetadata().getSchema().save();
+		}
+		
+
+		if (!target.areIndexed("descriptionIndex"))
+		{
+			if (target.getProperty("descriptionIndex") == null)
+			{
+				target.createProperty("descriptionIndex", OType.STRING);
+			}
+			target.createIndex(clazz.getSimpleName() + ".descriptionIndex", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "descriptionIndex");
 			dbConnection.getMetadata().getSchema().save();
 		}
 	}
@@ -240,7 +259,7 @@ public class VocabularyRepository {
 	public <T extends CodeModel> List<T> fetchByCode(Class<T> clazz, String code)
 	{
 		
-		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT * FROM " + clazz.getSimpleName() + " where code.toUpperCase() = :code");
+		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT * FROM " + clazz.getSimpleName() + " where codeIndex = :code");
 		OObjectDatabaseTx dbConnection = null;
 		List<T> result = null;
 		
@@ -266,7 +285,7 @@ public class VocabularyRepository {
 	public <T extends CodeModel> List<T> fetchByDisplayName(Class<T> clazz, String displayName)
 	{
 		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT * FROM " + clazz.getSimpleName() +
-			" where displayName.toUpperCase() = :displayName");
+			" where displayNameIndex = :displayName");
 		OObjectDatabaseTx dbConnection = null;
 		List<T> result = null;
 		
@@ -292,7 +311,7 @@ public class VocabularyRepository {
 	public <T extends ValueSetModel> List<T> fetchByValueSetAndCode(Class<T> clazz, String valueSet, String code)
 	{
 		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT * FROM " + clazz.getSimpleName() +
-			" where valueSet.toUpperCase() = :valueSet AND code.toUpperCase() = :code");
+			" where valueSetIndex = :valueSet AND codeIndex = :code");
 		OObjectDatabaseTx dbConnection = null;
 		List<T> result = null;
 		
@@ -319,7 +338,7 @@ public class VocabularyRepository {
 	
 	public <T extends ValueSetModel> Boolean valueSetExists(Class<T> clazz, String valueSet)
 	{
-		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT DISTINCT(valueSet) FROM "+clazz.getSimpleName()+" where valueSet = :valueSet");
+		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT DISTINCT(valueSet) FROM "+clazz.getSimpleName()+" where valueSetIndex = :valueSet");
 		OObjectDatabaseTx dbConnection = null;
 		List<T> result = null;
 		
@@ -345,7 +364,7 @@ public class VocabularyRepository {
 	public <T extends ValueSetModel> List<T> fetchByValueSetCodeSystemAndCode(Class<T> clazz, String valueSet, String codeSystem, String code)
 	{
 		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT * FROM " + clazz.getSimpleName() +
-			" where valueSet.toUpperCase() = :valueSet AND codeSystem.toUpperCase() = :codeSystem AND code.toUpperCase() = :code");
+			" where valueSetIndex = :valueSet AND codeSystemIndex = :codeSystem AND codeIndex = :code");
 		OObjectDatabaseTx dbConnection = null;
 		List<T> result = null;
 		

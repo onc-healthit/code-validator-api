@@ -86,6 +86,7 @@ public class VocabularyValidationListener implements ServletContextListener {
 			{
 				logger.debug("Intializing the Orient DB server...");
 				OServer server = OServerMain.create();
+				
 				String configFileName = props.getProperty("vocabulary.orientDbConfigFile");
 				String primaryDbName = props.getProperty("vocabulary.primaryDbName");
 				String secondaryDbName = props.getProperty("vocabulary.secondaryDbName");

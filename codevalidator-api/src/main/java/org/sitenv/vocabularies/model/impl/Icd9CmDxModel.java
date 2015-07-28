@@ -7,6 +7,24 @@ public class Icd9CmDxModel implements CodeModel{
 	
 	private String code;
 	private String displayName;
+	
+	
+	private String codeIndex;
+	private String displayNameIndex;
+	
+	public String getCodeIndex() {
+		return codeIndex;
+	}
+	public void setCodeIndex(String codeIndex) {
+		this.codeIndex = codeIndex;
+	}
+	public String getDisplayNameIndex() {
+		return displayNameIndex;
+	}
+	public void setDisplayNameIndex(String displayNameIndex) {
+		this.displayNameIndex = displayNameIndex;
+	}
+	
 	public String getCode() {
 		return code;
 	}

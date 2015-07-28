@@ -55,7 +55,7 @@ public class RxNormLoader implements CodeLoader {
 
 			VocabularyRepository.updateIndexProperties(dbConnection, RxNormModel.class, true);
 		
-			String insertQueryPrefix = "insert into " + RxNormModel.class.getSimpleName() + " (code, displayName) values ";
+			String insertQueryPrefix = "insert into " + RxNormModel.class.getSimpleName() + " (codeIndex, displayNameIndex, code, displayName) values ";
 			
 			StrBuilder insertQueryBuilder = new StrBuilder(insertQueryPrefix);
 			insertQueryBuilder.ensureCapacity(1000);
@@ -82,6 +82,10 @@ public class RxNormLoader implements CodeLoader {
 						}
 						
 						insertQueryBuilder.append("(\"");
+						insertQueryBuilder.append(OIOUtils.encode(line[0]));
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(OIOUtils.encode(line[14]));
+						insertQueryBuilder.append("\",\"");
 						insertQueryBuilder.append(OIOUtils.encode(line[0]));
 						insertQueryBuilder.append("\",\"");
 						insertQueryBuilder.append(OIOUtils.encode(line[14]));

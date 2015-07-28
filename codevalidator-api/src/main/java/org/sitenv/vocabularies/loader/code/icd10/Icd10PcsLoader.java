@@ -53,7 +53,7 @@ public class Icd10PcsLoader implements CodeLoader {
 
 			VocabularyRepository.updateIndexProperties(dbConnection, Icd10PcsModel.class, true);
 			
-			String insertQueryPrefix = "insert into " + Icd10PcsModel.class.getSimpleName() + " (code, displayName) values ";
+			String insertQueryPrefix = "insert into " + Icd10PcsModel.class.getSimpleName() + " (codeIndex, displayNameIndex, code, displayName) values ";
 			
 			StrBuilder insertQueryBuilder = new StrBuilder(insertQueryPrefix);
 			insertQueryBuilder.ensureCapacity(1000);
@@ -78,6 +78,10 @@ public class Icd10PcsLoader implements CodeLoader {
 						}
 						
 						insertQueryBuilder.append("(\"");
+						insertQueryBuilder.append(OIOUtils.encode(available.substring(6, 13).trim().toUpperCase()));
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(OIOUtils.encode(available.substring(77).trim().toUpperCase()));
+						insertQueryBuilder.append("\",\"");
 						insertQueryBuilder.append(OIOUtils.encode(available.substring(6, 13).trim()));
 						insertQueryBuilder.append("\",\"");
 						insertQueryBuilder.append(OIOUtils.encode(available.substring(77).trim()));

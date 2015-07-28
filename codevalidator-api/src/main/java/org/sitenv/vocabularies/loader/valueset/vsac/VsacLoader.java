@@ -59,7 +59,7 @@ public class VsacLoader implements ValueSetLoader {
 			VocabularyRepository.updateValueSetIndexProperties(dbConnection, VsacValueSetModel.class, true);
 		
 			String insertQueryPrefix = "insert into " + VsacValueSetModel.class.getSimpleName() +
-				" (code, codeSystem, codeSystemName, codeSystemVersion, description, definitionVersion, steward, tty, type, valueSet, valueSetName) values ";
+				" (valueSetIndex, valueSetNameIndex, codeSystemIndex, codeIndex, descriptionIndex, code, codeSystem, codeSystemName, codeSystemVersion, description, definitionVersion, steward, tty, type, valueSet, valueSetName) values ";
 			
 			StrBuilder insertQueryBuilder = new StrBuilder(insertQueryPrefix);
 			insertQueryBuilder.ensureCapacity(1000);
@@ -95,6 +95,9 @@ public class VsacLoader implements ValueSetLoader {
 					String type = ((String) OIOUtils.encode(sheet.getRow(3).getCell(1).getStringCellValue()));
 					String version = ((String) OIOUtils.encode(sheet.getRow(4).getCell(1).getStringCellValue()));
 					String steward = ((String) OIOUtils.encode(sheet.getRow(5).getCell(1).getStringCellValue()));
+					
+					String valueSetIndex = oid.toUpperCase();
+					String valueSetNameIndex = valueSetName.toUpperCase();
 				
 					
 					for (int count = 11; count <= sheet.getLastRowNum(); count++)
@@ -104,6 +107,23 @@ public class VsacLoader implements ValueSetLoader {
 						}
 						
 						insertQueryBuilder.append("(\"");
+
+						insertQueryBuilder.append(valueSetIndex);
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(valueSetNameIndex);
+						insertQueryBuilder.append("\",\"");
+
+						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(4).getStringCellValue().toUpperCase()));
+						insertQueryBuilder.append("\",\"");
+						
+
+						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(0).getStringCellValue().toUpperCase()));
+						insertQueryBuilder.append("\",\"");
+						
+
+						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(3).getStringCellValue().toUpperCase()));
+						insertQueryBuilder.append("\",\"");
+						
 						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(0).getStringCellValue()));
 						insertQueryBuilder.append("\",\"");
 						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(4).getStringCellValue()));

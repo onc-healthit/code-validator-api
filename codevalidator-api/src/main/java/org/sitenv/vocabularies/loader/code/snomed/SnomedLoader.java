@@ -57,7 +57,7 @@ public void load(List<File> filesToLoad) {
 
 			VocabularyRepository.updateIndexProperties(dbConnection, SnomedModel.class, true);
 		
-			String insertQueryPrefix = "insert into " + SnomedModel.class.getSimpleName() + " (code, displayName) values ";
+			String insertQueryPrefix = "insert into " + SnomedModel.class.getSimpleName() + " (codeIndex, displayNameIndex, code, displayName) values ";
 			
 			StrBuilder insertQueryBuilder = new StrBuilder(insertQueryPrefix);
 			insertQueryBuilder.ensureCapacity(1000);
@@ -89,6 +89,10 @@ public void load(List<File> filesToLoad) {
 							}
 							
 							insertQueryBuilder.append("(\"");
+							insertQueryBuilder.append(OIOUtils.encode(line[4].toUpperCase()));
+							insertQueryBuilder.append("\",\"");
+							insertQueryBuilder.append(OIOUtils.encode(line[2].toUpperCase()));
+							insertQueryBuilder.append("\",\"");
 							insertQueryBuilder.append(OIOUtils.encode(line[4]));
 							insertQueryBuilder.append("\",\"");
 							insertQueryBuilder.append(OIOUtils.encode(line[2]));
