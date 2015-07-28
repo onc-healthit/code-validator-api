@@ -1,5 +1,8 @@
 package org.sitenv.vocabularies.loader.valueset.vsac;
 
+import com.orientechnologies.common.io.OIOUtils;
+import com.orientechnologies.orient.core.intent.OIntentMassiveInsert;
+import com.orientechnologies.orient.core.sql.OCommandSQL;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -18,6 +23,7 @@ import org.sitenv.vocabularies.loader.valueset.ValueSetLoader;
 import org.sitenv.vocabularies.loader.valueset.ValueSetLoaderManager;
 import org.sitenv.vocabularies.model.ValueSetModel;
 import org.sitenv.vocabularies.model.ValueSetModelDefinition;
+import org.sitenv.vocabularies.model.impl.LoincModel;
 import org.sitenv.vocabularies.model.impl.VsacValueSetModel;
 import org.sitenv.vocabularies.repository.VocabularyRepository;
 
@@ -31,13 +37,7 @@ public class VsacLoader implements ValueSetLoader {
 	static {
 		ValueSetLoaderManager.getInstance()
 				.registerLoader(VocabularyConstants.VSAC_VALUESET_NAME, VsacLoader.class);
-		System.out.println("Loaded: " + VocabularyConstants.VSAC_VALUESET_NAME + " (value set)");
-		
-		
-		if (VocabularyRepository.getInstance().getValueSetModelClassList() == null) 
-		{
-			VocabularyRepository.getInstance().setValueSetModelClassList(new ArrayList<Class<? extends ValueSetModel>>());
-		}
+		logger.info("Loaded: " + VocabularyConstants.VSAC_VALUESET_NAME + " (value set)");
 		
 		VocabularyRepository.getInstance().getValueSetModelClassList().add(VsacValueSetModel.class);
 		
@@ -56,7 +56,18 @@ public class VsacLoader implements ValueSetLoader {
 			VocabularyRepository.truncateValueSetModel(dbConnection, VsacValueSetModel.class);
 			logger.info(dbConnection.getName() + ".VsacValueSetModel Datastore Truncated... records remaining: " + VocabularyRepository.getValueSetRecordCount(dbConnection, VsacValueSetModel.class));
 
+			VocabularyRepository.updateValueSetIndexProperties(dbConnection, VsacValueSetModel.class, true);
 		
+			String insertQueryPrefix = "insert into " + VsacValueSetModel.class.getSimpleName() +
+				" (code, codeSystem, codeSystemName, codeSystemVersion, description, definitionVersion, steward, tty, type, valueSet, valueSetName) values ";
+			
+			StrBuilder insertQueryBuilder = new StrBuilder(insertQueryPrefix);
+			insertQueryBuilder.ensureCapacity(1000);
+			
+			int totalCount = 0, pendingCount = 0;
+			
+			dbConnection.declareIntent(new OIntentMassiveInsert());
+			
 			for (File file : filesToLoad)
 			{
 				if (file.isFile() && !file.isHidden())
@@ -79,38 +90,52 @@ public class VsacLoader implements ValueSetLoader {
 					HSSFSheet sheet = workBook.getSheet("Code List");
 						
 						
-					String valueSetName = sheet.getRow(1).getCell(1).getStringCellValue();
-					String oid = sheet.getRow(2).getCell(1).getStringCellValue();
-					String type = sheet.getRow(3).getCell(1).getStringCellValue();
-					String version = sheet.getRow(4).getCell(1).getStringCellValue();
-					String steward = sheet.getRow(5).getCell(1).getStringCellValue();
+					String valueSetName = ((String) OIOUtils.encode(sheet.getRow(1).getCell(1).getStringCellValue()));
+					String oid = ((String) OIOUtils.encode(sheet.getRow(2).getCell(1).getStringCellValue()));
+					String type = ((String) OIOUtils.encode(sheet.getRow(3).getCell(1).getStringCellValue()));
+					String version = ((String) OIOUtils.encode(sheet.getRow(4).getCell(1).getStringCellValue()));
+					String steward = ((String) OIOUtils.encode(sheet.getRow(5).getCell(1).getStringCellValue()));
 				
 					
 					for (int count = 11; count <= sheet.getLastRowNum(); count++)
 					{
-						String code = sheet.getRow(count).getCell(0).getStringCellValue();
-						String description = sheet.getRow(count).getCell(1).getStringCellValue();
-						String codeSystem = sheet.getRow(count).getCell(2).getStringCellValue();
-						String codeSystemVersion = sheet.getRow(count).getCell(3).getStringCellValue();
-						String codeSystemOid = sheet.getRow(count).getCell(4).getStringCellValue();
-						String tty = sheet.getRow(count).getCell(5).getStringCellValue();
+						if (pendingCount++ > 0) {
+							insertQueryBuilder.append(",");
+						}
 						
-						//System.out.println(code+":"+description+":"+codeSystem+":"+codeSystemVersion+":"+codeSystemOid+":"+tty);
+						insertQueryBuilder.append("(\"");
+						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(0).getStringCellValue()));
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(4).getStringCellValue()));
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(2).getStringCellValue()));
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(3).getStringCellValue()));
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(1).getStringCellValue()));
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(version);
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(steward);
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(5).getStringCellValue()));
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(type);
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(oid);
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(valueSetName);
+						insertQueryBuilder.append("\")");
 						
-						VsacValueSetModel model = dbConnection.newInstance(VsacValueSetModel.class);
-						model.setCode(code.toUpperCase());
-						model.setCodeSystem(codeSystemOid.toUpperCase());
-						model.setCodeSystemName(codeSystem.toUpperCase());
-						model.setCodeSystemVersion(codeSystemVersion);
-						model.setDescription(description);
-						model.setDefinitionVersion(version);
-						model.setSteward(steward);
-						model.setTty(tty);
-						model.setType(type);
-						model.setValueSet(oid.toUpperCase());
-						model.setValueSetName(valueSetName);
-						
-						dbConnection.save(model);
+						if ((totalCount % 5000) == 0) {
+							dbConnection.command(new OCommandSQL(insertQueryBuilder.toString())).execute();
+							dbConnection.commit();
+							
+							insertQueryBuilder.clear();
+							insertQueryBuilder.append(insertQueryPrefix);
+							
+							pendingCount = 0;
+						}
 					}
 					
 					workBook.close();
@@ -119,8 +144,10 @@ public class VsacLoader implements ValueSetLoader {
 				}
 			}
 			
-				VocabularyRepository.updateValueSetIndexProperties(dbConnection, VsacValueSetModel.class);
-			
+				if (pendingCount > 0) {
+					dbConnection.command(new OCommandSQL(insertQueryBuilder.toString())).execute();
+					dbConnection.commit();
+				}
 			
 				logger.info("VsacValueSetModel Loading complete... records existing: " + VocabularyRepository.getValueSetRecordCount(dbConnection, VsacValueSetModel.class));
 			} catch (FileNotFoundException e) {
@@ -136,6 +163,9 @@ public class VsacLoader implements ValueSetLoader {
 						logger.error(e);
 					}
 				}
+				
+				dbConnection.declareIntent(null);
+				
 				Runtime r = Runtime.getRuntime();
 				r.gc();
 			}

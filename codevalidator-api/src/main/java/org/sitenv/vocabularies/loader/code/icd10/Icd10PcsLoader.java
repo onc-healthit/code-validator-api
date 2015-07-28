@@ -1,5 +1,8 @@
 package org.sitenv.vocabularies.loader.code.icd10;
 
+import com.orientechnologies.common.io.OIOUtils;
+import com.orientechnologies.orient.core.intent.OIntentMassiveInsert;
+import com.orientechnologies.orient.core.sql.OCommandSQL;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,11 +11,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.loader.code.CodeLoader;
 import org.sitenv.vocabularies.loader.code.CodeLoaderManager;
 import org.sitenv.vocabularies.model.VocabularyModelDefinition;
+import org.sitenv.vocabularies.model.impl.Icd10CmModel;
 import org.sitenv.vocabularies.model.impl.Icd10PcsModel;
 import org.sitenv.vocabularies.repository.VocabularyRepository;
 
@@ -26,12 +31,7 @@ public class Icd10PcsLoader implements CodeLoader {
 	static {
 		CodeLoaderManager.getInstance()
 				.registerLoader(VocabularyConstants.ICD10PCS_CODE_NAME, Icd10PcsLoader.class);
-		System.out.println("Loaded: " + VocabularyConstants.ICD10PCS_CODE_NAME + "(" + VocabularyConstants.ICD10PCS_CODE_SYSTEM + ")");
-		
-		if (VocabularyRepository.getInstance().getVocabularyMap() == null)
-		{
-			VocabularyRepository.getInstance().setVocabularyMap(new HashMap<String,VocabularyModelDefinition>());
-		}
+		logger.info("Loaded: " + VocabularyConstants.ICD10PCS_CODE_NAME + "(" + VocabularyConstants.ICD10PCS_CODE_SYSTEM + ")");
 		
 		VocabularyModelDefinition icd10Pcs = new VocabularyModelDefinition(Icd10PcsModel.class, VocabularyConstants.ICD10PCS_CODE_SYSTEM);
 		
@@ -51,7 +51,17 @@ public class Icd10PcsLoader implements CodeLoader {
 			VocabularyRepository.truncateModel(dbConnection, Icd10PcsModel.class);
 			logger.info(dbConnection.getName() + ".Icd10PcsModel Datastore Truncated... records remaining: " + VocabularyRepository.getRecordCount(dbConnection, Icd10PcsModel.class));
 
-		
+			VocabularyRepository.updateIndexProperties(dbConnection, Icd10PcsModel.class, true);
+			
+			String insertQueryPrefix = "insert into " + Icd10PcsModel.class.getSimpleName() + " (code, displayName) values ";
+			
+			StrBuilder insertQueryBuilder = new StrBuilder(insertQueryPrefix);
+			insertQueryBuilder.ensureCapacity(1000);
+			
+			int totalCount = 0, pendingCount = 0;
+			
+			dbConnection.declareIntent(new OIntentMassiveInsert());
+			
 			for (File file : filesToLoad)
 			{
 				if (file.isFile() && !file.isHidden())
@@ -63,23 +73,35 @@ public class Icd10PcsLoader implements CodeLoader {
 					String available;
 					while ((available = br.readLine()) != null) {
 						
-						String code = available.substring(6, 13).trim();
-						String displayName = available.substring(77).trim();
-					
-						Icd10PcsModel model = dbConnection.newInstance(Icd10PcsModel.class);;
+						if (pendingCount++ > 0) {
+							insertQueryBuilder.append(",");
+						}
 						
-						model.setCode(code);
-						model.setDisplayName(displayName);
+						insertQueryBuilder.append("(\"");
+						insertQueryBuilder.append(OIOUtils.encode(available.substring(6, 13).trim()));
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(OIOUtils.encode(available.substring(77).trim()));
+						insertQueryBuilder.append("\")");
 						
-						dbConnection.save(model);
+						if ((totalCount % 5000) == 0) {
+							dbConnection.command(new OCommandSQL(insertQueryBuilder.toString())).execute();
+							dbConnection.commit();
+							
+							insertQueryBuilder.clear();
+							insertQueryBuilder.append(insertQueryPrefix);
+							
+							pendingCount = 0;
+						}
 						
 					}
 						
 				}
 			}
 			
-			VocabularyRepository.updateIndexProperties(dbConnection, Icd10PcsModel.class);
-			
+			if (pendingCount > 0) {
+				dbConnection.command(new OCommandSQL(insertQueryBuilder.toString())).execute();
+				dbConnection.commit();
+			}
 			
 			logger.info("Icd10PcsModel Loading complete... records existing: " + VocabularyRepository.getRecordCount(dbConnection, Icd10PcsModel.class));
 		} catch (FileNotFoundException e) {
@@ -94,6 +116,8 @@ public class Icd10PcsLoader implements CodeLoader {
 					logger.error(e);
 				}
 			}
+			
+			dbConnection.declareIntent(null);
 			
 			Runtime r = Runtime.getRuntime();
 			r.gc();
