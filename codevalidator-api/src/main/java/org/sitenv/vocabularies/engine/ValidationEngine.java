@@ -9,7 +9,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
+import org.sitenv.vocabularies.data.CodeValidationResult;
 import org.sitenv.vocabularies.data.DisplayNameValidationResult;
+import org.sitenv.vocabularies.data.ValueSetValidationResult;
 import org.sitenv.vocabularies.loader.code.CodeLoader;
 import org.sitenv.vocabularies.loader.code.CodeLoaderManager;
 import org.sitenv.vocabularies.loader.valueset.ValueSetLoader;
@@ -101,15 +103,13 @@ public abstract class ValidationEngine {
 		DisplayNameValidationResult result = null;
 		
 		if (codeSystem != null && code != null &&  ds != null && ds.getVocabularyMap() != null) {
-			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
-			
-			VocabularyModelDefinition vocab = vocabMap.get(codeSystem);
+	
 			
 			result = new DisplayNameValidationResult();
 			result.setCode(code);
 			result.setAnticipatedDisplayName(displayName);
 			result.setActualDisplayName(new ArrayList<String>());
-			List<? extends CodeModel> results = ds.fetchByCode(vocab.getClazz(), code);
+			List<? extends CodeModel> results = getCode(codeSystem, code);
 			
 			result.setResult(false);
 			
@@ -147,11 +147,8 @@ public abstract class ValidationEngine {
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		
 		if (codeSystem != null && code != null &&  ds != null && ds.getVocabularyMap() != null) {
-			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
 			
-			VocabularyModelDefinition vocab = vocabMap.get(codeSystem);
-			
-			List<? extends CodeModel> results = ds.fetchByCode(vocab.getClazz(), code);
+			List<? extends CodeModel> results = getCode(codeSystem, code);
 			
 			if (results != null && results.size() > 0)
 			{
@@ -180,11 +177,9 @@ public abstract class ValidationEngine {
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		
 		if (codeSystem != null && displayName != null &&  ds != null && ds.getVocabularyMap() != null) {
-			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
 			
-			VocabularyModelDefinition vocab = vocabMap.get(codeSystem);
+			List<? extends CodeModel> results = getDisplayName(codeSystem, displayName);
 			
-			List<? extends CodeModel> results = ds.fetchByDisplayName(vocab.getClazz(), displayName);
 			
 			if (results != null && results.size() > 0)
 			{
@@ -196,7 +191,75 @@ public abstract class ValidationEngine {
 		return false;
 	}
 	
-	public static List<ValueSetModel> getValueSetCode(String valueSet, String code, String codeSystem)
+	public static CodeValidationResult validateCode(String codeSystem, String codeSystemName, String code, String displayName)
+	{
+		CodeValidationResult result = new CodeValidationResult();
+		
+		// Code System comparisons
+		if (codeSystem == null)
+		{
+			codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName);
+			result.getExpectedOidsForCodeSystemName().add(codeSystem);
+		}
+		else
+		{
+			if (codeSystemName != null)
+			{
+				if (codeSystem.equalsIgnoreCase(VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName)))
+				{
+					result.setCodeSystemAndNameMatch(true);
+					result.getExpectedOidsForCodeSystemName().add(codeSystem);
+					for (String codeSystemNameLkp : VocabularyConstants.CODE_SYSTEM_MAP.keySet())
+					{
+						if (VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemNameLkp).equalsIgnoreCase(VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName)))
+						{
+							result.getExpectedCodeSystemNamesForOid().add(codeSystemNameLkp);
+						}
+					}
+				}
+			}
+		}
+		
+		List<? extends CodeModel> codeModels = getCode(codeSystem, code);
+		
+		if (codeModels != null && codeModels.size() > 0)
+		{
+			result.setCodeExistsInCodeSystem(true);
+			
+			for (CodeModel model : codeModels)
+			{
+				result.getExpectedDisplayNamesForCode().add(model.getDisplayName());
+				
+				// case sensitive compare of displayName
+				if (displayName != null && model.getDisplayName() != null && model.getDisplayName().equals(displayName))
+				{
+					result.setDisplayNameExistsForCode(true);
+				}
+			}
+		}
+		
+		List<? extends CodeModel> displayNameModels = getCode(codeSystem, code);
+		
+		if (displayNameModels != null && displayNameModels.size() > 0)
+		{
+			result.setDisplayNameExistsInCodeSystem(true);
+			
+			for (CodeModel model : displayNameModels)
+			{
+				result.getExpectedCodesForDisplayName().add(model.getCode());
+			}
+		}
+		
+		return result;
+		
+	}
+	
+	public static ValueSetValidationResult validateValueSetCode (String valueSet, String codeSystem, String codeSystemName, String code, String displayName)
+	{
+		return null;
+	}
+	
+	private static List<ValueSetModel> getValueSetCode(String valueSet, String code)
 	{
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		List<ValueSetModel> result = null;
@@ -224,7 +287,35 @@ public abstract class ValidationEngine {
 		return result;
 	}
 	
-	public static List<? extends CodeModel> getCode(String codeSystem, String code)
+	private static List<ValueSetModel> getValueSetDescription(String valueSet, String description)
+	{
+		VocabularyRepository ds = VocabularyRepository.getInstance();
+		List<ValueSetModel> result = null;
+		
+		if (valueSet != null && description != null &&  ds != null && ds.getValueSetModelClassList() != null) {
+			
+			
+			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+			{
+				List<? extends ValueSetModel> modelList = ds.fetchByValueSetAndDescription(clazz, valueSet, description);
+				
+				if (modelList != null)
+				{
+					if (result == null)
+					{
+						result = new ArrayList<ValueSetModel>();
+					}
+					
+					result.addAll(modelList);
+				}
+			}
+					
+		}
+		
+		return result;
+	}
+	
+	private static List<? extends CodeModel> getCode(String codeSystem, String code)
 	{
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		List<? extends CodeModel> results = null;
@@ -235,6 +326,24 @@ public abstract class ValidationEngine {
 			VocabularyModelDefinition vocab = vocabMap.get(codeSystem);
 			
 			results = ds.fetchByCode(vocab.getClazz(), code);
+			
+			
+		}
+		
+		return results;
+	}
+	
+	private static List<? extends CodeModel> getDisplayName(String codeSystem, String displayName)
+	{
+		VocabularyRepository ds = VocabularyRepository.getInstance();
+		List<? extends CodeModel> results = null;
+		
+		if (codeSystem != null && displayName != null &&  ds != null && ds.getVocabularyMap() != null) {
+			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
+			
+			VocabularyModelDefinition vocab = vocabMap.get(codeSystem);
+			
+			results = ds.fetchByCode(vocab.getClazz(), displayName);
 			
 			
 		}

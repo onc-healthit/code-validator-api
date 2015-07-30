@@ -336,6 +336,34 @@ public class VocabularyRepository {
 		return result;
 	}
 	
+	public <T extends ValueSetModel> List<T> fetchByValueSetAndDescription(Class<T> clazz, String valueSet, String description)
+	{
+		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT * FROM " + clazz.getSimpleName() +
+			" where valueSetIndex = :valueSet AND descriptionIndex = :description");
+		OObjectDatabaseTx dbConnection = null;
+		List<T> result = null;
+		
+		Map<String, Object> params = new HashMap<String,Object> ();
+		params.put("valueSet", valueSet.toUpperCase());
+		params.put("description", description.toUpperCase());
+		
+		
+		try 
+		{
+			dbConnection = this.getActiveDbConnection();
+			result = dbConnection.command(query).execute(params);
+		}
+		catch (Exception e)
+		{
+			logger.error("Could not execute query against active database.", e);
+		}
+		finally
+		{
+			dbConnection.close();
+		}
+		return result;
+	}
+	
 	public <T extends ValueSetModel> Boolean valueSetExists(Class<T> clazz, String valueSet)
 	{
 		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT DISTINCT(valueSet) FROM "+clazz.getSimpleName()+" where valueSetIndex = :valueSet");
