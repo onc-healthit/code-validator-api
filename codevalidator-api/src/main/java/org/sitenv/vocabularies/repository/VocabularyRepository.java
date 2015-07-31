@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
+import org.sitenv.vocabularies.data.CodeSystemResult;
 import org.sitenv.vocabularies.model.CodeModel;
 import org.sitenv.vocabularies.model.ValueSetModel;
 import org.sitenv.vocabularies.model.VocabularyModelDefinition;
@@ -14,6 +17,7 @@ import org.sitenv.vocabularies.model.VocabularyModelDefinition;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.OCommandSQLParsingException;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
@@ -36,8 +40,6 @@ public class VocabularyRepository {
 	
 	private OServer primaryOrientDbServer;
 	private VocabularyRepositoryConnectionInfo primaryNodeCredentials;
-	private OObjectDatabasePool primaryConnectionPool;
-	private OObjectDatabasePool secondaryConnectionPool;
 	private VocabularyRepositoryConnectionInfo secondaryNodeCredentials;
 	private boolean isPrimaryActive = true; 
 	
@@ -48,8 +50,6 @@ public class VocabularyRepository {
 		return ACTIVE_INSTANCE;
 	}
 
-	
-	
 
 
 	public List<Class<? extends ValueSetModel>> getValueSetModelClassList() {
@@ -75,7 +75,6 @@ public class VocabularyRepository {
 	public void setPrimaryNodeCredentials(VocabularyRepositoryConnectionInfo primaryNodeCredentials) {
 		this.primaryNodeCredentials = primaryNodeCredentials;
 		
-		this.primaryConnectionPool = new OObjectDatabasePool(primaryNodeCredentials.getConnectionInfo(), primaryNodeCredentials.getUsername(), primaryNodeCredentials.getPassword());
 	}
 
 
@@ -88,7 +87,6 @@ public class VocabularyRepository {
 			VocabularyRepositoryConnectionInfo secondaryNodeCredentials) {
 		this.secondaryNodeCredentials = secondaryNodeCredentials;
 	
-		this.secondaryConnectionPool = new OObjectDatabasePool(secondaryNodeCredentials.getConnectionInfo(), secondaryNodeCredentials.getUsername(), secondaryNodeCredentials.getPassword());
 	}
 	
 	public OObjectDatabaseTx getActiveDbConnection() {
@@ -96,9 +94,11 @@ public class VocabularyRepository {
 		OObjectDatabaseTx connection;
 		
 		if (isPrimaryActive) {
-			connection = primaryConnectionPool.acquire();
+			//connection = primaryConnectionPool.acquire();
+			connection = OObjectDatabasePool.global().acquire(primaryNodeCredentials.getConnectionInfo(), primaryNodeCredentials.getUsername(), primaryNodeCredentials.getPassword());
 		} else {
-			connection = secondaryConnectionPool.acquire();
+			//connection = secondaryConnectionPool.acquire();
+			connection = OObjectDatabasePool.global().acquire(secondaryNodeCredentials.getConnectionInfo(), secondaryNodeCredentials.getUsername(), secondaryNodeCredentials.getPassword());
 		}
 		
 		registerModels(connection);
@@ -111,9 +111,11 @@ public class VocabularyRepository {
 		OObjectDatabaseTx connection;
 		
 		if (!isPrimaryActive) {
-			connection = primaryConnectionPool.acquire();
+			//connection = primaryConnectionPool.acquire();
+			connection = OObjectDatabasePool.global().acquire(primaryNodeCredentials.getConnectionInfo(), primaryNodeCredentials.getUsername(), primaryNodeCredentials.getPassword());
 		} else {
-			connection = secondaryConnectionPool.acquire();
+			//connection = secondaryConnectionPool.acquire();
+			connection = OObjectDatabasePool.global().acquire(secondaryNodeCredentials.getConnectionInfo(), secondaryNodeCredentials.getUsername(), secondaryNodeCredentials.getPassword());
 		}
 		
 		registerModels(connection);
@@ -308,6 +310,103 @@ public class VocabularyRepository {
 		return result;
 	}
 	
+	public <T extends ValueSetModel> List<CodeSystemResult> fetchCodeSystemsByValueSet(Class<T> clazz, String valueSet)
+	{
+		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT codeSystem, codeSystemName FROM " + clazz.getSimpleName() +
+				" where valueSetIndex = :valueSet GROUP BY codeSystem, codeSystemName");
+		OObjectDatabaseTx dbConnection = null;
+		List<ODocument> results = null;
+		List<CodeSystemResult> codeSystems = null;
+		
+		Map<String, Object> params = new HashMap<String,Object> ();
+		params.put("valueSet", valueSet.toUpperCase());
+		
+		
+		try 
+		{
+			dbConnection = this.getActiveDbConnection();
+			results = dbConnection.command(query).execute(params);
+			
+			if (results != null)
+			{
+				codeSystems = new ArrayList<CodeSystemResult>();
+				for (ODocument result : results)
+				{
+					//logger.debug("fieldNames " + result.fieldNames()[0] + " " + result.fieldNames()[1]);
+					String codeSystem = result.field("codeSystem");
+					String codeSystemName = result.field("codeSystemName");
+					
+					CodeSystemResult csResult = new CodeSystemResult();
+					csResult.setCodeSystem(codeSystem);
+					csResult.setCodeSystemName(codeSystemName);
+					
+					codeSystems.add(csResult);
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			logger.error("Could not execute query against active database.", e);
+		}
+		finally
+		{
+			dbConnection.close();
+		}
+		
+		
+		
+		
+		
+		
+		return codeSystems;
+	}
+	
+	public <T extends ValueSetModel> Set<String> fetchValueSetNamesByValueSet(Class<T> clazz, String valueSet)
+	{
+		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT DISTINCT(valueSetName) AS valueSetName FROM " + clazz.getSimpleName() +
+				" where valueSetIndex = :valueSet");
+		OObjectDatabaseTx dbConnection = null;
+		List<ODocument> results = null;
+		Set<String> valueSetNames = null;
+		
+		Map<String, Object> params = new HashMap<String,Object> ();
+		params.put("valueSet", valueSet.toUpperCase());
+		
+		
+		try 
+		{
+			dbConnection = this.getActiveDbConnection();
+			results = dbConnection.command(query).execute(params);
+			
+			if (results != null)
+			{
+				valueSetNames = new TreeSet<String>();
+				for (ODocument result : results)
+				{
+					//logger.debug("fieldNames " + result.fieldNames()[0] + " " + result.fieldNames()[1]);
+					String valueSetName = result.field("valueSetName");
+					
+					valueSetNames.add(valueSetName);
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			logger.error("Could not execute query against active database.", e);
+		}
+		finally
+		{
+			dbConnection.close();
+		}
+		
+		
+		
+		
+		
+		
+		return valueSetNames;
+	}
+	
 	public <T extends ValueSetModel> List<T> fetchByValueSetAndCode(Class<T> clazz, String valueSet, String code)
 	{
 		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT * FROM " + clazz.getSimpleName() +
@@ -366,7 +465,7 @@ public class VocabularyRepository {
 	
 	public <T extends ValueSetModel> Boolean valueSetExists(Class<T> clazz, String valueSet)
 	{
-		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT DISTINCT(valueSet) FROM "+clazz.getSimpleName()+" where valueSetIndex = :valueSet");
+		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT DISTINCT(valueSet) AS valueSet FROM "+clazz.getSimpleName()+" where valueSetIndex = :valueSet");
 		OObjectDatabaseTx dbConnection = null;
 		List<T> result = null;
 		

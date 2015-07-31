@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
+import org.sitenv.vocabularies.data.CodeSystemResult;
 import org.sitenv.vocabularies.data.CodeValidationResult;
 import org.sitenv.vocabularies.data.DisplayNameValidationResult;
 import org.sitenv.vocabularies.data.ValueSetValidationResult;
@@ -52,7 +55,7 @@ public abstract class ValidationEngine {
 		return (vocabulary != null);
 	}
 	
-	public static boolean validateValueSetLoaded(String valueSet)
+	public static boolean isValueSetLoaded(String valueSet)
 	{
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		
@@ -192,8 +195,13 @@ public abstract class ValidationEngine {
 	}
 	
 	public static CodeValidationResult validateCode(String codeSystem, String codeSystemName, String code, String displayName)
-	{
+	{	
 		CodeValidationResult result = new CodeValidationResult();
+		
+		result.setRequestedCode(code);
+		result.setRequestedCodeSystemName(codeSystemName);
+		result.setRequestedCodeSystemOid(codeSystem);
+		result.setRequestedDisplayName(displayName);
 		
 		// Code System comparisons
 		if (codeSystem == null)
@@ -250,13 +258,97 @@ public abstract class ValidationEngine {
 			}
 		}
 		
+		
 		return result;
 		
 	}
 	
-	public static ValueSetValidationResult validateValueSetCode (String valueSet, String codeSystem, String codeSystemName, String code, String displayName)
+	public static ValueSetValidationResult validateValueSetCode (String valueSet, String codeSystem, String codeSystemName, String code, String description)
 	{
-		return null;
+		ValueSetValidationResult result = new ValueSetValidationResult();
+		
+		
+		result.setRequestedCode(code);
+		result.setRequestedCodeSystemName(codeSystemName);
+		result.setRequestedCodeSystemOid(codeSystem);
+		result.setRequestedDescription(description);
+		result.setRequestedValueSetOid(valueSet);
+		
+		Set<String> valueSetNames = getValueSetNames(valueSet);
+		
+		result.getValueSetNames().addAll(valueSetNames);
+		
+		List<? extends ValueSetModel> codeModels = getValueSetCode(valueSet, code);
+		
+		if (codeModels != null && codeModels.size() > 0)
+		{
+			result.setCodeExistsInValueSet(true);
+			
+			for (ValueSetModel model : codeModels)
+			{
+				result.getExpectedDescriptionsForCode().add(model.getDescription());
+				
+				result.getExpectedCodeSystemsForCode().add(model.getCodeSystem());
+				
+				// case sensitive compare of displayName
+				if (description != null && model.getDescription() != null && model.getDescription().equals(description))
+				{
+					result.setDescriptionMatchesCode(true);
+				}
+				
+				if (codeSystem != null && model.getCodeSystem() != null && model.getCodeSystem().equals(codeSystem))
+				{
+					result.setCodeExistsInCodeSystem(true);
+				}
+				
+			}
+		}
+		
+		List<? extends ValueSetModel> descriptionModels = getValueSetDescription(valueSet, description);
+		
+		if (descriptionModels != null && descriptionModels.size() > 0)
+		{
+			result.setDescriptionExistsInValueSet(true);
+			
+			for (ValueSetModel model : descriptionModels)
+			{
+				result.getExpectedCodesForDescription().add(model.getCode());
+				
+				if (codeSystem != null && model.getCodeSystem() != null && model.getCodeSystem().equals(codeSystem))
+				{
+					result.setDescriptionExistsInCodeSystem(true);
+				}
+			}
+		}
+		
+		List<CodeSystemResult> codeSystemModels  = getValueSetCodeSystems(valueSet);
+		
+		if (codeSystemModels != null && codeSystemModels.size() > 0)
+		{
+			for (CodeSystemResult system : codeSystemModels)
+			{
+				result.getExpectedCodeSystemsForValueSet().add(system.getCodeSystem());
+				
+				if (codeSystem != null && system.getCodeSystem() != null && system.getCodeSystem().equalsIgnoreCase(codeSystem))
+				{
+					result.setCodeSystemExistsInValueSet(true);
+					result.getExpectedCodeSystemNamesForOid().add(system.getCodeSystemName());
+				}
+				
+				if (codeSystemName != null && system.getCodeSystemName() != null && system.getCodeSystemName().equalsIgnoreCase(codeSystemName))
+				{
+					
+					result.getExpectedOidsForCodeSystemName().add(system.getCodeSystem());
+					
+					if (codeSystem != null && system.getCodeSystem() != null && system.getCodeSystem().equalsIgnoreCase(codeSystem))
+					{
+						result.setCodeSystemAndNameMatch(true);
+					}
+				}
+			}
+		}
+		
+		return result;
 	}
 	
 	private static List<ValueSetModel> getValueSetCode(String valueSet, String code)
@@ -287,6 +379,34 @@ public abstract class ValidationEngine {
 		return result;
 	}
 	
+	private static Set<String> getValueSetNames(String valueSet)
+	{
+		VocabularyRepository ds = VocabularyRepository.getInstance();
+		Set<String> result = null;
+		
+		if (valueSet != null &&  ds != null && ds.getValueSetModelClassList() != null) {
+			
+			
+			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+			{
+				Set<String> modelList = ds.fetchValueSetNamesByValueSet(clazz, valueSet);
+				
+				if (modelList != null)
+				{
+					if (result == null)
+					{
+						result = new TreeSet<String>();
+					}
+					
+					result.addAll(modelList);
+				}
+			}
+					
+		}
+		
+		return result;
+	}
+	
 	private static List<ValueSetModel> getValueSetDescription(String valueSet, String description)
 	{
 		VocabularyRepository ds = VocabularyRepository.getInstance();
@@ -304,6 +424,34 @@ public abstract class ValidationEngine {
 					if (result == null)
 					{
 						result = new ArrayList<ValueSetModel>();
+					}
+					
+					result.addAll(modelList);
+				}
+			}
+					
+		}
+		
+		return result;
+	}
+	
+	private static List<CodeSystemResult> getValueSetCodeSystems(String valueSet)
+	{
+		VocabularyRepository ds = VocabularyRepository.getInstance();
+		List<CodeSystemResult> result = null;
+		
+		if (valueSet != null &&  ds != null && ds.getValueSetModelClassList() != null) {
+			
+			
+			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+			{
+				List<CodeSystemResult> modelList = ds.fetchCodeSystemsByValueSet(clazz, valueSet);
+				
+				if (modelList != null)
+				{
+					if (result == null)
+					{
+						result = new ArrayList<CodeSystemResult>();
 					}
 					
 					result.addAll(modelList);
