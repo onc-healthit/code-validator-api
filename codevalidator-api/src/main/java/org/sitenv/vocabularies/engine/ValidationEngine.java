@@ -491,7 +491,7 @@ public abstract class ValidationEngine {
 			
 			VocabularyModelDefinition vocab = vocabMap.get(codeSystem);
 			
-			results = ds.fetchByCode(vocab.getClazz(), displayName);
+			results = ds.fetchByDisplayName(vocab.getClazz(), displayName);
 			
 			
 		}
