@@ -23,16 +23,16 @@ public class ValueSetValidationResult {
 	private Set<String> expectedCodeSystemsForCode = new TreeSet<String>();
 	private Set<String> expectedCodeSystemsForValueSet = new TreeSet<String>();
 	
-	private Boolean codeExistsInValueSet;
-	private Boolean codeExistsInCodeSystem;
+	private Boolean codeExistsInValueSet = false;
+	private Boolean codeExistsInCodeSystem = false;
 
-	private Boolean descriptionExistsInValueSet;
-	private Boolean descriptionExistsInCodeSystem;
-	private Boolean descriptionMatchesCode;
+	private Boolean descriptionExistsInValueSet = false;
+	private Boolean descriptionExistsInCodeSystem = false;
+	private Boolean descriptionMatchesCode = false;
 	
 	
-	private Boolean codeSystemAndNameMatch;
-	private Boolean codeSystemExistsInValueSet;
+	private Boolean codeSystemAndNameMatch = false;
+	private Boolean codeSystemExistsInValueSet = false;
 	public String getRequestedValueSetOid() {
 		return requestedValueSetOid;
 	}

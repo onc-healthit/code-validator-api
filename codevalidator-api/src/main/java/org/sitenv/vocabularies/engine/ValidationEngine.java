@@ -314,7 +314,7 @@ public abstract class ValidationEngine {
 			{
 				result.getExpectedCodesForDescription().add(model.getCode());
 				
-				if (codeSystem != null && model.getCodeSystem() != null && model.getCodeSystem().equals(codeSystem))
+				if (codeSystem != null && model.getCodeSystem() != null && model.getCodeSystem().equalsIgnoreCase(codeSystem))
 				{
 					result.setDescriptionExistsInCodeSystem(true);
 				}

@@ -3,6 +3,7 @@ package org.sitenv.vocabularies.loader.valueset.vsac;
 import com.orientechnologies.common.io.OIOUtils;
 import com.orientechnologies.orient.core.intent.OIntentMassiveInsert;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -106,39 +107,46 @@ public class VsacLoader implements ValueSetLoader {
 							insertQueryBuilder.append(",");
 						}
 						
+						String code = (String) OIOUtils.encode(sheet.getRow(count).getCell(0).getStringCellValue());
+						String description = (String) OIOUtils.encode(sheet.getRow(count).getCell(1).getStringCellValue());
+						String codeSystemName = (String) OIOUtils.encode(sheet.getRow(count).getCell(2).getStringCellValue());
+						String codeSystemVersion = (String) OIOUtils.encode(sheet.getRow(count).getCell(3).getStringCellValue());
+						String codeSystem = (String) OIOUtils.encode(sheet.getRow(count).getCell(4).getStringCellValue());
+						String tty = (String) OIOUtils.encode(sheet.getRow(count).getCell(5).getStringCellValue());
+						
 						insertQueryBuilder.append("(\"");
-
+						
 						insertQueryBuilder.append(valueSetIndex);
 						insertQueryBuilder.append("\",\"");
 						insertQueryBuilder.append(valueSetNameIndex);
 						insertQueryBuilder.append("\",\"");
 
-						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(4).getStringCellValue().toUpperCase()));
+						insertQueryBuilder.append(codeSystem.toUpperCase());
 						insertQueryBuilder.append("\",\"");
 						
 
-						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(0).getStringCellValue().toUpperCase()));
+						insertQueryBuilder.append(code.toUpperCase());
 						insertQueryBuilder.append("\",\"");
 						
 
-						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(3).getStringCellValue().toUpperCase()));
+						insertQueryBuilder.append(description.toUpperCase());
 						insertQueryBuilder.append("\",\"");
 						
-						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(0).getStringCellValue()));
+						insertQueryBuilder.append(code);
 						insertQueryBuilder.append("\",\"");
-						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(4).getStringCellValue()));
+						insertQueryBuilder.append(codeSystem);
 						insertQueryBuilder.append("\",\"");
-						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(2).getStringCellValue()));
+						insertQueryBuilder.append(codeSystemName);
 						insertQueryBuilder.append("\",\"");
-						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(3).getStringCellValue()));
+						insertQueryBuilder.append(codeSystemVersion);
 						insertQueryBuilder.append("\",\"");
-						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(1).getStringCellValue()));
+						insertQueryBuilder.append(description);
 						insertQueryBuilder.append("\",\"");
 						insertQueryBuilder.append(version);
 						insertQueryBuilder.append("\",\"");
 						insertQueryBuilder.append(steward);
 						insertQueryBuilder.append("\",\"");
-						insertQueryBuilder.append(OIOUtils.encode(sheet.getRow(count).getCell(5).getStringCellValue()));
+						insertQueryBuilder.append(tty);
 						insertQueryBuilder.append("\",\"");
 						insertQueryBuilder.append(type);
 						insertQueryBuilder.append("\",\"");
