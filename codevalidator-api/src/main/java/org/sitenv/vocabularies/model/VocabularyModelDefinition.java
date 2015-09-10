@@ -1,41 +1,19 @@
 package org.sitenv.vocabularies.model;
 
+public abstract class VocabularyModelDefinition<T extends CodeModel> {
+	protected Class<T> modelClass;
+	protected String type;
 
-public class VocabularyModelDefinition {
-
-	private Class<? extends CodeModel> clazz;
-	private String codeSystem;
-	
-	
-
-	public VocabularyModelDefinition(Class<? extends CodeModel> clazz, String codeSystem) {
-		super();
-		this.clazz = clazz;
-		this.codeSystem = codeSystem;
+	protected VocabularyModelDefinition(Class<T> modelClass, String type) {
+		this.modelClass = modelClass;
+		this.type = type;
 	}
 
-
-	public Class<? extends CodeModel> getClazz() {
-		return clazz;
+	public Class<T> getModelClass() {
+		return this.modelClass;
 	}
 
-	public void setClazz(Class<? extends CodeModel> clazz) {
-		this.clazz = clazz;
+	public String getType() {
+		return this.type;
 	}
-
-	public String getCodeSystem() {
-		return codeSystem;
-	}
-
-	public void setCodeSystem(String codeSystem) {
-		this.codeSystem = codeSystem;
-	}
-
-
-
-	
-	
-	
-	
-	
 }

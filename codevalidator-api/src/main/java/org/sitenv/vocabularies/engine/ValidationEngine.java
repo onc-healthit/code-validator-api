@@ -1,27 +1,25 @@
 package org.sitenv.vocabularies.engine;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.data.CodeSystemResult;
 import org.sitenv.vocabularies.data.CodeValidationResult;
 import org.sitenv.vocabularies.data.DisplayNameValidationResult;
 import org.sitenv.vocabularies.data.ValueSetValidationResult;
-import org.sitenv.vocabularies.loader.code.CodeLoader;
-import org.sitenv.vocabularies.loader.code.CodeLoaderManager;
-import org.sitenv.vocabularies.loader.valueset.ValueSetLoader;
-import org.sitenv.vocabularies.loader.valueset.ValueSetLoaderManager;
+import org.sitenv.vocabularies.loader.VocabularyLoader;
 import org.sitenv.vocabularies.model.CodeModel;
-import org.sitenv.vocabularies.model.ValueSetModel;
-import org.sitenv.vocabularies.model.VocabularyModelDefinition;
+import org.sitenv.vocabularies.model.CodeModelDefinition;
+import org.sitenv.vocabularies.model.ValueSetCodeModel;
+import org.sitenv.vocabularies.model.ValueSetModelDefinition;
 import org.sitenv.vocabularies.repository.VocabularyRepository;
 import org.sitenv.vocabularies.watchdog.RepositoryWatchdog;
 
@@ -42,43 +40,26 @@ public abstract class ValidationEngine {
 	}
 	
 	public static boolean isCodeSystemLoaded(String codeSystem) {
-		VocabularyRepository ds = VocabularyRepository.getInstance();
-		VocabularyModelDefinition vocabulary = null;
-		if (codeSystem != null) {
-			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
-			
-			if (vocabMap != null) {
-				vocabulary = vocabMap.get(codeSystem);
-			}
-		}
-		
-		return (vocabulary != null);
+		return VocabularyRepository.getInstance().getCodeModelDefinitions().containsKey(codeSystem);
 	}
 	
 	public static boolean isValueSetLoaded(String valueSet)
 	{
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		
-		if (valueSet != null  &&  ds != null && ds.getValueSetModelClassList() != null) {
-			
-			
-			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+		for (ValueSetModelDefinition<?> valueSetModelDefinition : ds.getValueSetModelDefinitions().values())
+		{
+			if (ds.valueSetExists(valueSetModelDefinition.getModelClass(), valueSet))
 			{
-				Boolean model = ds.valueSetExists(clazz, valueSet);
-				
-				if (model != null && model)
-				{
-					return true;
-				}
+				return true;
 			}
-					
 		}
 		
 		return false;
 	}
 	
 	public static DisplayNameValidationResult validateCodeSystem(String codeSystemName, String displayName, String code) {
-		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName);
+		String codeSystem = VocabularyConstants.CODE_SYSTEM_NAMES.getKey(codeSystemName);
 		DisplayNameValidationResult result = null;
 		
 		if (codeSystem != null)
@@ -90,7 +71,7 @@ public abstract class ValidationEngine {
 	}
 	
 	public static DisplayNameValidationResult validateDisplayNameForCodeByCodeSystemName(String codeSystemName, String displayName, String code) {
-		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName);
+		String codeSystem = VocabularyConstants.CODE_SYSTEM_NAMES.getKey(codeSystemName);
 		DisplayNameValidationResult result = null;
 		
 		if (codeSystem != null)
@@ -105,7 +86,7 @@ public abstract class ValidationEngine {
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		DisplayNameValidationResult result = null;
 		
-		if (codeSystem != null && code != null &&  ds != null && ds.getVocabularyMap() != null) {
+		if (codeSystem != null && code != null &&  ds != null) {
 	
 			
 			result = new DisplayNameValidationResult();
@@ -135,7 +116,7 @@ public abstract class ValidationEngine {
 	
 	public static boolean validateCodeByCodeSystemName(String codeSystemName, String code)
 	{
-		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName);
+		String codeSystem = VocabularyConstants.CODE_SYSTEM_NAMES.getKey(codeSystemName);
 		
 		if (codeSystem != null)
 		{
@@ -149,7 +130,7 @@ public abstract class ValidationEngine {
 	{
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		
-		if (codeSystem != null && code != null &&  ds != null && ds.getVocabularyMap() != null) {
+		if (codeSystem != null && code != null &&  ds != null) {
 			
 			List<? extends CodeModel> results = getCode(codeSystem, code);
 			
@@ -165,7 +146,7 @@ public abstract class ValidationEngine {
 	
 	public static boolean validateDisplayNameByCodeSystemName(String codeSystemName, String displayName)
 	{
-		String codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName);
+		String codeSystem = VocabularyConstants.CODE_SYSTEM_NAMES.getKey(codeSystemName);
 		
 		if (codeSystem != null)
 		{
@@ -179,7 +160,7 @@ public abstract class ValidationEngine {
 	{
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		
-		if (codeSystem != null && displayName != null &&  ds != null && ds.getVocabularyMap() != null) {
+		if (codeSystem != null && displayName != null &&  ds != null) {
 			
 			List<? extends CodeModel> results = getDisplayName(codeSystem, displayName);
 			
@@ -206,24 +187,18 @@ public abstract class ValidationEngine {
 		// Code System comparisons
 		if (codeSystem == null)
 		{
-			codeSystem = VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName);
+			codeSystem = VocabularyConstants.CODE_SYSTEM_NAMES.getKey(codeSystemName);
 			result.getExpectedOidsForCodeSystemName().add(codeSystem);
 		}
 		else
 		{
 			if (codeSystemName != null)
 			{
-				if (codeSystem.equalsIgnoreCase(VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName)))
+				if (codeSystem.equalsIgnoreCase(VocabularyConstants.CODE_SYSTEM_NAMES.getKey(codeSystemName)))
 				{
 					result.setCodeSystemAndNameMatch(true);
 					result.getExpectedOidsForCodeSystemName().add(codeSystem);
-					for (String codeSystemNameLkp : VocabularyConstants.CODE_SYSTEM_MAP.keySet())
-					{
-						if (VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemNameLkp).equalsIgnoreCase(VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName)))
-						{
-							result.getExpectedCodeSystemNamesForOid().add(codeSystemNameLkp);
-						}
-					}
+					result.getExpectedCodeSystemNamesForOid().add(VocabularyConstants.CODE_SYSTEM_NAMES.get(codeSystem));
 				}
 			}
 		}
@@ -278,25 +253,25 @@ public abstract class ValidationEngine {
 		
 		result.getValueSetNames().addAll(valueSetNames);
 		
-		List<? extends ValueSetModel> codeModels = getValueSetCode(valueSet, code);
+		List<? extends ValueSetCodeModel> codeModels = getValueSetCode(valueSet, code);
 		
 		if (codeModels != null && codeModels.size() > 0)
 		{
 			result.setCodeExistsInValueSet(true);
 			
-			for (ValueSetModel model : codeModels)
+			for (ValueSetCodeModel model : codeModels)
 			{
-				result.getExpectedDescriptionsForCode().add(model.getDescription());
+				result.getExpectedDescriptionsForCode().add(model.getDisplayName());
 				
-				result.getExpectedCodeSystemsForCode().add(model.getCodeSystem());
+				result.getExpectedCodeSystemsForCode().add(model.getCodeSystemId());
 				
 				// case sensitive compare of displayName
-				if (description != null && model.getDescription() != null && model.getDescription().equals(description))
+				if (description != null && model.getDisplayName() != null && model.getDisplayName().equals(description))
 				{
 					result.setDescriptionMatchesCode(true);
 				}
 				
-				if (codeSystem != null && model.getCodeSystem() != null && model.getCodeSystem().equals(codeSystem))
+				if (codeSystem != null && model.getCodeSystemId() != null && model.getCodeSystemId().equals(codeSystem))
 				{
 					result.setCodeExistsInCodeSystem(true);
 				}
@@ -304,17 +279,17 @@ public abstract class ValidationEngine {
 			}
 		}
 		
-		List<? extends ValueSetModel> descriptionModels = getValueSetDescription(valueSet, description);
+		List<? extends ValueSetCodeModel> descriptionModels = getValueSetDescription(valueSet, description);
 		
 		if (descriptionModels != null && descriptionModels.size() > 0)
 		{
 			result.setDescriptionExistsInValueSet(true);
 			
-			for (ValueSetModel model : descriptionModels)
+			for (ValueSetCodeModel model : descriptionModels)
 			{
 				result.getExpectedCodesForDescription().add(model.getCode());
 				
-				if (codeSystem != null && model.getCodeSystem() != null && model.getCodeSystem().equalsIgnoreCase(codeSystem))
+				if (codeSystem != null && model.getCodeSystemId() != null && model.getCodeSystemId().equalsIgnoreCase(codeSystem))
 				{
 					result.setDescriptionExistsInCodeSystem(true);
 				}
@@ -351,23 +326,23 @@ public abstract class ValidationEngine {
 		return result;
 	}
 	
-	private static List<ValueSetModel> getValueSetCode(String valueSet, String code)
+	private static List<ValueSetCodeModel> getValueSetCode(String valueSet, String code)
 	{
 		VocabularyRepository ds = VocabularyRepository.getInstance();
-		List<ValueSetModel> result = null;
+		List<ValueSetCodeModel> result = null;
 		
-		if (valueSet != null && code != null &&  ds != null && ds.getValueSetModelClassList() != null) {
+		if (valueSet != null && code != null &&  ds != null) {
 			
 			
-			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+			for (ValueSetModelDefinition<?> valueSetModelDefinition : ds.getValueSetModelDefinitions().values())
 			{
-				List<? extends ValueSetModel> modelList = ds.fetchByValueSetAndCode(clazz, valueSet, code);
+				List<? extends ValueSetCodeModel> modelList = ds.fetchByValueSetAndCode(valueSetModelDefinition.getModelClass(), valueSet, code);
 				
 				if (modelList != null)
 				{
 					if (result == null)
 					{
-						result = new ArrayList<ValueSetModel>();
+						result = new ArrayList<ValueSetCodeModel>();
 					}
 					
 					result.addAll(modelList);
@@ -384,12 +359,12 @@ public abstract class ValidationEngine {
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		Set<String> result = null;
 		
-		if (valueSet != null &&  ds != null && ds.getValueSetModelClassList() != null) {
+		if (valueSet != null &&  ds != null) {
 			
 			
-			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+			for (ValueSetModelDefinition<?> valueSetModelDefinition : ds.getValueSetModelDefinitions().values())
 			{
-				Set<String> modelList = ds.fetchValueSetNamesByValueSet(clazz, valueSet);
+				Set<String> modelList = ds.fetchValueSetNamesByValueSet(valueSetModelDefinition.getModelClass(), valueSet);
 				
 				if (modelList != null)
 				{
@@ -407,23 +382,23 @@ public abstract class ValidationEngine {
 		return result;
 	}
 	
-	private static List<ValueSetModel> getValueSetDescription(String valueSet, String description)
+	private static List<ValueSetCodeModel> getValueSetDescription(String valueSet, String description)
 	{
 		VocabularyRepository ds = VocabularyRepository.getInstance();
-		List<ValueSetModel> result = null;
+		List<ValueSetCodeModel> result = null;
 		
-		if (valueSet != null && description != null &&  ds != null && ds.getValueSetModelClassList() != null) {
+		if (valueSet != null && description != null &&  ds != null) {
 			
 			
-			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+			for (ValueSetModelDefinition<?> valueSetModelDefinition : ds.getValueSetModelDefinitions().values())
 			{
-				List<? extends ValueSetModel> modelList = ds.fetchByValueSetAndDescription(clazz, valueSet, description);
+				List<? extends ValueSetCodeModel> modelList = ds.fetchByValueSetAndDescription(valueSetModelDefinition.getModelClass(), valueSet, description);
 				
 				if (modelList != null)
 				{
 					if (result == null)
 					{
-						result = new ArrayList<ValueSetModel>();
+						result = new ArrayList<ValueSetCodeModel>();
 					}
 					
 					result.addAll(modelList);
@@ -440,12 +415,12 @@ public abstract class ValidationEngine {
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		List<CodeSystemResult> result = null;
 		
-		if (valueSet != null &&  ds != null && ds.getValueSetModelClassList() != null) {
+		if (valueSet != null &&  ds != null) {
 			
 			
-			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+			for (ValueSetModelDefinition<?> valueSetModelDefinition : ds.getValueSetModelDefinitions().values())
 			{
-				List<CodeSystemResult> modelList = ds.fetchCodeSystemsByValueSet(clazz, valueSet);
+				List<CodeSystemResult> modelList = ds.fetchCodeSystemsByValueSet(valueSetModelDefinition.getModelClass(), valueSet);
 				
 				if (modelList != null)
 				{
@@ -468,14 +443,12 @@ public abstract class ValidationEngine {
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		List<? extends CodeModel> results = null;
 		
-		if (codeSystem != null && code != null &&  ds != null && ds.getVocabularyMap() != null) {
-			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
+		if (codeSystem != null && code != null &&  ds != null) {
+			CodeModelDefinition<?> vocab = ds.getCodeModelDefinitions().get(codeSystem);
 			
-			VocabularyModelDefinition vocab = vocabMap.get(codeSystem);
-			
-			results = ds.fetchByCode(vocab.getClazz(), code);
-			
-			
+			if (vocab != null) {
+				results = ds.fetchByCode(vocab.getModelClass(), code);
+			}
 		}
 		
 		return results;
@@ -486,14 +459,12 @@ public abstract class ValidationEngine {
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		List<? extends CodeModel> results = null;
 		
-		if (codeSystem != null && displayName != null &&  ds != null && ds.getVocabularyMap() != null) {
-			Map<String, VocabularyModelDefinition> vocabMap = ds.getVocabularyMap();
+		if (codeSystem != null && displayName != null &&  ds != null) {
+			CodeModelDefinition<?> vocab = ds.getCodeModelDefinitions().get(codeSystem);
 			
-			VocabularyModelDefinition vocab = vocabMap.get(codeSystem);
-			
-			results = ds.fetchByDisplayName(vocab.getClazz(), displayName);
-			
-			
+			if (vocab != null) {
+				results = ds.fetchByDisplayName(vocab.getModelClass(), displayName);
+			}
 		}
 		
 		return results;
@@ -504,12 +475,12 @@ public abstract class ValidationEngine {
 	{
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		
-		if (valueSet != null && code != null &&  ds != null && ds.getValueSetModelClassList() != null) {
+		if (valueSet != null && code != null &&  ds != null) {
 			
 			
-			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+			for (ValueSetModelDefinition<?> valueSetModelDefinition : ds.getValueSetModelDefinitions().values())
 			{
-				List<? extends ValueSetModel> modelList = ds.fetchByValueSetAndCode(clazz, valueSet, code);
+				List<? extends ValueSetCodeModel> modelList = ds.fetchByValueSetAndCode(valueSetModelDefinition.getModelClass(), valueSet, code);
 				
 				if (modelList != null && modelList.size() > 0)
 				{
@@ -526,12 +497,13 @@ public abstract class ValidationEngine {
 	{
 		VocabularyRepository ds = VocabularyRepository.getInstance();
 		
-		if (valueSet != null && code != null &&  ds != null && ds.getValueSetModelClassList() != null) {
+		if (valueSet != null && code != null &&  ds != null) {
 			
 			
-			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+			for (ValueSetModelDefinition<?> valueSetModelDefinition : ds.getValueSetModelDefinitions().values())
 			{
-				List<? extends ValueSetModel> modelList = ds.fetchByValueSetCodeSystemAndCode(clazz, valueSet, codeSystem, code);
+				List<? extends ValueSetCodeModel> modelList = ds.fetchByValueSetCodeSystemAndCode(valueSetModelDefinition.getModelClass(), valueSet, codeSystem,
+					code);
 				
 				if (modelList != null && modelList.size() > 0)
 				{
@@ -546,11 +518,6 @@ public abstract class ValidationEngine {
 	
 	public static synchronized void initialize(String codeDirectory, String valueSetDirectory, boolean loadAtStartup) throws IOException {
 		boolean recursive = true;
-
-		logger.info("Registering Loaders...");
-		// register Loaders
-		registerLoaders();
-		logger.info("Loaders Registered...");
 		
 		// Validation Engine should load using the primary database (existing). This will kick off the loading of the secondary database and swap configs
 		// Once the secondary dB is loaded, the watchdog thread will be initialized to monitor future changes.
@@ -564,130 +531,36 @@ public abstract class ValidationEngine {
 		
 		initializer.start();
 	}
-	
-	public static void registerLoaders() {
-		try {
-			Class.forName("org.sitenv.vocabularies.loader.code.snomed.SnomedLoader");
-			Class.forName("org.sitenv.vocabularies.loader.code.loinc.LoincLoader");
-			Class.forName("org.sitenv.vocabularies.loader.code.rxnorm.RxNormLoader");
-			Class.forName("org.sitenv.vocabularies.loader.code.icd9.Icd9CmDxLoader");
-			Class.forName("org.sitenv.vocabularies.loader.code.icd9.Icd9CmSgLoader");
-			Class.forName("org.sitenv.vocabularies.loader.code.icd10.Icd10CmLoader");
-			Class.forName("org.sitenv.vocabularies.loader.code.icd10.Icd10PcsLoader");
-			Class.forName("org.sitenv.vocabularies.loader.valueset.vsac.VsacLoader");
-		} catch (ClassNotFoundException e) {
-			// TODO: log4j
-			logger.error("Error Initializing Loaders", e);
-		}
-	}
-	
-	public static void loadValueSetDirectory(String directory) throws IOException
-	{
-		File dir = new File(directory);
-		
-		if (dir.isFile())
-		{
-			logger.debug("Directory to Load is a file and not a directory");
-			throw new IOException("Directory to Load is a file and not a directory");
-		}
-		else
-		{
-			
-			File[] list = dir.listFiles();
-			
-			for (File file : list)
-			{
-				loadValueSetFiles(file);
-			}
-		}
-	}
-	
-	private static void loadCodeFiles(File directory) throws IOException
-	{
-		if (directory.isDirectory() && !directory.isHidden()) 
-		{
-			File[] filesToLoad = directory.listFiles();
-			String codeSystem = null;
-			
-			logger.debug("Building Loader for directory: " + directory.getName() + "...");
-			CodeLoader loader = CodeLoaderManager.getInstance().buildLoader(directory.getName());
-			if (loader != null && filesToLoad != null) {
-				logger.debug("Loader built...");
-			
-				codeSystem = loader.getCodeSystem();
-			
-				//logger.debug("Loading file: " + loadFile.getAbsolutePath() + "...");
-				loader.load(Arrays.asList(filesToLoad));
-				
-				
-				logger.debug("File loaded...");
-			}
-			else 
-			{
-				logger.debug("Building of Loader Failed.");
-			}
-			
-			
-			
-		}
-		
-		
 
+	public static <T extends CodeModel, U extends VocabularyLoader<? extends T>> void loadVocabularyDirectory(String vocabDirPath,
+		final Map<String, U> vocabLoaders) throws Exception {
+		File vocabDir = new File(vocabDirPath);
+		
+		if (!vocabDir.isDirectory()) {
+			throw new IOException("Vocabulary directory path is not a directory: " + vocabDirPath);
+		}
+		
+		File[] vocabModelDirs = vocabDir.listFiles(new FileFilter() {
+			public boolean accept(File vocabSubDir) {
+				return vocabSubDir.isDirectory() && !vocabSubDir.isHidden() && vocabLoaders.containsKey(vocabSubDir.getName());
+			}
+		});
+		
+		if (ArrayUtils.isEmpty(vocabModelDirs)) {
+			return;
+		}
+		
+		for (File vocabModelDir : vocabModelDirs) {
+			vocabLoaders.get(vocabModelDir.getName()).load(vocabModelDir.listFiles());
+		}
 	}
 	
-	
-	public static void loadCodeDirectory(String directory) throws IOException
-	{
-		File dir = new File(directory);
-		
-		if (dir.isFile())
-		{
-			logger.debug("Directory to Load is a file and not a directory");
-			throw new IOException("Directory to Load is a file and not a directory");
-		}
-		else
-		{
-			
-			File[] list = dir.listFiles();
-			
-			for (File file : list)
-			{
-				loadCodeFiles(file);
-			}
-		}
+	public static void loadValueSetDirectory(String directory) throws Exception {
+		loadVocabularyDirectory(directory, VocabularyRepository.getInstance().getValueSetCodeLoaders());
 	}
-	
-	private static void loadValueSetFiles(File directory) throws IOException
-	{
-		if (directory.isDirectory() && !directory.isHidden()) 
-		{
-			File[] filesToLoad = directory.listFiles();
-			String valueSet = null;
-			
-			logger.debug("Building Loader for directory: " + directory.getName() + "...");
-			ValueSetLoader loader = ValueSetLoaderManager.getInstance().buildLoader(directory.getName());
-			if (loader != null && filesToLoad != null) {
-				logger.debug("Loader built...");
-			
-				valueSet = loader.getValueSetAuthorName();
-			
-				//logger.debug("Loading file: " + loadFile.getAbsolutePath() + "...");
-				loader.load(Arrays.asList(filesToLoad));
-				
-				
-				logger.debug("File loaded...");
-			}
-			else 
-			{
-				logger.debug("Building of Loader Failed.");
-			}
-			
-			
-			
-		}
-		
-		
 
+	public static void loadCodeDirectory(String directory) throws Exception {
+		loadVocabularyDirectory(directory, VocabularyRepository.getInstance().getCodeLoaders());
 	}
 	
 	private static class InitializerThread extends Thread {
@@ -752,6 +625,7 @@ public abstract class ValidationEngine {
 
 
 
+		@SuppressWarnings("unchecked")
 		public void run() {
 			
 			
@@ -807,10 +681,6 @@ public abstract class ValidationEngine {
 			{
 				logger.error("Failed to load configured vocabulary directory.", e);
 			}
-			
-			// TODO: Perform Validation/Verification, if needed
-			Runtime.getRuntime().gc();
-			
 		}
 		
 	}
