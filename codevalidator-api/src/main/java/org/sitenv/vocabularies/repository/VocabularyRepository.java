@@ -407,6 +407,45 @@ public class VocabularyRepository {
 		return valueSetNames;
 	}
 	
+	public <T extends ValueSetModel> Set<String> fetchValueSets(Class<T> clazz)
+	{
+		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT DISTINCT(valueSet) AS valueSet FROM " + clazz.getSimpleName());
+		OObjectDatabaseTx dbConnection = null;
+		List<ODocument> results = null;
+		Set<String> valueSets = null;
+		
+		Map<String, Object> params = new HashMap<String,Object> ();
+		
+		
+		try 
+		{
+			dbConnection = this.getActiveDbConnection();
+			results = dbConnection.command(query).execute(params);
+			
+			if (results != null)
+			{
+				valueSets = new TreeSet<String>();
+				for (ODocument result : results)
+				{
+					//logger.debug("fieldNames " + result.fieldNames()[0] + " " + result.fieldNames()[1]);
+					String valueSet = result.field("valueSet");
+					
+					valueSets.add(valueSet);
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			logger.error("Could not execute query against active database.", e);
+		}
+		finally
+		{
+			dbConnection.close();
+		}
+		
+		return valueSets;
+	}
+	
 	public <T extends ValueSetModel> List<T> fetchByValueSetAndCode(Class<T> clazz, String valueSet, String code)
 	{
 		OSQLSynchQuery <T> query = new OSQLSynchQuery<T>("SELECT * FROM " + clazz.getSimpleName() +

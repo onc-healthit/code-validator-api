@@ -278,6 +278,8 @@ public abstract class ValidationEngine {
 		
 		result.getValueSetNames().addAll(valueSetNames);
 		
+		
+		
 		List<? extends ValueSetModel> codeModels = getValueSetCode(valueSet, code);
 		
 		if (codeModels != null && codeModels.size() > 0)
@@ -390,6 +392,34 @@ public abstract class ValidationEngine {
 			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
 			{
 				Set<String> modelList = ds.fetchValueSetNamesByValueSet(clazz, valueSet);
+				
+				if (modelList != null)
+				{
+					if (result == null)
+					{
+						result = new TreeSet<String>();
+					}
+					
+					result.addAll(modelList);
+				}
+			}
+					
+		}
+		
+		return result;
+	}
+	
+	public static Set<String> getValueSets()
+	{
+		VocabularyRepository ds = VocabularyRepository.getInstance();
+		Set<String> result = null;
+		
+		if (ds != null && ds.getValueSetModelClassList() != null) {
+			
+			
+			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+			{
+				Set<String> modelList = ds.fetchValueSets(clazz);
 				
 				if (modelList != null)
 				{
