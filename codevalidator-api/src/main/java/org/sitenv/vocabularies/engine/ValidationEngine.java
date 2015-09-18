@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -549,9 +550,21 @@ public abstract class ValidationEngine {
 		if (ArrayUtils.isEmpty(vocabModelDirs)) {
 			return;
 		}
+
+		Arrays.sort(vocabModelDirs);
+		
+		File[] vocabModelFiles;
 		
 		for (File vocabModelDir : vocabModelDirs) {
-			vocabLoaders.get(vocabModelDir.getName()).load(vocabModelDir.listFiles());
+			vocabModelFiles = vocabModelDir.listFiles(new FileFilter() {
+				public boolean accept(File vocabModelFile) {
+					return vocabModelFile.isFile() && !vocabModelFile.isHidden();
+				}
+			});
+			
+			Arrays.sort(vocabModelFiles);
+			
+			vocabLoaders.get(vocabModelDir.getName()).load(vocabModelFiles);
 		}
 	}
 	
@@ -633,6 +646,8 @@ public abstract class ValidationEngine {
 			{
 				if (loadAtStartup)
 				{
+					VocabularyRepository.getInstance().initializeDb(false);
+					
 					if (codeDirectory != null && !codeDirectory.trim().equals(""))
 					{
 						logger.info("Loading vocabularies at: " + codeDirectory + "...");
@@ -650,6 +665,8 @@ public abstract class ValidationEngine {
 					logger.info("Activating new Vocabularies Map...");
 					VocabularyRepository.getInstance().toggleActiveDatabase();
 					logger.info("New vocabulary Map Activated...");
+					
+					VocabularyRepository.getInstance().initializeDb(false);
 					
 					if (codeDirectory != null && !codeDirectory.trim().equals(""))
 					{

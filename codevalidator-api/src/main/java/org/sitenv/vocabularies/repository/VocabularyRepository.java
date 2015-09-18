@@ -3,9 +3,11 @@ package org.sitenv.vocabularies.repository;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePoolFactory;
 import com.orientechnologies.orient.core.entity.OEntityManager;
+import com.orientechnologies.orient.core.index.OIndex;
+import com.orientechnologies.orient.core.index.OIndexManager;
+import com.orientechnologies.orient.core.metadata.OMetadata;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OClass.INDEX_TYPE;
-import com.orientechnologies.orient.core.metadata.schema.OClassImpl;
 import com.orientechnologies.orient.core.metadata.schema.OProperty;
 import com.orientechnologies.orient.core.metadata.schema.OSchema;
 import com.orientechnologies.orient.core.metadata.schema.OType;
@@ -22,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.data.CodeSystemResult;
@@ -177,7 +181,7 @@ public class VocabularyRepository {
 		return new OObjectDatabaseTx(connectionPool.acquire());
 	}
 	
-	public void initializeDbs() {
+	public void initializeDbConnectionPools() {
 		this.connectionPoolFactory.setMaxPoolSize(100);
 		
 		this.primaryConnectionPool = this.connectionPoolFactory.get(this.primaryNodeCredentials.getConnectionInfo(),
@@ -185,9 +189,6 @@ public class VocabularyRepository {
 		
 		this.secondaryConnectionPool = this.connectionPoolFactory.get(this.secondaryNodeCredentials.getConnectionInfo(),
 			this.secondaryNodeCredentials.getUsername(), this.secondaryNodeCredentials.getPassword());
-
-		this.initializeDb(true);
-		this.initializeDb(false);
 	}
 	
 	public void initializeDb(boolean active) {
@@ -196,9 +197,19 @@ public class VocabularyRepository {
 		try {
 			dbConnection = this.getDbConnection(active);
 			
-			this.initializeModel(dbConnection, CodeModel.class);
+			OEntityManager entityManager = dbConnection.getEntityManager();
+			OMetadata metadata = dbConnection.getMetadata();
+			OIndexManager indexManager = metadata.getIndexManager();
+			OSchema schema = metadata.getSchema();
+			OClass modelDbClass = this.initializeModel(entityManager, indexManager, schema, CodeModel.class);
 			
-			this.initializeModel(dbConnection, ValueSetCodeModel.class);
+			buildDbIndex(indexManager, modelDbClass, INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "code", "codeSystemId");
+			
+			modelDbClass = this.initializeModel(entityManager, indexManager, schema, ValueSetCodeModel.class);
+			
+			buildDbIndex(indexManager, modelDbClass, INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "code", "codeSystemId");
+			buildDbIndex(indexManager, modelDbClass, INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "code", "valueSetId");
+			buildDbIndex(indexManager, modelDbClass, INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "code", "codeSystemId", "valueSetId");
 		} finally {
 			if (dbConnection != null) {
 				dbConnection.close();
@@ -206,40 +217,63 @@ public class VocabularyRepository {
 		}
 	}
 	
-	public <T extends CodeModel> void initializeModel(OObjectDatabaseTx dbConnection, Class<T> modelClass) {
-		OSchema schema = dbConnection.getMetadata().getSchema();
-		boolean valueSetModel = ValueSetCodeModel.class.isAssignableFrom(modelClass);
-		OClass modelDbClass = buildDbClass(dbConnection.getEntityManager(), schema, modelClass,
-			schema.getClass((valueSetModel ? ValueSetCodeModel.class : CodeModel.class)));
+	public <T extends CodeModel> OClass initializeModel(OObjectDatabaseTx dbConnection, Class<T> modelClass) {
+		OMetadata metadata = dbConnection.getMetadata();
 		
-		buildDbProperty(modelDbClass, "code", OType.STRING, null, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-		buildDbProperty(modelDbClass, "displayName", OType.STRING, null, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-		buildDbProperty(modelDbClass, "tty", OType.STRING, null, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-		buildDbProperty(modelDbClass, "codeSystemId", OType.STRING, null, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-		buildDbProperty(modelDbClass, "codeSystemName", OType.STRING, null, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-		buildDbProperty(modelDbClass, "codeSystemVersion", OType.STRING, null, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-		
-		if (valueSetModel) {
-			buildDbProperty(modelDbClass, "valueSetId", OType.STRING, null, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-			buildDbProperty(modelDbClass, "valueSetName", OType.STRING, null, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-			buildDbProperty(modelDbClass, "valueSetVersion", OType.STRING, null, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-			buildDbProperty(modelDbClass, "steward", OType.STRING, null, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-			buildDbProperty(modelDbClass, "type", OType.STRING, null, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-		}
+		return this.initializeModel(dbConnection.getEntityManager(), metadata.getIndexManager(), metadata.getSchema(), modelClass);
 	}
 	
-	private static OProperty buildDbProperty(OClass dbClass, String propName, OType propType, OClass propLinkedClass, INDEX_TYPE indexType) {
-		OProperty dbProp = (dbClass.existsProperty(propName) ? dbClass.getProperty(propName) : ((propLinkedClass != null) ?
-			dbClass.createProperty(propName, propType, propLinkedClass) : dbClass.createProperty(propName, propType)));
-		String indexName = dbClass.getName() + "." + propName;
+	public <T extends CodeModel> OClass initializeModel(OEntityManager entityManager, OIndexManager indexManager, OSchema schema, Class<T> modelClass) {
+		boolean valueSetModel = ValueSetCodeModel.class.isAssignableFrom(modelClass);
+		OClass modelDbClass = buildDbClass(entityManager, schema, modelClass, schema.getClass((valueSetModel ? ValueSetCodeModel.class : CodeModel.class)));
 		
-		if ((indexType == null) || (dbClass.getClassIndex(indexName) != null)) {
-			return dbProp;
+		buildDbProperty(indexManager, modelDbClass, "code", OType.STRING, true, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+		buildDbProperty(indexManager, modelDbClass, "displayName", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+		buildDbProperty(indexManager, modelDbClass, "tty", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+		buildDbProperty(indexManager, modelDbClass, "codeSystemId", OType.STRING, true, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+		buildDbProperty(indexManager, modelDbClass, "codeSystemName", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+		buildDbProperty(indexManager, modelDbClass, "codeSystemVersion", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+		
+		if (valueSetModel) {
+			buildDbProperty(indexManager, modelDbClass, "valueSetId", OType.STRING, true, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+			buildDbProperty(indexManager, modelDbClass, "valueSetName", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+			buildDbProperty(indexManager, modelDbClass, "valueSetVersion", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+			buildDbProperty(indexManager, modelDbClass, "steward", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+			buildDbProperty(indexManager, modelDbClass, "type", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
 		}
 		
-		dbClass.createIndex(indexName, indexType, propName);
+		return modelDbClass;
+	}
+	
+	private static OProperty buildDbProperty(OIndexManager indexManager, OClass dbClass, String propName, OType propType, boolean required,
+		INDEX_TYPE indexType) {
+		OProperty dbProp = (dbClass.existsProperty(propName) ? dbClass.getProperty(propName) : dbClass.createProperty(propName, propType));
 		
+		if (required) {
+			dbProp.setMandatory(true);
+			dbProp.setNotNull(true);
+		}
+		
+		if (indexType != null) {
+			buildDbIndex(indexManager, dbClass, indexType, propName);
+		}
+
 		return dbProp;
+	}
+	
+	private static OIndex<?> buildDbIndex(OIndexManager indexManager, OClass dbClass, INDEX_TYPE indexType, String ... fieldNames) {
+		StrBuilder indexNameBuilder = new StrBuilder(dbClass.getName());
+		indexNameBuilder.append(".");
+		indexNameBuilder.append(fieldNames[0]);
+		
+		for (int a = 1; a < fieldNames.length; a++) {
+			indexNameBuilder.append("And");
+			indexNameBuilder.append(StringUtils.capitalize(fieldNames[a]));
+		}
+		
+		String indexName = indexNameBuilder.build();
+		
+		return (indexManager.existsIndex(indexName) ? indexManager.getIndex(indexName) : dbClass.createIndex(indexName, indexType, fieldNames));
 	}
 	
 	private static OClass buildDbClass(OEntityManager entityManager, OSchema schema, Class<?> clazz, OClass ... superClasses) {
@@ -269,6 +303,12 @@ public class VocabularyRepository {
 			
 			if (dbClass != null) {
 				dbClass.truncate();
+				
+				for (OIndex<?> classIndex : dbClass.getClassIndexes()) {
+					classIndex.clear();
+				}
+				
+				logger.debug(String.format("Vocabulary model (name=%s) truncated in inactive database.", clazz.getSimpleName()));
 			}
 		} catch (IOException e) {
 			logger.error("Could not truncate model class: %s" + clazz.getSimpleName(), e);
@@ -447,7 +487,7 @@ public class VocabularyRepository {
 		OObjectDatabaseTx dbConnection = null;
 		List<T> result = null;
 		
-		Map<String, Object> params = new HashMap<String,Object> ();
+		Map<String, Object> params = new LinkedHashMap<String,Object> ();
 		params.put("valueSetId", valueSet);
 		params.put("code", code);
 		
@@ -477,7 +517,7 @@ public class VocabularyRepository {
 		OObjectDatabaseTx dbConnection = null;
 		List<T> result = null;
 		
-		Map<String, Object> params = new HashMap<String,Object> ();
+		Map<String, Object> params = new LinkedHashMap<String,Object> ();
 		params.put("valueSetId", valueSet);
 		params.put("displayName", description);
 		
@@ -534,7 +574,7 @@ public class VocabularyRepository {
 		OObjectDatabaseTx dbConnection = null;
 		List<T> result = null;
 		
-		Map<String, Object> params = new HashMap<String,Object> ();
+		Map<String, Object> params = new LinkedHashMap<String,Object> ();
 		params.put("valueSetId", valueSet);
 		params.put("codeSystemId", codeSystem);
 		params.put("code", code);

@@ -18,11 +18,11 @@ public class PhinVadsLoader extends DelimitedTextVocabularyLoader<PhinVadsModel>
 		String[] lineParts = StringUtils.splitPreserveAllTokens(line, "\t", 9);
 		
 		Map<String, String> fields = new LinkedHashMap<String, String>();
-		fields.put("code", lineParts[0]);
-		fields.put("displayName", lineParts[1]);
-		fields.put("codeSystemId", lineParts[4]);
-		fields.put("codeSystemName", lineParts[5]);
-		fields.put("codeSystemVersion", lineParts[7]);
+		fields.put("code", lineParts[0].trim());
+		fields.put("displayName", lineParts[1].trim());
+		fields.put("codeSystemId", lineParts[4].trim());
+		fields.put("codeSystemName", lineParts[5].trim());
+		fields.put("codeSystemVersion", lineParts[7].trim());
 		fields.putAll(baseFields);
 		
 		this.loadDocument(doc, fields);
@@ -35,9 +35,9 @@ public class PhinVadsLoader extends DelimitedTextVocabularyLoader<PhinVadsModel>
 		if (headerLineIndex == 1) {
 			String[] headerLineParts = StringUtils.splitPreserveAllTokens(headerLine, "\t", 5);
 			
-			baseFields.put("valueSetId", headerLineParts[2]);
-			baseFields.put("valueSetName", headerLineParts[0]);
-			baseFields.put("valueSetVersion", headerLineParts[3]);
+			baseFields.put("valueSetId", headerLineParts[2].trim());
+			baseFields.put("valueSetName", headerLineParts[0].trim());
+			baseFields.put("valueSetVersion", headerLineParts[3].trim());
 		}
 	}
 }

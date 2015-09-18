@@ -33,11 +33,11 @@ public abstract class VocabularyLoader<T extends CodeModel> {
 			
 			VocabularyRepository.truncateModel(dbConnection, this.modelClass);
 			
-			logger.debug(String.format("Vocabulary model (name=%s) truncated in inactive database.", this.modelName));
-			
 			vocabRepo.initializeModel(dbConnection, this.modelClass);
 			
-			dbConnection.declareIntent(new OIntentMassiveInsert());
+			OIntentMassiveInsert intent = new OIntentMassiveInsert();
+			intent.setDisableValidation(false);
+			dbConnection.declareIntent(intent);
 			
 			for (File file : files) {
 				baseFields = this.buildBaseFields();

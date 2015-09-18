@@ -108,7 +108,7 @@ public class VocabularyValidationListener implements ServletContextListener {
 					throw new Exception("Could not load configuration for secondary database node.");
 				}
 				
-				VocabularyRepository.getInstance().initializeDbs();
+				VocabularyRepository.getInstance().initializeDbConnectionPools();
 				
 			}
 			catch (Exception e)

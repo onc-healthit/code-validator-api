@@ -19,8 +19,9 @@ public class RxNormLoader extends DelimitedTextVocabularyLoader<RxNormModel> {
 		String[] lineParts = StringUtils.splitPreserveAllTokens(line, "|", 16);
 		
 		Map<String, String> fields = new LinkedHashMap<String, String>();
-		fields.put("code", lineParts[0]);
+		fields.put("code", lineParts[13]);
 		fields.put("displayName", lineParts[14]);
+		fields.put("tty", lineParts[12]);
 		fields.putAll(baseFields);
 		
 		this.loadDocument(doc, fields);
