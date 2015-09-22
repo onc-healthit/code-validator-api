@@ -20,7 +20,7 @@ public abstract class IcdLoader<T extends CodeModel> extends DelimitedTextVocabu
 		}
 		
 		int lastDelimIndex = -1, codeIndex;
-		StrBuilder builder = new StrBuilder((codeLen + Math.floorDiv(codeLen, ICD_CODE_PART_LEN)));
+		StrBuilder builder = new StrBuilder((codeLen + (codeLen / ICD_CODE_PART_LEN)));
 		
 		for (codeIndex = 0; codeIndex < codeLen; codeIndex++) {
 			if (((codeIndex + 1) % ICD_CODE_PART_LEN) == 0) {
