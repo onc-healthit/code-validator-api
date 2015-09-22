@@ -18,12 +18,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.engine.ValidationEngine;
 import org.sitenv.vocabularies.repository.VocabularyRepository;
-
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
 
 public class RepositoryWatchdog  implements Runnable {
@@ -236,7 +233,7 @@ public class RepositoryWatchdog  implements Runnable {
 
             				Runtime.getRuntime().gc();
             				
-            			} catch (IOException e) {
+            			} catch (Exception e) {
             				// TODO: log4j
             				logger.error("Error performing a load of the directory.", e);
             			}
