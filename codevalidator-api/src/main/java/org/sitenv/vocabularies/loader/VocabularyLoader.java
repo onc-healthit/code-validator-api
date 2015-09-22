@@ -12,12 +12,16 @@ import org.sitenv.vocabularies.repository.VocabularyRepository;
 
 public abstract class VocabularyLoader<T extends CodeModel> {
 	protected Class<T> modelClass;
+	protected int numBaseFields;
+	protected int numFields;
 	protected String modelName;
 	
 	private static Logger logger = Logger.getLogger(VocabularyLoader.class);
 	
-	protected VocabularyLoader(Class<T> modelClass) {
+	protected VocabularyLoader(Class<T> modelClass, int numBaseFields, int numFields) {
 		this.modelClass = modelClass;
+		this.numBaseFields = numBaseFields;
+		this.numFields = numFields;
 		this.modelName = this.modelClass.getSimpleName();
 	}
 	
@@ -26,30 +30,26 @@ public abstract class VocabularyLoader<T extends CodeModel> {
 		VocabularyRepository vocabRepo = VocabularyRepository.getInstance();
 		OObjectDatabaseTx dbConnection = null;
 		ODocument doc = new ODocument();
-		Map<String, String> baseFields;
+		Map<String, String> baseFields, fields;
 		
 		try {
 			dbConnection = vocabRepo.getInactiveDbConnection();
 			
-			VocabularyRepository.truncateModel(dbConnection, this.modelClass);
+			vocabRepo.initializeModel(true, dbConnection, this.modelClass);
 			
-			vocabRepo.initializeModel(dbConnection, this.modelClass);
-			
-			OIntentMassiveInsert intent = new OIntentMassiveInsert();
-			intent.setDisableValidation(false);
-			dbConnection.declareIntent(intent);
+			dbConnection.declareIntent(new OIntentMassiveInsert());
 			
 			for (File file : files) {
 				baseFields = this.buildBaseFields();
+				fields = this.buildFields();
 				
 				try {
-					fileCount = this.loadFile(vocabRepo, dbConnection, doc, baseFields, file);
+					fileCount = this.loadFile(vocabRepo, dbConnection, doc, baseFields, fields, file);
 					
 					totalCount += fileCount;
 					
 					logger.debug(String.format("Loaded %d vocabulary model (name=%s) record(s) from file: %s", fileCount, this.modelName, file.getPath()));
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					logger.error(String.format("Unable to load vocabulary model (name=%s) file: %s", this.modelName, file), e);
 				}
 			}
@@ -66,21 +66,30 @@ public abstract class VocabularyLoader<T extends CodeModel> {
 		}
 	}
 	
-	protected abstract int loadFile(VocabularyRepository vocabRepo, OObjectDatabaseTx dbConnection, ODocument doc, Map<String, String> baseFields, File file)
+	protected abstract int loadFile(VocabularyRepository vocabRepo, OObjectDatabaseTx dbConnection, ODocument doc, Map<String, String> baseFields,
+		Map<String, String> fields, File file)
 		throws Exception;
 	
-	protected void loadDocument(ODocument doc, Map<String, String> fields) {
+	protected void loadDocument(OObjectDatabaseTx dbConnection, ODocument doc, Map<String, String> fields) {
+		this.loadDocument(dbConnection, doc, this.modelName, fields);
+	}
+	
+	protected void loadDocument(OObjectDatabaseTx dbConnection, ODocument doc, String modelClassName, Map<String, String> fields) {
 		doc.reset();
-		doc.setClassName(this.modelName);
+		doc.setClassName(modelClassName);
 		
 		for (String fieldName : fields.keySet()) {
 			doc.field(fieldName, fields.get(fieldName));
 		}
 		
-		doc.save();
+		dbConnection.getUnderlying().save(doc);
+	}
+	
+	protected Map<String, String> buildFields() {
+		return new LinkedHashMap<String, String>(this.numFields);
 	}
 	
 	protected Map<String, String> buildBaseFields() {
-		return new LinkedHashMap<String, String>();
+		return new LinkedHashMap<String, String>(this.numBaseFields);
 	}
 }

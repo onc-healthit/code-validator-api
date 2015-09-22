@@ -2,7 +2,6 @@ package org.sitenv.vocabularies.loader.code.loinc;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
@@ -11,19 +10,20 @@ import org.sitenv.vocabularies.model.impl.LoincModel;
 
 public class LoincLoader extends DelimitedTextVocabularyLoader<LoincModel> {
 	public LoincLoader() {
-		super(LoincModel.class, 1);
+		super(LoincModel.class, 2, 4, 1);
 	}
 	
 	@Override
-	protected boolean processLine(OObjectDatabaseTx dbConnection, ODocument doc, Map<String, String> baseFields, int lineIndex, String line) {
+	protected boolean processLine(OObjectDatabaseTx dbConnection, ODocument doc, Map<String, String> baseFields, Map<String, String> fields, int lineIndex,
+		String line) {
 		String[] lineParts = StringUtils.splitPreserveAllTokens(line, ",", 3);
 		
-		Map<String, String> fields = new LinkedHashMap<String, String>();
+		fields.clear();
 		fields.put("code", StringUtils.strip(lineParts[0], "\""));
 		fields.put("displayName", StringUtils.strip(lineParts[1], "\""));
 		fields.putAll(baseFields);
 		
-		this.loadDocument(doc, fields);
+		this.loadDocument(dbConnection, doc, fields);
 		
 		return true;
 	}

@@ -1,31 +1,12 @@
 package org.sitenv.vocabularies.loader.code.icd9;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
-import org.sitenv.vocabularies.loader.DelimitedTextVocabularyLoader;
 import org.sitenv.vocabularies.model.impl.Icd9CmSgModel;
 
-public class Icd9CmSgLoader extends DelimitedTextVocabularyLoader<Icd9CmSgModel> {
+public class Icd9CmSgLoader extends Icd9Loader<Icd9CmSgModel> {
 	public Icd9CmSgLoader() {
-		super(Icd9CmSgModel.class, 1);
-	}
-	
-	@Override
-	protected boolean processLine(OObjectDatabaseTx dbConnection, ODocument doc, Map<String, String> baseFields, int lineIndex, String line) {
-		String[] lineParts = StringUtils.splitPreserveAllTokens(line, "\t", 2);
-		
-		Map<String, String> fields = new LinkedHashMap<String, String>();
-		fields.put("code", lineParts[0].trim());
-		fields.put("displayName", lineParts[1].trim());
-		fields.putAll(baseFields);
-		
-		this.loadDocument(doc, fields);
-		
-		return true;
+		super(Icd9CmSgModel.class);
 	}
 	
 	@Override

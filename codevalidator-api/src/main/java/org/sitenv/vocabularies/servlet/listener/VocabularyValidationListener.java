@@ -78,8 +78,7 @@ public class VocabularyValidationListener implements ServletContextListener {
 				String primaryDbName = props.getProperty("vocabulary.primaryDbName");
 				String secondaryDbName = props.getProperty("vocabulary.secondaryDbName");
 
-				OServerConfiguration serverConfiguration = new OServerConfiguration(new OServerConfigurationLoaderXml(OServerConfiguration.class,
-					new File(configFileName)));
+				OServerConfiguration serverConfiguration = new OServerConfigurationLoaderXml(OServerConfiguration.class, new File(configFileName)).load();
 				
 				server.startup(serverConfiguration);
 				

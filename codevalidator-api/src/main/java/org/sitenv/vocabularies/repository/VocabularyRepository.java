@@ -99,8 +99,7 @@ public class VocabularyRepository {
 		this.put(VocabularyConstants.PHIN_VADS_VALUE_SET_TYPE, new ValueSetModelDefinition<PhinVadsModel>(PhinVadsModel.class,
 			VocabularyConstants.PHIN_VADS_VALUE_SET_TYPE));
 		
-		this.put(VocabularyConstants.VSAC_VALUE_SET_TYPE, new ValueSetModelDefinition<VsacModel>(VsacModel.class,
-			VocabularyConstants.VSAC_VALUE_SET_TYPE));
+		this.put(VocabularyConstants.VSAC_VALUE_SET_TYPE, new ValueSetModelDefinition<VsacModel>(VsacModel.class, VocabularyConstants.VSAC_VALUE_SET_TYPE));
 	}};
 	
 	@SuppressWarnings("serial")
@@ -136,7 +135,11 @@ public class VocabularyRepository {
 	public void setOrientDbServer(OServer orientDbServer) {
 		this.primaryOrientDbServer = orientDbServer;
 	}
-
+	
+	public boolean isPrimaryActive() {
+		return this.isPrimaryActive;
+	}
+	
 	public OPartitionedDatabasePoolFactory getConnectionPoolFactory() {
 		return this.connectionPoolFactory;
 	}
@@ -170,15 +173,12 @@ public class VocabularyRepository {
 	}
 	
 	public OObjectDatabaseTx getDbConnection(boolean active) {
-		OPartitionedDatabasePool connectionPool;
-		
-		if (active) {
-			connectionPool = (this.isPrimaryActive ? this.primaryConnectionPool : this.secondaryConnectionPool);
-		} else {
-			connectionPool = (!this.isPrimaryActive ? this.primaryConnectionPool : this.secondaryConnectionPool);
-		}
-		
-		return new OObjectDatabaseTx(connectionPool.acquire());
+		return new OObjectDatabaseTx(this.getDbConnectionPool(active).acquire());
+	}
+	
+	public OPartitionedDatabasePool getDbConnectionPool(boolean active) {
+		return (active ? (this.isPrimaryActive ? this.primaryConnectionPool : this.secondaryConnectionPool) :
+			(!this.isPrimaryActive ? this.primaryConnectionPool : this.secondaryConnectionPool));
 	}
 	
 	public void initializeDbConnectionPools() {
@@ -201,15 +201,15 @@ public class VocabularyRepository {
 			OMetadata metadata = dbConnection.getMetadata();
 			OIndexManager indexManager = metadata.getIndexManager();
 			OSchema schema = metadata.getSchema();
-			OClass modelDbClass = this.initializeModel(entityManager, indexManager, schema, CodeModel.class);
+			OClass modelDbClass = this.initializeModel(true, entityManager, indexManager, schema, CodeModel.class);
 			
-			buildDbIndex(indexManager, modelDbClass, INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "code", "codeSystemId");
+			buildDbIndex(true, indexManager, modelDbClass, INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "code", "codeSystemId");
 			
-			modelDbClass = this.initializeModel(entityManager, indexManager, schema, ValueSetCodeModel.class);
+			modelDbClass = this.initializeModel(true, entityManager, indexManager, schema, ValueSetCodeModel.class);
 			
-			buildDbIndex(indexManager, modelDbClass, INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "code", "codeSystemId");
-			buildDbIndex(indexManager, modelDbClass, INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "code", "valueSetId");
-			buildDbIndex(indexManager, modelDbClass, INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "code", "codeSystemId", "valueSetId");
+			buildDbIndex(true, indexManager, modelDbClass, INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "code", "codeSystemId");
+			buildDbIndex(true, indexManager, modelDbClass, INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "code", "valueSetId");
+			buildDbIndex(true, indexManager, modelDbClass, INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "code", "codeSystemId", "valueSetId");
 		} finally {
 			if (dbConnection != null) {
 				dbConnection.close();
@@ -217,35 +217,61 @@ public class VocabularyRepository {
 		}
 	}
 	
-	public <T extends CodeModel> OClass initializeModel(OObjectDatabaseTx dbConnection, Class<T> modelClass) {
+	public <T extends CodeModel> OClass initializeModel(boolean clear, OObjectDatabaseTx dbConnection, Class<T> modelClass) {
 		OMetadata metadata = dbConnection.getMetadata();
 		
-		return this.initializeModel(dbConnection.getEntityManager(), metadata.getIndexManager(), metadata.getSchema(), modelClass);
+		return this.initializeModel(clear, dbConnection.getEntityManager(), metadata.getIndexManager(), metadata.getSchema(), modelClass);
 	}
 	
-	public <T extends CodeModel> OClass initializeModel(OEntityManager entityManager, OIndexManager indexManager, OSchema schema, Class<T> modelClass) {
+	public <T extends CodeModel> OClass initializeModel(boolean clear, OEntityManager entityManager, OIndexManager indexManager, OSchema schema,
+		Class<T> modelClass) {
 		boolean valueSetModel = ValueSetCodeModel.class.isAssignableFrom(modelClass);
-		OClass modelDbClass = buildDbClass(entityManager, schema, modelClass, schema.getClass((valueSetModel ? ValueSetCodeModel.class : CodeModel.class)));
+		OClass modelDbClass = buildDbClass(clear, entityManager, schema, modelClass, schema.getClass((valueSetModel ? ValueSetCodeModel.class :
+			CodeModel.class)));
 		
-		buildDbProperty(indexManager, modelDbClass, "code", OType.STRING, true, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-		buildDbProperty(indexManager, modelDbClass, "displayName", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-		buildDbProperty(indexManager, modelDbClass, "tty", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-		buildDbProperty(indexManager, modelDbClass, "codeSystemId", OType.STRING, true, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-		buildDbProperty(indexManager, modelDbClass, "codeSystemName", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-		buildDbProperty(indexManager, modelDbClass, "codeSystemVersion", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+		buildDbProperty(clear, indexManager, modelDbClass, "code", OType.STRING, true, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+		buildDbProperty(clear, indexManager, modelDbClass, "displayName", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+		buildDbProperty(clear, indexManager, modelDbClass, "tty", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+		buildDbProperty(clear, indexManager, modelDbClass, "codeSystemId", OType.STRING, true, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+		buildDbProperty(clear, indexManager, modelDbClass, "codeSystemName", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+		buildDbProperty(clear, indexManager, modelDbClass, "codeSystemVersion", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
 		
 		if (valueSetModel) {
-			buildDbProperty(indexManager, modelDbClass, "valueSetId", OType.STRING, true, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-			buildDbProperty(indexManager, modelDbClass, "valueSetName", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-			buildDbProperty(indexManager, modelDbClass, "valueSetVersion", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-			buildDbProperty(indexManager, modelDbClass, "steward", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
-			buildDbProperty(indexManager, modelDbClass, "type", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+			buildDbProperty(clear, indexManager, modelDbClass, "valueSetId", OType.STRING, true, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+			buildDbProperty(clear, indexManager, modelDbClass, "valueSetName", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+			buildDbProperty(clear, indexManager, modelDbClass, "valueSetVersion", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+			buildDbProperty(clear, indexManager, modelDbClass, "steward", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
+			buildDbProperty(clear, indexManager, modelDbClass, "type", OType.STRING, false, INDEX_TYPE.NOTUNIQUE_HASH_INDEX);
 		}
 		
 		return modelDbClass;
 	}
 	
-	private static OProperty buildDbProperty(OIndexManager indexManager, OClass dbClass, String propName, OType propType, boolean required,
+	public void registerModels(boolean active) {
+		OObjectDatabaseTx dbConnection = null;
+		OEntityManager entityManager;
+		OSchema schema;
+		
+		try {
+			dbConnection = this.getDbConnection(active);
+			entityManager = dbConnection.getEntityManager();
+			schema = dbConnection.getMetadata().getSchema();
+			
+			for (CodeModelDefinition<?> codeModelDefinition : this.codeModelDefinitions.values()) {
+				registerEntityClass(entityManager, schema, codeModelDefinition.getModelClass());
+			}
+			
+			for (ValueSetModelDefinition<?> valueSetModelDefinition : this.valueSetModelDefinitions.values()) {
+				registerEntityClass(entityManager, schema, valueSetModelDefinition.getModelClass());
+			}
+		} finally {
+			if (dbConnection != null) {
+				dbConnection.close();
+			}
+		}
+	}
+	
+	public static OProperty buildDbProperty(boolean clear, OIndexManager indexManager, OClass dbClass, String propName, OType propType, boolean required,
 		INDEX_TYPE indexType) {
 		OProperty dbProp = (dbClass.existsProperty(propName) ? dbClass.getProperty(propName) : dbClass.createProperty(propName, propType));
 		
@@ -255,13 +281,13 @@ public class VocabularyRepository {
 		}
 		
 		if (indexType != null) {
-			buildDbIndex(indexManager, dbClass, indexType, propName);
+			buildDbIndex(clear, indexManager, dbClass, indexType, propName);
 		}
 
 		return dbProp;
 	}
 	
-	private static OIndex<?> buildDbIndex(OIndexManager indexManager, OClass dbClass, INDEX_TYPE indexType, String ... fieldNames) {
+	public static OIndex<?> buildDbIndex(boolean clear, OIndexManager indexManager, OClass dbClass, INDEX_TYPE indexType, String ... fieldNames) {
 		StrBuilder indexNameBuilder = new StrBuilder(dbClass.getName());
 		indexNameBuilder.append(".");
 		indexNameBuilder.append(fieldNames[0]);
@@ -272,46 +298,55 @@ public class VocabularyRepository {
 		}
 		
 		String indexName = indexNameBuilder.build();
+		OIndex<?> index;
 		
-		return (indexManager.existsIndex(indexName) ? indexManager.getIndex(indexName) : dbClass.createIndex(indexName, indexType, fieldNames));
+		if (indexManager.existsIndex(indexName)) {
+			index = indexManager.getIndex(indexName);
+			
+			if (clear) {
+				index.clear();
+			}
+		} else {
+			index = dbClass.createIndex(indexName, indexType, fieldNames);
+		}
+		
+		return index;
 	}
 	
-	private static OClass buildDbClass(OEntityManager entityManager, OSchema schema, Class<?> clazz, OClass ... superClasses) {
+	public static OClass buildDbClass(boolean truncate, OEntityManager entityManager, OSchema schema, Class<?> clazz, OClass ... superClasses) {
 		String className = clazz.getSimpleName();
-		
-		if (entityManager.getEntityClass(className) == null) {
-			entityManager.registerEntityClass(clazz);
-		}
+		OClass dbClass;
 		
 		if (schema.existsClass(className)) {
-			return schema.getClass(className);
+			dbClass = schema.getClass(className);
+			
+			if (truncate) {
+				try {
+					dbClass.truncate();
+					
+					logger.debug(String.format("Database class (name=%s) truncated.", className));
+				} catch (IOException e) {
+					logger.error("Could not truncate database class: %s" + clazz.getSimpleName(), e);
+				}
+			}
+		} else {
+			int classMods = clazz.getModifiers();
+
+			dbClass = ((Modifier.isInterface(classMods) || Modifier.isAbstract(classMods)) ? schema.createAbstractClass(className, superClasses) :
+				schema.createClass(className, superClasses));
+			dbClass.setStrictMode(true);
 		}
 		
-		int classMods = clazz.getModifiers();
-		
-		OClass dbClass = ((Modifier.isInterface(classMods) || Modifier.isAbstract(classMods)) ? schema.createAbstractClass(className, superClasses) :
-			schema.createClass(className, superClasses));
-		dbClass.setStrictMode(true);
+		registerEntityClass(entityManager, schema, clazz);
 		
 		return dbClass;
 	}
 	
-	public static void truncateModel(OObjectDatabaseTx dbConnection, Class<? extends CodeModel> clazz)
-	{
-		try {
-			OClass dbClass = dbConnection.getMetadata().getSchema().getClass(clazz);
-			
-			if (dbClass != null) {
-				dbClass.truncate();
-				
-				for (OIndex<?> classIndex : dbClass.getClassIndexes()) {
-					classIndex.clear();
-				}
-				
-				logger.debug(String.format("Vocabulary model (name=%s) truncated in inactive database.", clazz.getSimpleName()));
-			}
-		} catch (IOException e) {
-			logger.error("Could not truncate model class: %s" + clazz.getSimpleName(), e);
+	public static void registerEntityClass(OEntityManager entityManager, OSchema schema, Class<?> clazz) {
+		String className = clazz.getSimpleName();
+		
+		if (schema.existsClass(className) && (entityManager.getEntityClass(className) == null)) {
+			entityManager.registerEntityClass(clazz);
 		}
 	}
 	

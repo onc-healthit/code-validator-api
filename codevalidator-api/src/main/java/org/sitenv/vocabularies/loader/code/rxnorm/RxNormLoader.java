@@ -2,7 +2,6 @@ package org.sitenv.vocabularies.loader.code.rxnorm;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
@@ -11,20 +10,21 @@ import org.sitenv.vocabularies.model.impl.RxNormModel;
 
 public class RxNormLoader extends DelimitedTextVocabularyLoader<RxNormModel> {
 	public RxNormLoader() {
-		super(RxNormModel.class, 0);
+		super(RxNormModel.class, 2, 5, 0);
 	}
 	
 	@Override
-	protected boolean processLine(OObjectDatabaseTx dbConnection, ODocument doc, Map<String, String> baseFields, int lineIndex, String line) {
+	protected boolean processLine(OObjectDatabaseTx dbConnection, ODocument doc, Map<String, String> baseFields, Map<String, String> fields, int lineIndex,
+		String line) {
 		String[] lineParts = StringUtils.splitPreserveAllTokens(line, "|", 16);
 		
-		Map<String, String> fields = new LinkedHashMap<String, String>();
-		fields.put("code", lineParts[13]);
+		fields.clear();
+		fields.put("code", lineParts[0]);
 		fields.put("displayName", lineParts[14]);
 		fields.put("tty", lineParts[12]);
 		fields.putAll(baseFields);
 		
-		this.loadDocument(doc, fields);
+		this.loadDocument(dbConnection, doc, fields);
 		
 		return true;
 	}

@@ -682,6 +682,10 @@ public abstract class ValidationEngine {
 						logger.info("Value Sets loaded...");
 					}
 				}
+				
+				VocabularyRepository.getInstance().registerModels(false);
+				VocabularyRepository.getInstance().registerModels(true);
+				
 				// recommendation from cwatson: load files back in the primary so both db's are 
 				
 				logger.info("Starting Vocabulary Watchdog...");

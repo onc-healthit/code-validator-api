@@ -1,28 +1,12 @@
 package org.sitenv.vocabularies.loader.code.icd10;
 
-import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
-import org.sitenv.vocabularies.loader.DelimitedTextVocabularyLoader;
 import org.sitenv.vocabularies.model.impl.Icd10CmModel;
 
-public class Icd10CmLoader extends DelimitedTextVocabularyLoader<Icd10CmModel> {
+public class Icd10CmLoader extends Icd10Loader<Icd10CmModel> {
 	public Icd10CmLoader() {
-		super(Icd10CmModel.class, 0);
-	}
-	
-	@Override
-	protected boolean processLine(OObjectDatabaseTx dbConnection, ODocument doc, Map<String, String> baseFields, int lineIndex, String line) {
-		Map<String, String> fields = new LinkedHashMap<String, String>();
-		fields.put("code", line.substring(6, 13).trim());
-		fields.put("displayName", line.substring(77).trim());
-		fields.putAll(baseFields);
-		
-		this.loadDocument(doc, fields);
-		
-		return true;
+		super(Icd10CmModel.class);
 	}
 	
 	@Override

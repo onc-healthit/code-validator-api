@@ -4,7 +4,6 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -15,12 +14,12 @@ import org.sitenv.vocabularies.repository.VocabularyRepository;
 
 public class VsacLoader extends VocabularyLoader<VsacModel> {
 	public VsacLoader() {
-		super(VsacModel.class);
+		super(VsacModel.class, 5, 11);
 	}
 
 	@Override
-	protected int loadFile(VocabularyRepository vocabRepo, OObjectDatabaseTx dbConnection, ODocument doc, Map<String, String> baseFields, File file) throws
-		Exception {
+	protected int loadFile(VocabularyRepository vocabRepo, OObjectDatabaseTx dbConnection, ODocument doc, Map<String, String> baseFields,
+		Map<String, String> fields, File file) throws Exception {
 		int fileCount = 0;
 		HSSFWorkbook workbook = null;
 		
@@ -29,6 +28,7 @@ public class VsacLoader extends VocabularyLoader<VsacModel> {
 			
 			HSSFSheet sheet = workbook.getSheet("Code List");
 			
+			baseFields.clear();
 			baseFields.put("valueSetId", sheet.getRow(2).getCell(1).getStringCellValue());
 			baseFields.put("valueSetName", sheet.getRow(1).getCell(1).getStringCellValue());
 			baseFields.put("valueSetVersion", sheet.getRow(4).getCell(1).getStringCellValue());
@@ -36,12 +36,11 @@ public class VsacLoader extends VocabularyLoader<VsacModel> {
 			baseFields.put("type", sheet.getRow(3).getCell(1).getStringCellValue());
 			
 			HSSFRow row;
-			Map<String, String> fields;
 			
 			for (int rowIndex = 11; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
 				row = sheet.getRow(rowIndex);
 				
-				fields = new LinkedHashMap<String, String>();
+				fields.clear();
 				fields.put("code", row.getCell(0).getStringCellValue());
 				fields.put("displayName", row.getCell(1).getStringCellValue());
 				fields.put("tty", row.getCell(5).getStringCellValue());
@@ -50,7 +49,7 @@ public class VsacLoader extends VocabularyLoader<VsacModel> {
 				fields.put("codeSystemVersion", row.getCell(3).getStringCellValue());
 				fields.putAll(baseFields);
 				
-				this.loadDocument(doc, fields);
+				this.loadDocument(dbConnection, doc, fields);
 				
 				fileCount++;
 			}
