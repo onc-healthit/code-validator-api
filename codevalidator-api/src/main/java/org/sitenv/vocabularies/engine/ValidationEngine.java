@@ -217,12 +217,13 @@ public abstract class ValidationEngine {
 				{
 					result.setCodeSystemAndNameMatch(true);
 					result.getExpectedOidsForCodeSystemName().add(codeSystem);
-					for (String codeSystemNameLkp : VocabularyConstants.CODE_SYSTEM_MAP.keySet())
+					
+				}
+				for (String codeSystemNameLkp : VocabularyConstants.CODE_SYSTEM_MAP.keySet())
+				{
+					if (VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemNameLkp).equalsIgnoreCase(codeSystem))
 					{
-						if (VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemNameLkp).equalsIgnoreCase(VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName)))
-						{
-							result.getExpectedCodeSystemNamesForOid().add(codeSystemNameLkp);
-						}
+						result.getExpectedCodeSystemNamesForOid().add(codeSystemNameLkp);
 					}
 				}
 			}
@@ -265,6 +266,7 @@ public abstract class ValidationEngine {
 	
 	public static ValueSetValidationResult validateValueSetCode (String valueSet, String codeSystem, String codeSystemName, String code, String description)
 	{
+		
 		ValueSetValidationResult result = new ValueSetValidationResult();
 		
 		
@@ -341,12 +343,13 @@ public abstract class ValidationEngine {
 				{
 					
 					result.getExpectedOidsForCodeSystemName().add(system.getCodeSystem());
-					
 					if (codeSystem != null && system.getCodeSystem() != null && system.getCodeSystem().equalsIgnoreCase(codeSystem))
 					{
 						result.setCodeSystemAndNameMatch(true);
 					}
+					
 				}
+				
 			}
 		}
 		

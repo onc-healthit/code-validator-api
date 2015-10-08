@@ -155,7 +155,7 @@ public class VsacLoader implements ValueSetLoader {
 						insertQueryBuilder.append(valueSetName);
 						insertQueryBuilder.append("\")");
 						
-						if ((totalCount % 5000) == 0) {
+						if ((++totalCount % 5000) == 0) {
 							dbConnection.command(new OCommandSQL(insertQueryBuilder.toString())).execute();
 							dbConnection.commit();
 							

@@ -1,14 +1,10 @@
 package org.sitenv.vocabularies.loader.code.icd10;
 
-import com.orientechnologies.common.io.OIOUtils;
-import com.orientechnologies.orient.core.intent.OIntentMassiveInsert;
-import com.orientechnologies.orient.core.sql.OCommandSQL;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.text.StrBuilder;
@@ -16,14 +12,17 @@ import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.loader.code.CodeLoader;
 import org.sitenv.vocabularies.loader.code.CodeLoaderManager;
+import org.sitenv.vocabularies.loader.code.IcdLoader;
 import org.sitenv.vocabularies.model.VocabularyModelDefinition;
-import org.sitenv.vocabularies.model.impl.Icd10CmModel;
 import org.sitenv.vocabularies.model.impl.Icd10PcsModel;
 import org.sitenv.vocabularies.repository.VocabularyRepository;
 
+import com.orientechnologies.common.io.OIOUtils;
+import com.orientechnologies.orient.core.intent.OIntentMassiveInsert;
+import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
-public class Icd10PcsLoader implements CodeLoader {
+public class Icd10PcsLoader extends IcdLoader implements CodeLoader {
 
 	private static Logger logger = Logger.getLogger(Icd10PcsLoader.class);
 	
@@ -87,7 +86,19 @@ public class Icd10PcsLoader implements CodeLoader {
 						insertQueryBuilder.append(OIOUtils.encode(available.substring(77).trim()));
 						insertQueryBuilder.append("\")");
 						
-						if ((totalCount % 5000) == 0) {
+						insertQueryBuilder.append(",");
+						
+						insertQueryBuilder.append("(\"");
+						insertQueryBuilder.append(OIOUtils.encode(available.substring(6, 13).trim().toUpperCase()));
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(OIOUtils.encode(available.substring(16,76).trim().toUpperCase()));
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(OIOUtils.encode(available.substring(6, 13).trim()));
+						insertQueryBuilder.append("\",\"");
+						insertQueryBuilder.append(OIOUtils.encode(available.substring(16,76).trim()));
+						insertQueryBuilder.append("\")");
+						
+						if ((++totalCount % 2500) == 0) {
 							dbConnection.command(new OCommandSQL(insertQueryBuilder.toString())).execute();
 							dbConnection.commit();
 							

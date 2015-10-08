@@ -77,23 +77,23 @@ public void load(List<File> filesToLoad) {
 							continue; // skip header row
 						} else {
 
-							String[] line = StringUtils.splitPreserveAllTokens(available, "\t", 4);
+							String[] line = StringUtils.splitPreserveAllTokens(available, "\t", 9);
 							
 							if (pendingCount++ > 0) {
 								insertQueryBuilder.append(",");
 							}
 							
 							insertQueryBuilder.append("(\"");
-							insertQueryBuilder.append(OIOUtils.encode(line[0].toUpperCase()));
+							insertQueryBuilder.append(OIOUtils.encode(line[4].toUpperCase()));
 							insertQueryBuilder.append("\",\"");
-							insertQueryBuilder.append(OIOUtils.encode(line[2].toUpperCase()));
+							insertQueryBuilder.append(OIOUtils.encode(line[7].toUpperCase()));
 							insertQueryBuilder.append("\",\"");
-							insertQueryBuilder.append(OIOUtils.encode(line[0]));
+							insertQueryBuilder.append(OIOUtils.encode(line[4]));
 							insertQueryBuilder.append("\",\"");
-							insertQueryBuilder.append(OIOUtils.encode(line[2]));
+							insertQueryBuilder.append(OIOUtils.encode(line[7]));
 							insertQueryBuilder.append("\")");
 							
-							if ((totalCount % 5000) == 0) {
+							if ((++totalCount % 5000) == 0) {
 								dbConnection.command(new OCommandSQL(insertQueryBuilder.toString())).execute();
 								dbConnection.commit();
 								
