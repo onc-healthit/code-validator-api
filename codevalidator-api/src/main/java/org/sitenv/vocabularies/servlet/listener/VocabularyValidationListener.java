@@ -1,22 +1,7 @@
 package org.sitenv.vocabularies.servlet.listener;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
+import com.orientechnologies.orient.server.OServer;
+import com.orientechnologies.orient.server.OServerMain;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.engine.ValidationEngine;
 import org.sitenv.vocabularies.repository.VocabularyRepository;
@@ -25,31 +10,58 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import com.orientechnologies.orient.server.OServer;
-import com.orientechnologies.orient.server.OServerMain;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class VocabularyValidationListener implements ServletContextListener {
 
 	private static Logger logger = Logger.getLogger(VocabularyValidationListener.class);
 	public static final XPathFactory XPATH = XPathFactory.newInstance();
-	
-	
 	private static final String DEFAULT_PROPERTIES_FILE = "environment.properties";
-	
+	private String configFileName;
+	private String primaryDbName;
+	private String secondaryDbName;
+    private String localCodeRepositoryDir;
+    private String localValueSetRepositoryDir;
+	private boolean propertiesLoaded;
+    private boolean startupLoader;
 	protected Properties props;
 	
-	protected void loadProperties() throws IOException {
+	protected void loadProperties(ServletContextEvent servletContextEvent) throws IOException {
 		InputStream in = this.getClass().getClassLoader().getResourceAsStream(DEFAULT_PROPERTIES_FILE);
-		
+
 		if (in == null)
 		{
-			props = null;
-			throw new FileNotFoundException("Environment Properties File not found in class path.");
+			logger.debug("Environment Properties File not found in class path. Trying to get parameters from servlet context");
+            ServletContext ctx = servletContextEvent.getServletContext();
+            configFileName = ctx.getInitParameter("vocabulary.orientDbConfigFile");
+            primaryDbName = ctx.getInitParameter("vocabulary.primaryDbName");
+            secondaryDbName = ctx.getInitParameter("vocabulary.secondaryDbName");
+            localCodeRepositoryDir = ctx.getInitParameter("vocabulary.localCodeRepositoryDir");
+            localValueSetRepositoryDir = ctx.getInitParameter("vocabulary.localValueSetRepositoryDir");
+            startupLoader = Boolean.parseBoolean(ctx.getInitParameter("vocabulary.loadVocabulariesAtStartup"));
+            propertiesLoaded = true;
 		}
 		else
 		{
 			props = new Properties();
 			props.load(in);
+            configFileName = props.getProperty("vocabulary.orientDbConfigFile");
+            primaryDbName = props.getProperty("vocabulary.primaryDbName");
+            secondaryDbName = props.getProperty("vocabulary.secondaryDbName");
+            localCodeRepositoryDir = props.getProperty("vocabulary.localCodeRepositoryDir");
+            localValueSetRepositoryDir = props.getProperty("vocabulary.localValueSetRepositoryDir");
+            startupLoader = Boolean.parseBoolean(props.getProperty("vocabulary.loadVocabulariesAtStartup"));
+            propertiesLoaded = true;
 		}
 	}
 	
@@ -74,26 +86,19 @@ public class VocabularyValidationListener implements ServletContextListener {
 	}
 
 	
-	public void contextInitialized(ServletContextEvent arg0) {
+	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		try
 		{
-			if (props == null)
+			if (!propertiesLoaded)
 			{
-				this.loadProperties();
+				this.loadProperties(servletContextEvent);
 			}
 			
 			try
 			{
 				logger.debug("Intializing the Orient DB server...");
 				OServer server = OServerMain.create();
-				
-				String configFileName = props.getProperty("vocabulary.orientDbConfigFile");
-				String primaryDbName = props.getProperty("vocabulary.primaryDbName");
-				String secondaryDbName = props.getProperty("vocabulary.secondaryDbName");
-				
-				
 				server.startup(new File(configFileName));
-				
 				server.activate();
 				
 				VocabularyRepository.getInstance().setOrientDbServer(server);
@@ -125,16 +130,8 @@ public class VocabularyValidationListener implements ServletContextListener {
 				logger.error("Could not initialize the DataStore repository", e);
 			}
 			
-			String loadAtStartup = props.getProperty("vocabulary.loadVocabulariesAtStartup");
-			boolean startupLoader = true;
-			
-			if (loadAtStartup != null)
-			{
-				startupLoader = Boolean.parseBoolean(loadAtStartup);
-			}
-			
 			logger.debug("Initializing the validation engine...");
-			ValidationEngine.initialize(props.getProperty("vocabulary.localCodeRepositoryDir"), props.getProperty("vocabulary.localValueSetRepositoryDir"), startupLoader);
+			ValidationEngine.initialize(localCodeRepositoryDir, localValueSetRepositoryDir, startupLoader);
 			logger.debug("Validation Engine initialized...");
 			
 		}
