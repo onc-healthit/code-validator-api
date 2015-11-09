@@ -217,12 +217,13 @@ public abstract class ValidationEngine {
 				{
 					result.setCodeSystemAndNameMatch(true);
 					result.getExpectedOidsForCodeSystemName().add(codeSystem);
-					for (String codeSystemNameLkp : VocabularyConstants.CODE_SYSTEM_MAP.keySet())
+					
+				}
+				for (String codeSystemNameLkp : VocabularyConstants.CODE_SYSTEM_MAP.keySet())
+				{
+					if (VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemNameLkp).equalsIgnoreCase(codeSystem))
 					{
-						if (VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemNameLkp).equalsIgnoreCase(VocabularyConstants.CODE_SYSTEM_MAP.get(codeSystemName)))
-						{
-							result.getExpectedCodeSystemNamesForOid().add(codeSystemNameLkp);
-						}
+						result.getExpectedCodeSystemNamesForOid().add(codeSystemNameLkp);
 					}
 				}
 			}
@@ -265,6 +266,7 @@ public abstract class ValidationEngine {
 	
 	public static ValueSetValidationResult validateValueSetCode (String valueSet, String codeSystem, String codeSystemName, String code, String description)
 	{
+		
 		ValueSetValidationResult result = new ValueSetValidationResult();
 		
 		
@@ -277,6 +279,8 @@ public abstract class ValidationEngine {
 		Set<String> valueSetNames = getValueSetNames(valueSet);
 		
 		result.getValueSetNames().addAll(valueSetNames);
+		
+		
 		
 		List<? extends ValueSetModel> codeModels = getValueSetCode(valueSet, code);
 		
@@ -339,12 +343,13 @@ public abstract class ValidationEngine {
 				{
 					
 					result.getExpectedOidsForCodeSystemName().add(system.getCodeSystem());
-					
 					if (codeSystem != null && system.getCodeSystem() != null && system.getCodeSystem().equalsIgnoreCase(codeSystem))
 					{
 						result.setCodeSystemAndNameMatch(true);
 					}
+					
 				}
+				
 			}
 		}
 		
@@ -390,6 +395,34 @@ public abstract class ValidationEngine {
 			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
 			{
 				Set<String> modelList = ds.fetchValueSetNamesByValueSet(clazz, valueSet);
+				
+				if (modelList != null)
+				{
+					if (result == null)
+					{
+						result = new TreeSet<String>();
+					}
+					
+					result.addAll(modelList);
+				}
+			}
+					
+		}
+		
+		return result;
+	}
+	
+	public static Set<String> getValueSets()
+	{
+		VocabularyRepository ds = VocabularyRepository.getInstance();
+		Set<String> result = null;
+		
+		if (ds != null && ds.getValueSetModelClassList() != null) {
+			
+			
+			for (Class<? extends ValueSetModel> clazz : ds.getValueSetModelClassList())
+			{
+				Set<String> modelList = ds.fetchValueSets(clazz);
 				
 				if (modelList != null)
 				{

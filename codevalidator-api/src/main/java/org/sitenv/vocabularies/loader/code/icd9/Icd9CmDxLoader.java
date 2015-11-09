@@ -1,14 +1,10 @@
 package org.sitenv.vocabularies.loader.code.icd9;
 
-import com.orientechnologies.common.io.OIOUtils;
-import com.orientechnologies.orient.core.intent.OIntentMassiveInsert;
-import com.orientechnologies.orient.core.sql.OCommandSQL;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,13 +13,17 @@ import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.loader.code.CodeLoader;
 import org.sitenv.vocabularies.loader.code.CodeLoaderManager;
+import org.sitenv.vocabularies.loader.code.IcdLoader;
 import org.sitenv.vocabularies.model.VocabularyModelDefinition;
 import org.sitenv.vocabularies.model.impl.Icd9CmDxModel;
 import org.sitenv.vocabularies.repository.VocabularyRepository;
 
+import com.orientechnologies.common.io.OIOUtils;
+import com.orientechnologies.orient.core.intent.OIntentMassiveInsert;
+import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 
-public class Icd9CmDxLoader implements CodeLoader {
+public class Icd9CmDxLoader extends IcdLoader implements CodeLoader {
 
 	private static Logger logger = Logger.getLogger(Icd9CmDxLoader.class);
 	
@@ -72,29 +72,28 @@ public class Icd9CmDxLoader implements CodeLoader {
 					int count = 0;
 
 					br = new BufferedReader(new FileReader(file));
-					String available;
-					while ((available = br.readLine()) != null) {
-						if ((count++ == 0) || available.isEmpty()) {
+					String line;
+					while ((line = br.readLine()) != null) {
+						if ((count++ == 0) || line.isEmpty()) {
 							continue; // skip header row
 						} else {
 
-							String[] line = StringUtils.splitPreserveAllTokens(available, "\t", 2);
 							
 							if (pendingCount++ > 0) {
 								insertQueryBuilder.append(",");
 							}
 							
 							insertQueryBuilder.append("(\"");
-							insertQueryBuilder.append(OIOUtils.encode(line[0].trim().toUpperCase()));
+							insertQueryBuilder.append(OIOUtils.encode(buildDelimitedIcdCode(line.substring(0, 5).trim()).toUpperCase()));
 							insertQueryBuilder.append("\",\"");
-							insertQueryBuilder.append(OIOUtils.encode(line[1].trim().toUpperCase()));
+							insertQueryBuilder.append(OIOUtils.encode(line.substring(6).trim().toUpperCase()));
 							insertQueryBuilder.append("\",\"");
-							insertQueryBuilder.append(OIOUtils.encode(line[0].trim()));
+							insertQueryBuilder.append(OIOUtils.encode(buildDelimitedIcdCode(line.substring(0, 5).trim())));
 							insertQueryBuilder.append("\",\"");
-							insertQueryBuilder.append(OIOUtils.encode(line[1].trim()));
+							insertQueryBuilder.append(OIOUtils.encode(line.substring(6).trim()));
 							insertQueryBuilder.append("\")");
 							
-							if ((totalCount % 5000) == 0) {
+							if ((++totalCount % 5000) == 0) {
 								dbConnection.command(new OCommandSQL(insertQueryBuilder.toString())).execute();
 								dbConnection.commit();
 								
