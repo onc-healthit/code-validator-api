@@ -16,7 +16,6 @@
 		
 	<modules>
 		<module>codevalidator-api</module>
-		<module>codevalidator-service</module>
 	</modules>
 	
 	<dependencies>
