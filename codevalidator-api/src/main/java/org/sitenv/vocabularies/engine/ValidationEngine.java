@@ -1,14 +1,5 @@
 package org.sitenv.vocabularies.engine;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.data.CodeSystemResult;
@@ -24,6 +15,10 @@ import org.sitenv.vocabularies.model.ValueSetModel;
 import org.sitenv.vocabularies.model.VocabularyModelDefinition;
 import org.sitenv.vocabularies.repository.VocabularyRepository;
 import org.sitenv.vocabularies.watchdog.RepositoryWatchdog;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 public abstract class ValidationEngine {
 	
@@ -513,7 +508,8 @@ public abstract class ValidationEngine {
 		
 		return results;
 	}
-	
+
+
 	private static List<? extends CodeModel> getDisplayName(String codeSystem, String displayName)
 	{
 		VocabularyRepository ds = VocabularyRepository.getInstance();
