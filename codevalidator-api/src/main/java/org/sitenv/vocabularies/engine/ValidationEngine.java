@@ -441,7 +441,7 @@ public abstract class ValidationEngine {
 				logger.info("Starting Value Set Watchdog...");
 				ValidationEngine.valueSetWatchdog = new RepositoryWatchdog(this.getValueSetDirectory(), this.isRecursive(), false);
 				ValidationEngine.valueSetWatchdog.start();
-				logger.info("Vocabulary ValueSet started...");
+				logger.info("Vocabulary VsacValueSet started...");
 			} catch (Exception e) {
 				logger.error("Failed to load configured vocabulary directory.", e);
 			}

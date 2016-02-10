@@ -5,8 +5,8 @@ public class VocabularyModelDefinition {
 
 	private Class<? extends CodeModel> clazz;
 	private String codeSystem;
-	
-	
+
+
 
 	public VocabularyModelDefinition(Class<? extends CodeModel> clazz, String codeSystem) {
 		super();

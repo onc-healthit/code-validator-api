@@ -1,8 +1,9 @@
 package org.sitenv.vocabularies.loader.code;
 
 import org.apache.commons.lang3.text.StrBuilder;
+import org.sitenv.vocabularies.loader.BaseVocabularyLoader;
 
-public abstract class IcdLoader {
+public abstract class IcdLoader extends BaseVocabularyLoader{
 	protected final static char ICD_CODE_DELIM = '.';
 	
 	protected final static int ICD_CODE_PART_LEN = 3;

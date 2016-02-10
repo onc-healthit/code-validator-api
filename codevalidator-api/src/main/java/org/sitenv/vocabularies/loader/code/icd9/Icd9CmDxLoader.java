@@ -1,13 +1,9 @@
 package org.sitenv.vocabularies.loader.code.icd9;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
+import com.orientechnologies.common.io.OIOUtils;
+import com.orientechnologies.orient.core.intent.OIntentMassiveInsert;
+import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
@@ -18,25 +14,23 @@ import org.sitenv.vocabularies.model.VocabularyModelDefinition;
 import org.sitenv.vocabularies.model.impl.Icd9CmDxModel;
 import org.sitenv.vocabularies.repository.VocabularyRepository;
 
-import com.orientechnologies.common.io.OIOUtils;
-import com.orientechnologies.orient.core.intent.OIntentMassiveInsert;
-import com.orientechnologies.orient.core.sql.OCommandSQL;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import java.io.*;
+import java.util.List;
 
 public class Icd9CmDxLoader extends IcdLoader implements CodeLoader {
 
 	private static Logger logger = Logger.getLogger(Icd9CmDxLoader.class);
-	
+
 
 	static {
 		CodeLoaderManager.getInstance()
 				.registerLoader(VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_NAME, Icd9CmDxLoader.class);
 		logger.info("Loaded: " + VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_NAME + "(" + VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_SYSTEM + ")");
-		
+
 		VocabularyModelDefinition icd9CmDx = new VocabularyModelDefinition(Icd9CmDxModel.class, VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_SYSTEM);
-			
+
 		VocabularyRepository.getInstance().getVocabularyMap().put(VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_SYSTEM, icd9CmDx);
-		
+
 	}
 	
 	public void load(List<File> filesToLoad) {
@@ -138,7 +132,7 @@ public class Icd9CmDxLoader extends IcdLoader implements CodeLoader {
 
 	}
 
-	
+
 	public String getCodeName() {
 		return VocabularyConstants.ICD9CM_DIAGNOSIS_CODE_NAME;
 	}

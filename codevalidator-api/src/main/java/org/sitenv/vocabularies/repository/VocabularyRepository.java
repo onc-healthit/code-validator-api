@@ -27,7 +27,7 @@ public class VocabularyRepository {
 	private OServer primaryOrientDbServer;
 	private VocabularyRepositoryConnectionInfo primaryNodeCredentials;
 	private VocabularyRepositoryConnectionInfo secondaryNodeCredentials;
-	private boolean isPrimaryActive = true; 
+	private boolean isPrimaryActive = true;
 	private OCommandSQL cmd = new OCommandSQL();
 	private VocabularyRepository () {}
 
@@ -53,7 +53,7 @@ public class VocabularyRepository {
 
 	public void setPrimaryNodeCredentials(VocabularyRepositoryConnectionInfo primaryNodeCredentials) {
 		this.primaryNodeCredentials = primaryNodeCredentials;
-		
+
 	}
 
 	public VocabularyRepositoryConnectionInfo getSecondaryNodeCredentials() {
@@ -64,7 +64,7 @@ public class VocabularyRepository {
 			VocabularyRepositoryConnectionInfo secondaryNodeCredentials) {
 		this.secondaryNodeCredentials = secondaryNodeCredentials;
 	}
-	
+
 	public OObjectDatabaseTx getActiveDbConnection() {
 		OObjectDatabaseTx connection;
 		if (isPrimaryActive) {
@@ -77,7 +77,7 @@ public class VocabularyRepository {
 		registerModels(connection);
 		return connection;
 	}
-	
+
 	public OObjectDatabaseTx getInactiveDbConnection() {
 		OObjectDatabaseTx connection;
 		if (!isPrimaryActive) {
@@ -88,9 +88,9 @@ public class VocabularyRepository {
 			connection = OObjectDatabasePool.global().acquire(secondaryNodeCredentials.getConnectionInfo(), secondaryNodeCredentials.getUsername(), secondaryNodeCredentials.getPassword());
 		}
 		registerModels(connection);
-		return connection;	
+		return connection;
 	}
-	
+
 	public static void truncateModel(OObjectDatabaseTx dbConnection, Class<? extends CodeModel> clazz) {
 		try {
 		dbConnection.command(new OCommandSQL("TRUNCATE CLASS " + clazz.getSimpleName())).execute();
@@ -99,7 +99,7 @@ public class VocabularyRepository {
 			logger.error("Could not truncate the class " + clazz.getSimpleName() + ".  Perhaps it doesn't exist in " + dbConnection.getName());
 		}
 	}
-	
+
 	public static void truncateValueSetModel(OObjectDatabaseTx dbConnection, Class<? extends ValueSetModel> clazz) {
 		try {
 		dbConnection.command(new OCommandSQL("TRUNCATE CLASS " + clazz.getSimpleName())).execute();
@@ -108,16 +108,16 @@ public class VocabularyRepository {
 			logger.error("Could not truncate the class " + clazz.getSimpleName() + ".  Perhaps it doesn't exist in " + dbConnection.getName());
 		}
 	}
-	
+
 	public static void updateIndexProperties(OObjectDatabaseTx dbConnection, Class<? extends CodeModel> clazz, boolean clear) {
 		OClass target = dbConnection.getMetadata().getSchema().getOrCreateClass(clazz.getSimpleName());
-		
+
 		if (clear) {
 			for (OIndex<?> index : target.getInvolvedIndexes("codeIndex", "displayNameIndex")) {
 				index.clear();
 			}
 		}
-		
+
 		if (!target.areIndexed("codeIndex"))
 		{
 			if (target.getProperty("codeIndex") == null)
@@ -127,7 +127,7 @@ public class VocabularyRepository {
 			target.createIndex(clazz.getSimpleName() + ".codeIndex", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "codeIndex");
 			dbConnection.getMetadata().getSchema().save();
 		}
-		
+
 		if (!target.areIndexed("displayNameIndex"))
 		{
 			if (target.getProperty("displayNameIndex") == null)
@@ -138,17 +138,17 @@ public class VocabularyRepository {
 			dbConnection.getMetadata().getSchema().save();
 		}
 	}
-	
+
 	public static void updateValueSetIndexProperties(OObjectDatabaseTx dbConnection, Class<? extends ValueSetModel> clazz, boolean clear)
 	{
 		OClass target = dbConnection.getMetadata().getSchema().getOrCreateClass(clazz.getSimpleName());
-		
+
 		if (clear) {
 			for (OIndex<?> index : target.getInvolvedIndexes("codeIndex", "codeSystemIndex", "valueSetIndex", "valueSetNameIndex", "descriptionIndex")) {
 				index.clear();
 			}
 		}
-		
+
 		if (!target.areIndexed("codeIndex"))
 		{
 			if (target.getProperty("codeIndex") == null)
@@ -158,7 +158,7 @@ public class VocabularyRepository {
 			target.createIndex(clazz.getSimpleName() + ".codeIndex", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "codeIndex");
 			dbConnection.getMetadata().getSchema().save();
 		}
-		
+
 		if (!target.areIndexed("codeSystemIndex"))
 		{
 			if (target.getProperty("codeSystemIndex") == null)
@@ -168,7 +168,7 @@ public class VocabularyRepository {
 			target.createIndex(clazz.getSimpleName() + ".codeSystemIndex", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "codeSystemIndex");
 			dbConnection.getMetadata().getSchema().save();
 		}
-		
+
 		if (!target.areIndexed("valueSetIndex"))
 		{
 			if (target.getProperty("valueSetIndex") == null)
@@ -178,7 +178,7 @@ public class VocabularyRepository {
 			target.createIndex(clazz.getSimpleName() + ".valueSetIndex", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "valueSetIndex");
 			dbConnection.getMetadata().getSchema().save();
 		}
-		
+
 		if (!target.areIndexed("valueSetNameIndex"))
 		{
 			if (target.getProperty("valueSetNameIndex") == null)
@@ -188,7 +188,7 @@ public class VocabularyRepository {
 			target.createIndex(clazz.getSimpleName() + ".valueSetNameIndex", OClass.INDEX_TYPE.NOTUNIQUE_HASH_INDEX, "valueSetNameIndex");
 			dbConnection.getMetadata().getSchema().save();
 		}
-		
+
 
 		if (!target.areIndexed("descriptionIndex"))
 		{
@@ -200,17 +200,17 @@ public class VocabularyRepository {
 			dbConnection.getMetadata().getSchema().save();
 		}
 	}
-	
+
 	public static long getRecordCount (OObjectDatabaseTx dbConnection, Class<? extends CodeModel> clazz) {
 		OClass target = dbConnection.getMetadata().getSchema().getOrCreateClass(clazz.getSimpleName());
 		return target.count();
 	}
-	
+
 	public static long getValueSetRecordCount (OObjectDatabaseTx dbConnection, Class<? extends ValueSetModel> clazz) {
 		OClass target = dbConnection.getMetadata().getSchema().getOrCreateClass(clazz.getSimpleName());
 		return target.count();
 	}
-	
+
 	public void toggleActiveDatabase() {
 		this.isPrimaryActive = !(this.isPrimaryActive);
 		logger.info("TOGGLING ACTIVE DATABASE");
@@ -228,7 +228,7 @@ public class VocabularyRepository {
 		}
 		return result;
 	}
-	
+
 	public <T extends CodeModel> List<T> fetchByDisplayName(Class<T> clazz, String displayName, OObjectDatabaseTx dbConnection) {
 		String query = "SELECT * FROM " + clazz.getSimpleName() + " where displayNameIndex = ?";
 		cmd.setUseCache(true);
@@ -241,7 +241,7 @@ public class VocabularyRepository {
 		}
 		return result;
 	}
-	
+
 	public <T extends ValueSetModel> List<CodeSystemResult> fetchCodeSystemsByValueSet(Class<T> clazz, String valueSet, OObjectDatabaseTx dbConnection) {
 		String query = "SELECT codeSystem, codeSystemName FROM " + clazz.getSimpleName() + " where valueSetIndex = ? GROUP BY codeSystem, codeSystemName";
 		cmd.setUseCache(true);
@@ -255,7 +255,7 @@ public class VocabularyRepository {
 				for (ODocument result : results) {
 					String codeSystem = result.field("codeSystem");
 					String codeSystemName = result.field("codeSystemName");
-					
+
 					CodeSystemResult csResult = new CodeSystemResult();
 					csResult.setCodeSystem(codeSystem);
 					csResult.setCodeSystemName(codeSystemName);
@@ -267,7 +267,7 @@ public class VocabularyRepository {
 		}
 		return codeSystems;
 	}
-	
+
 	public <T extends ValueSetModel> Set<String> fetchValueSetNamesByValueSet(Class<T> clazz, String valueSet,  OObjectDatabaseTx dbConnection) {
 		System.out.println("DEBUG ---> GONNA fetchValueSetNameByValueset : " + valueSet);
 		String query = "SELECT DISTINCT(valueSetName) AS valueSetName FROM " + clazz.getSimpleName() + " where valueSetIndex = ?";
@@ -290,7 +290,7 @@ public class VocabularyRepository {
 		}
 		return valueSetNames;
 	}
-	
+
 	public <T extends ValueSetModel> List<T> fetchByValueSetAndCode(Class<T> clazz, String valueSet, String code, OObjectDatabaseTx dbConnection) {
 		System.out.println("DEBUG ---> GONNA fetchByValueSetAndCode : " + valueSet + " : " + code);
 		String query = "SELECT * FROM " + clazz.getSimpleName() + " where valueSetIndex = ? AND codeIndex = ?";
@@ -304,7 +304,7 @@ public class VocabularyRepository {
 		}
 		return result;
 	}
-	
+
 	public <T extends ValueSetModel> List<T> fetchByValueSetAndDescription(Class<T> clazz, String valueSet, String description, OObjectDatabaseTx dbConnection) {
 		System.out.println("DEBUG ---> GONNA fetchByValueSetAndDescription : " + valueSet + " : " + description);
 		String query = "SELECT * FROM " + clazz.getSimpleName() + " where valueSetIndex = ? AND descriptionIndex = ?";
@@ -318,7 +318,7 @@ public class VocabularyRepository {
 		}
 		return result;
 	}
-	
+
 	public <T extends ValueSetModel> Boolean valueSetExists(Class<T> clazz, String valueSet, OObjectDatabaseTx dbConnection) {
 		System.out.println("DEBUG ---> GONNA valueSetExists : " + valueSet);
 		String query = "SELECT DISTINCT(valueSet) AS valueSet FROM " +clazz.getSimpleName()+ " where valueSetIndex = ?";
@@ -332,7 +332,7 @@ public class VocabularyRepository {
 		}
 		return (result != null && result.size() > 0);
 	}
-	
+
 	public static void registerModels(OObjectDatabaseTx db) {
 		db.getEntityManager().registerEntityClasses("org.sitenv.vocabularies.model.impl");
 	}
