@@ -106,7 +106,6 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
                 loadCodeDirectory(codeDirectory, connection);
                 logger.info("Vocabularies loaded...");
             }
-
             connection.commit();
 
             if (valueSetDirectory != null && !valueSetDirectory.trim().equals("")) {
@@ -114,33 +113,6 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
                 loadValueSetDirectory(valueSetDirectory, connection);
                 logger.info("Value Sets loaded...");
             }
-//
-//            logger.info("Activating new Vocabularies Map...");
-//            VocabularyRepository.getInstance().toggleActiveDatabase();
-//            logger.info("New vocabulary Map Activated...");
-//
-//            if (codeDirectory != null && !codeDirectory.trim().equals("")) {
-//                logger.info("Loading vocabularies to new inactive repository at: " + codeDirectory + "...");
-//                loadCodeDirectory(codeDirectory, connection);
-//                logger.info("Vocabularies loaded...");
-//            }
-//
-//            if (valueSetDirectory != null && !valueSetDirectory.trim().equals("")) {
-//                logger.info("Loading value sets to new inactive repository at: " + valueSetDirectory + "...");
-//                loadValueSetDirectory(valueSetDirectory);
-//                logger.info("Value Sets loaded...");
-//            }
-
-//            // recommendation from cwatson: load files back in the primary so both db's are
-//            logger.info("Starting Vocabulary Watchdog...");
-//            ValidationEngine.codeWatchdog = new RepositoryWatchdog(this.getCodeDirectory(), this.isRecursive(), false);
-//            ValidationEngine.codeWatchdog.start();
-//            logger.info("Vocabulary Watchdog started...");
-//
-//            logger.info("Starting Value Set Watchdog...");
-//            ValidationEngine.valueSetWatchdog = new RepositoryWatchdog(this.getValueSetDirectory(), this.isRecursive(), false);
-//            ValidationEngine.valueSetWatchdog.start();
-//            logger.info("Vocabulary VsacValueSet started...");
             connection.commit();
         } catch (Exception e) {
             logger.error("Failed to load configured vocabulary directory.", e);

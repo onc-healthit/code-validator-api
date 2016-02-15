@@ -23,7 +23,7 @@ public class VsacLoader extends BaseVocabularyLoader implements VocabularyLoader
 
     public void load(List<File> filesToLoad, Connection connection) {
         StrBuilder insertQueryBuilder = null;
-        String insertQueryPrefix = "insert into VALUESETS (ID, CODE, DESCRIPTION, CODESYSTEM, CODESYSTEMVERSION, CODESYSTEMOID, TTY, VALUESETNAME, OID, TYPE, DEFINITIONVERSION, STEWARD) values ";
+        String insertQueryPrefix = "insert into VALUESETS (ID, CODE, DISPLAYNAME, CODESYSTEMNAME, CODESYSTEMVERSION, CODESYSTEM, TTY, VALUESETNAME, VALUESETOID, VALUESETTYPE, VALUESETDEFINITIONVERSION, VALUESETSTEWARD) values ";
         for (File file : filesToLoad) {
             if (file.isFile() && !file.isHidden()) {
                 InputStream inputStream = null;
@@ -39,21 +39,21 @@ public class VsacLoader extends BaseVocabularyLoader implements VocabularyLoader
                         insertQueryBuilder = new StrBuilder(insertQueryPrefix);
                         HSSFSheet sheet = workBook.getSheetAt(i);
                         String valueSetName = sheet.getRow(1).getCell(1).getStringCellValue();
-                        String oid = sheet.getRow(2).getCell(1).getStringCellValue();
-                        String type = sheet.getRow(3).getCell(1).getStringCellValue();
-                        String version;
+                        String valueSetOid = sheet.getRow(2).getCell(1).getStringCellValue();
+                        String valueSetType = sheet.getRow(3).getCell(1).getStringCellValue();
+                        String valueSetVersion;
                         Cell versionCell = sheet.getRow(4).getCell(1);
                         versionCell.setCellType(Cell.CELL_TYPE_STRING);
-                        version = versionCell.getStringCellValue();
-                        String steward = sheet.getRow(5).getCell(1).getStringCellValue();
+                        valueSetVersion = versionCell.getStringCellValue();
+                        String valueSetSteward = sheet.getRow(5).getCell(1).getStringCellValue();
 
                         for (int count = 11; count <= sheet.getPhysicalNumberOfRows(); count++) {
                             if (!isRowEmpty(sheet.getRow(count))) {
                                 String code;
-                                String description;
-                                String codeSystem;
+                                String displayName;
+                                String codeSystemName;
                                 String codeSystemVersion;
-                                String codeSystemOid;
+                                String codeSystem;
                                 String tty;
 
                                 Cell codeCell = sheet.getRow(count).getCell(0);
@@ -71,10 +71,10 @@ public class VsacLoader extends BaseVocabularyLoader implements VocabularyLoader
                                 ttyCell.setCellType(Cell.CELL_TYPE_STRING);
 
                                 code = codeCell.getStringCellValue();
-                                description = descriptionCell.getStringCellValue();
-                                codeSystem = codeSystemCell.getStringCellValue();
+                                displayName = descriptionCell.getStringCellValue();
+                                codeSystemName = codeSystemCell.getStringCellValue();
                                 codeSystemVersion = codeSystemVersionCell.getStringCellValue();
-                                codeSystemOid = codeSystemOidCell.getStringCellValue();
+                                codeSystem = codeSystemOidCell.getStringCellValue();
                                 tty = ttyCell.getStringCellValue();
 
                                 if(count > 11){
@@ -85,25 +85,25 @@ public class VsacLoader extends BaseVocabularyLoader implements VocabularyLoader
                                 insertQueryBuilder.append(",'");
                                 insertQueryBuilder.append(code.replaceAll("'", "''").toUpperCase().trim());
                                 insertQueryBuilder.append("','");
-                                insertQueryBuilder.append(description.replaceAll("'", "''").toUpperCase().trim());
+                                insertQueryBuilder.append(displayName.replaceAll("'", "''").toUpperCase().trim());
                                 insertQueryBuilder.append("','");
-                                insertQueryBuilder.append(codeSystem.toUpperCase().trim());
+                                insertQueryBuilder.append(codeSystemName.toUpperCase().trim());
                                 insertQueryBuilder.append("','");
                                 insertQueryBuilder.append(codeSystemVersion.trim());
                                 insertQueryBuilder.append("','");
-                                insertQueryBuilder.append(codeSystemOid.toUpperCase().trim());
+                                insertQueryBuilder.append(codeSystem.toUpperCase().trim());
                                 insertQueryBuilder.append("','");
                                 insertQueryBuilder.append(tty.toUpperCase().trim());
                                 insertQueryBuilder.append("','");
                                 insertQueryBuilder.append(valueSetName.toUpperCase().trim());
                                 insertQueryBuilder.append("','");
-                                insertQueryBuilder.append(oid.toUpperCase().trim());
+                                insertQueryBuilder.append(valueSetOid.toUpperCase().trim());
                                 insertQueryBuilder.append("','");
-                                insertQueryBuilder.append(type.toUpperCase().trim());
+                                insertQueryBuilder.append(valueSetType.toUpperCase().trim());
                                 insertQueryBuilder.append("','");
-                                insertQueryBuilder.append(version.toUpperCase().trim());
+                                insertQueryBuilder.append(valueSetVersion.toUpperCase().trim());
                                 insertQueryBuilder.append("','");
-                                insertQueryBuilder.append(steward.replaceAll("'", "''").toUpperCase().trim());
+                                insertQueryBuilder.append(valueSetSteward.replaceAll("'", "''").toUpperCase().trim());
                                 insertQueryBuilder.append("')");
                             }
                         }

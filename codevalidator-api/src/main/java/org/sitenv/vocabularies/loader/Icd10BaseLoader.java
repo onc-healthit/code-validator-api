@@ -2,7 +2,6 @@ package org.sitenv.vocabularies.loader;
 
 import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
-import org.sitenv.vocabularies.loader.code.IcdLoader;
 
 import java.io.BufferedReader;
 import java.io.File;
