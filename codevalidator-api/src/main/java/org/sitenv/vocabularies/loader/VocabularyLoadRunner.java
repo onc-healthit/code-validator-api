@@ -22,20 +22,7 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
     private boolean recursive = true;
     private DataSource dataSource;
 
-    public void loadValueSetDirectory(String directory, Connection connection) throws IOException {
-        File dir = new File(directory);
-        if (dir.isFile()) {
-            logger.debug("Directory to Load is a file and not a directory");
-            throw new IOException("Directory to Load is a file and not a directory");
-        } else {
-            File[] list = dir.listFiles();
-            for (File file : list) {
-                load(file, connection);
-            }
-        }
-    }
-
-    public void loadCodeDirectory(String directory, Connection connection) throws IOException {
+    public void loadDirectory(String directory, Connection connection) throws IOException {
         File dir = new File(directory);
         if (dir.isFile()) {
             throw new IOException("Directory to Load is a file and not a directory");
@@ -103,17 +90,18 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
             connection.setAutoCommit(false);
             if (codeDirectory != null && !codeDirectory.trim().equals("")) {
                 logger.info("Loading vocabularies at: " + codeDirectory + "...");
-                loadCodeDirectory(codeDirectory, connection);
+                loadDirectory(codeDirectory, connection);
                 logger.info("Vocabularies loaded...");
             }
             connection.commit();
 
             if (valueSetDirectory != null && !valueSetDirectory.trim().equals("")) {
                 logger.info("Loading value sets at: " + valueSetDirectory + "...");
-                loadValueSetDirectory(valueSetDirectory, connection);
+                loadDirectory(valueSetDirectory, connection);
                 logger.info("Value Sets loaded...");
             }
             connection.commit();
+            logger.info("!!!!*********** VOCABULARY DATABASE HAS FINISHED LOADING - SERVER WILL CONTINUE AND SHOULD BE DONE SHORTLY. ***********!!!!");
         } catch (Exception e) {
             logger.error("Failed to load configured vocabulary directory.", e);
         }finally {
