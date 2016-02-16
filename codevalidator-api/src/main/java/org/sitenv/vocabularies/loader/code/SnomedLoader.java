@@ -1,8 +1,10 @@
-package org.sitenv.vocabularies.loader;
+package org.sitenv.vocabularies.loader.code;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
+import org.sitenv.vocabularies.loader.BaseVocabularyLoader;
+import org.sitenv.vocabularies.loader.VocabularyLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -17,7 +19,7 @@ import java.util.List;
  * Created by Brian on 2/7/2016.
  */
 @Component(value = "SNOMED-CT")
-public class SnomedLoader extends BaseVocabularyLoader implements VocabularyLoader{
+public class SnomedLoader extends BaseVocabularyLoader implements VocabularyLoader {
     private static Logger logger = Logger.getLogger(SnomedLoader.class);
 
     @Override

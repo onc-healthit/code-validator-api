@@ -1,4 +1,4 @@
-package org.sitenv.vocabularies.loader;
+package org.sitenv.vocabularies.loader.valueset;
 
 import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
@@ -7,6 +7,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.sitenv.vocabularies.loader.BaseVocabularyLoader;
+import org.sitenv.vocabularies.loader.VocabularyLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -47,7 +49,7 @@ public class VsacLoader extends BaseVocabularyLoader implements VocabularyLoader
                         valueSetVersion = versionCell.getStringCellValue();
                         String valueSetSteward = sheet.getRow(5).getCell(1).getStringCellValue();
 
-                        for (int count = 11; count <= sheet.getPhysicalNumberOfRows(); count++) {
+                        for (int count = 11; count < sheet.getLastRowNum()+1; count++) {
                             if (!isRowEmpty(sheet.getRow(count))) {
                                 String code;
                                 String displayName;

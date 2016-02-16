@@ -2,11 +2,9 @@ package org.sitenv.vocabularies.validation.services;
 
 import org.sitenv.vocabularies.configuration.ConfiguredExpression;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
-import org.sitenv.vocabularies.dto.NodeValidationResult;
-import org.sitenv.vocabularies.dto.VocabularyValidationResult;
-import org.sitenv.vocabularies.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.VocabularyNodeValidator;
 import org.sitenv.vocabularies.validation.VocabularyValidatorFactory;
+import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +49,6 @@ public  class VocabularyValidationService {
     }
 
     public List<VocabularyValidationResult> validate(Document doc) {
-        List<VocabularyValidationResult> vocabularyValidationResults = new ArrayList<>();
         Map<String, ArrayList<VocabularyValidationResult>> vocabularyValidationResultMap = getInitializedResultMap();
         if (doc != null) {
             try {
@@ -65,45 +62,10 @@ public  class VocabularyValidationService {
                         while(configIterator.hasNext()){
                             ConfiguredValidator configuredValidator = (ConfiguredValidator) configIterator.next();
                             VocabularyNodeValidator vocabularyValidator = vocabularyValidatorFactory.getVocabularyValidator(configuredValidator.getName());
-                            NodeValidationResult nodeValidationResult = vocabularyValidator.validateNode(configuredValidator, xpath, node, i);
-                            if(!nodeValidationResult.isValid()) {
-                                if (nodeValidationResult.isNodeValuesetsFound()) {
-                                    if (!nodeValidationResult.isNodeCodeSystemFoundInConfiguredAllowableValueSets()) {
-                                        VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
-                                        vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-                                        vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.ERRORS);
-                                        vocabularyValidationResult.setMessage("Code System " + nodeValidationResult.getRequestedCodeSystem() + " does not exist in value set(s) " + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode());
-                                        vocabularyValidationResultMap.get(VocabularyValidationResultLevel.ERRORS.getResultType()).add(vocabularyValidationResult);
-                                    } else {
-                                        if (!nodeValidationResult.isNodeCodeFoundInCodeSystemForConfiguredAllowableValueSets()) {
-                                            VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
-                                            vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-                                            vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.ERRORS);
-                                            vocabularyValidationResult.setMessage("Code " + nodeValidationResult.getRequestedCode() + " does not exist in the code system " + nodeValidationResult.getRequestedCodeSystemName() + " (" + nodeValidationResult.getRequestedCodeSystem() + ") in the value set(s) " + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode());
-                                            vocabularyValidationResultMap.get(VocabularyValidationResultLevel.ERRORS.getResultType()).add(vocabularyValidationResult);
-                                        }
-                                        if (!nodeValidationResult.isNodeCodeSystemNameFoundInCodeSystemForConfiguredAllowableValueSets()) {
-                                            VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
-                                            vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-                                            vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.WARNINGS);
-                                            vocabularyValidationResult.setMessage("Code System Name " + nodeValidationResult.getRequestedCodeSystemName() + " does not match expected name for the code system oid" + nodeValidationResult.getRequestedCodeSystem() + " in the value set(s) " + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode());
-                                            vocabularyValidationResultMap.get(VocabularyValidationResultLevel.WARNINGS.getResultType()).add(vocabularyValidationResult);
-                                        }
-                                        if (!nodeValidationResult.isNodeDisplayNameFoundInCodeSystemForConfiguredAllowableValueSets()) {
-                                            VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
-                                            vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-                                            vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.WARNINGS);
-                                            vocabularyValidationResult.setMessage("Display Name " + nodeValidationResult.getRequestedDisplayName() + " does not exist in the code system " + nodeValidationResult.getRequestedCodeSystemName() + " (" + nodeValidationResult.getRequestedCodeSystem() + ") in the value set(s) " + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode());
-                                            vocabularyValidationResultMap.get(VocabularyValidationResultLevel.WARNINGS.getResultType()).add(vocabularyValidationResult);
-                                        }
-                                    }
-                                }else{
-                                    VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
-                                    vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-                                    vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.INFO);
-                                    vocabularyValidationResult.setMessage("Value set code validation attempt for a value set that does not exist in service.");
-                                    vocabularyValidationResultMap.get(VocabularyValidationResultLevel.INFO.getResultType()).add(vocabularyValidationResult);
-                                }
+                            List<VocabularyValidationResult> vocabularyValidationResults = vocabularyValidator.validateNode(configuredValidator, xpath, node, i);
+                            for(VocabularyValidationResult vocabularyValidationResult : vocabularyValidationResults){
+                                vocabularyValidationResult.getNodeValidationResult().setConfiguredXpathExpression(configuredXpathExpression);
+                                vocabularyValidationResultMap.get(vocabularyValidationResult.getVocabularyValidationResultLevel().getResultType()).add(vocabularyValidationResult);
                             }
                         }
                     }

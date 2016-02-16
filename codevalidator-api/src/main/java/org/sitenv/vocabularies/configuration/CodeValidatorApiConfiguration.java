@@ -145,17 +145,14 @@ public class CodeValidatorApiConfiguration {
     @Bean
     VocabularyLoadRunner vocabularyLoadRunner(final Environment environment, final VocabularyLoaderFactory vocabularyLoaderFactory, final  DataSourceInitializer dataSourceInitializer, final DataSource dataSource){
         VocabularyLoadRunner vocabularyLoadRunner = null;
-        boolean loadVocabulariesAtStartup = Boolean.valueOf(environment.getProperty("vocabulary.loadVocabulariesAtStartup"));
         String localCodeRepositoryDir = environment.getProperty("vocabulary.localCodeRepositoryDir");
         String localValueSetRepositoryDir = environment.getProperty("vocabulary.localValueSetRepositoryDir");
-        if(loadVocabulariesAtStartup){
-            vocabularyLoadRunner = new VocabularyLoadRunner();
-            System.out.println("LOADING VOCABULARY DATABASES FROM THE FOLLOWING RESOURCES: VALUESETS - " + localValueSetRepositoryDir + " CODES - " + localCodeRepositoryDir);
-            vocabularyLoadRunner.setCodeDirectory(localCodeRepositoryDir);
-            vocabularyLoadRunner.setValueSetDirectory(localValueSetRepositoryDir);
-            vocabularyLoadRunner.setDataSource(dataSource);
-            vocabularyLoadRunner.setVocabularyLoaderFactory(vocabularyLoaderFactory);
-        }
+        vocabularyLoadRunner = new VocabularyLoadRunner();
+        System.out.println("LOADING VOCABULARY DATABASES FROM THE FOLLOWING RESOURCES: VALUESETS - " + localValueSetRepositoryDir + " CODES - " + localCodeRepositoryDir);
+        vocabularyLoadRunner.setCodeDirectory(localCodeRepositoryDir);
+        vocabularyLoadRunner.setValueSetDirectory(localValueSetRepositoryDir);
+        vocabularyLoadRunner.setDataSource(dataSource);
+        vocabularyLoadRunner.setVocabularyLoaderFactory(vocabularyLoaderFactory);
         return vocabularyLoadRunner;
     }
 
@@ -180,7 +177,6 @@ public class CodeValidatorApiConfiguration {
     public ValidationConfigurationLoader validationConfigurationLoader(final Environment environment){
         ValidationConfigurationLoader validationConfigurationLoader = new ValidationConfigurationLoader();
         validationConfigurationLoader.setValidationConfigurationFilePath(environment.getProperty("referenceccda.configFile"));
-        validationConfigurationLoader.setMarshaller(castorMarshaller());
         validationConfigurationLoader.setUnmarshaller(castorMarshaller());
         return validationConfigurationLoader;
     }

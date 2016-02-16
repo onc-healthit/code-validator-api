@@ -1,9 +1,8 @@
-package org.sitenv.vocabularies.loader;
+package org.sitenv.vocabularies.loader.code;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Component;
+import org.sitenv.vocabularies.loader.VocabularyLoader;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,14 +15,13 @@ import java.util.List;
 /**
  * Created by Brian on 2/7/2016.
  */
-@Component(value = "RXNORM")
-public class RxNormLoader extends BaseVocabularyLoader implements VocabularyLoader{
-    private static Logger logger = Logger.getLogger(RxNormLoader.class);
+public class Icd10BaseLoader extends IcdLoader implements VocabularyLoader {
+    private static Logger logger = Logger.getLogger(Icd10BaseLoader.class);
 
     @Override
     public void load(List<File> filesToLoad, Connection connection) {
-        FileReader fileReader = null;
         BufferedReader br = null;
+        FileReader fileReader = null;
         try {
             String insertQueryPrefix = "insert into CODES (ID, CODE, DISPLAYNAME, CODESYSTEM) values ";
             StrBuilder insertQueryBuilder = new StrBuilder(insertQueryPrefix);
@@ -31,34 +29,32 @@ public class RxNormLoader extends BaseVocabularyLoader implements VocabularyLoad
 
             for (File file : filesToLoad) {
                 if (file.isFile() && !file.isHidden()) {
-                    logger.debug("Loading RxNorm File: " + file.getName());
-                    int count = 0;
+                    logger.debug("Loading ICD10CM File: " + file.getName());
                     fileReader = new FileReader(file);
                     br = new BufferedReader(fileReader);
                     String available;
                     while ((available = br.readLine()) != null) {
-                        String[] line = StringUtils.splitPreserveAllTokens(available, "|", 16);
                         if (pendingCount++ > 0) {
                             insertQueryBuilder.append(",");
                         }
                         insertQueryBuilder.append("(");
                         insertQueryBuilder.append("DEFAULT");
                         insertQueryBuilder.append(",'");
-                        insertQueryBuilder.append(line[0]);
+                        insertQueryBuilder.append(buildDelimitedIcdCode(available.substring(6, 13).trim()).toUpperCase());
                         insertQueryBuilder.append("','");
-                        insertQueryBuilder.append(line[14].replaceAll("'", "''"));
+                        insertQueryBuilder.append(available.substring(77).trim().toUpperCase().replaceAll("'", "''"));
                         insertQueryBuilder.append("','");
                         insertQueryBuilder.append(file.getParentFile().getName());
                         insertQueryBuilder.append("')");
 
-                        if ((++totalCount % 5000) == 0) {
+                        if ((++totalCount % 2500) == 0) {
                             doInsert(insertQueryBuilder.toString(), connection);
                             insertQueryBuilder.clear();
                             insertQueryBuilder.append(insertQueryPrefix);
                             pendingCount = 0;
                         }
-
                     }
+
                 }
             }
             if (pendingCount > 0) {

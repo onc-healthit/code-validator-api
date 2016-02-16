@@ -1,6 +1,6 @@
-package org.sitenv.vocabularies.dto;
+package org.sitenv.vocabularies.validation.dto;
 
-import org.sitenv.vocabularies.dto.enums.VocabularyValidationResultLevel;
+import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 
 /**
  * Created by Brian on 2/14/2016.

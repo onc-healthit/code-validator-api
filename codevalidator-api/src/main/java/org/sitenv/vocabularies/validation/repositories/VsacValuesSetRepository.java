@@ -19,12 +19,18 @@ public interface VsacValuesSetRepository extends JpaRepository<VsacValueSet, Int
     @Transactional(readOnly = true)
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM VsacValueSet c WHERE c.codeSystemName = :codeSystemName")
     boolean codeSystemNameExists(@Param("codeSystemName") String codeSystemName);
+
     @Transactional(readOnly = true)
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM VsacValueSet c WHERE c.code = :code and c.codeSystem = :codeSystem and c.codeSystemName = :codeSystemName and c.displayName = :displayName and c.valuesetOid in (:valuesetOids)")
     boolean existsByCodeAndCodeSystemAndCodeSystemNameAndDisplayNameInValuesetOid(@Param("code")String code, @Param("codeSystem")String codeSystem, @Param("codeSystemName")String codeSystemName, @Param("displayName")String displayName, @Param("valuesetOids")List<String> valuesetOids);
     List<VsacValueSet> findByCodeSystemAndValuesetOidIn(String codeSystem, List<String> valuesetOids);
+
     @Transactional(readOnly = true)
     @Cacheable("loadedValuesets")
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM VsacValueSet c WHERE c.valuesetOid in (:valuesetOids)")
     boolean valuesetOidsExists(@Param("valuesetOids")List<String> valuesetOids);
+
+    @Transactional(readOnly = true)
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM VsacValueSet c WHERE c.code = :code and c.valuesetOid in (:valuesetOids)")
+    boolean existsByCodeInValuesetOid(@Param("code")String code, @Param("valuesetOids")List<String> valuesetOids);
 }

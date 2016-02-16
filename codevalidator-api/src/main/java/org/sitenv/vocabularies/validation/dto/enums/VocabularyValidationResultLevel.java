@@ -1,4 +1,4 @@
-package org.sitenv.vocabularies.dto.enums;
+package org.sitenv.vocabularies.validation.dto.enums;
 
 public enum VocabularyValidationResultLevel {
     INFO ("info"),

@@ -1,4 +1,4 @@
-package org.sitenv.vocabularies.dto;
+package org.sitenv.vocabularies.validation.dto;
 
 public class NodeValidationResult {
 	private boolean isValid;
@@ -11,6 +11,7 @@ public class NodeValidationResult {
 	private String requestedCodeSystem;
 	private String requestedCodeSystemName;
 	private String requestedDisplayName;
+    private String requestedUnit;
 	private String configuredAllowableValuesetOidsForNode;
 
 	private boolean nodeValuesetsFound;
@@ -139,4 +140,12 @@ public class NodeValidationResult {
 	public void setNodeValuesetsFound(boolean nodeValuesetsFound) {
 		this.nodeValuesetsFound = nodeValuesetsFound;
 	}
+
+    public String getRequestedUnit() {
+        return requestedUnit;
+    }
+
+    public void setRequestedUnit(String requestedUnit) {
+        this.requestedUnit = requestedUnit;
+    }
 }
