@@ -25,6 +25,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
     private static final Logger logger = Logger.getLogger(CcdaValueSetCodeValidator.class);
     private VsacValuesSetRepository vsacValuesSetRepository;
 
+
     @Autowired
     public CcdaValueSetCodeValidator(VsacValuesSetRepository vsacValuesSetRepository) {
         this.vsacValuesSetRepository = vsacValuesSetRepository;
@@ -37,48 +38,50 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
 
         getNodeAttributesToBeValidated(xpath, node);
 
-        NodeValidationResult vocabularyNodeValidationResult = new NodeValidationResult();
-        vocabularyNodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
-        vocabularyNodeValidationResult.setRequestedCode(nodeCode);
-        vocabularyNodeValidationResult.setRequestedCodeSystemName(nodeCodeSystemName);
-        vocabularyNodeValidationResult.setRequestedCodeSystem(nodeCodeSystem);
-        vocabularyNodeValidationResult.setRequestedDisplayName(nodeDisplayName);
-        vocabularyNodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedCodeSystemOids());
+        NodeValidationResult nodeValidationResult = new NodeValidationResult();
+        nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
+        nodeValidationResult.setRequestedCode(nodeCode);
+        nodeValidationResult.setRequestedCodeSystemName(nodeCodeSystemName);
+        nodeValidationResult.setRequestedCodeSystem(nodeCodeSystem);
+        nodeValidationResult.setRequestedDisplayName(nodeDisplayName);
+        nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedCodeSystemOids());
+
         if(vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)){
-            vocabularyNodeValidationResult.setNodeValuesetsFound(true);
+            nodeValidationResult.setNodeValuesetsFound(true);
             if (vsacValuesSetRepository.existsByCodeAndCodeSystemAndCodeSystemNameAndDisplayNameInValuesetOid(nodeCode, nodeCodeSystem, nodeCodeSystemName, nodeDisplayName, allowedConfiguredCodeSystemOids)) {
-                vocabularyNodeValidationResult.setValid(true);
+                nodeValidationResult.setValid(true);
             } else {
                 List<VsacValueSet> valuesetsFoundByNodeCodeSystemInConfiguredAllowableValuesetOids = vsacValuesSetRepository.findByCodeSystemAndValuesetOidIn(nodeCodeSystem, allowedConfiguredCodeSystemOids);
                 if (!valuesetsFoundByNodeCodeSystemInConfiguredAllowableValuesetOids.isEmpty()) {
-                    vocabularyNodeValidationResult.setNodeCodeSystemFoundInConfiguredAllowableValueSets(true);
+                    nodeValidationResult.setNodeCodeSystemFoundInConfiguredAllowableValueSets(true);
                     boolean codeSystemCodeFound = false;
                     boolean codeSystemNameFound = false;
                     boolean codeSystemDisplayNameFound = false;
+
                     for (VsacValueSet valueSet : valuesetsFoundByNodeCodeSystemInConfiguredAllowableValuesetOids) {
                         if (!codeSystemCodeFound) {
                             if (nodeCode.equals(valueSet.getCode())) {
                                 codeSystemCodeFound = true;
-                                vocabularyNodeValidationResult.setNodeCodeFoundInCodeSystemForConfiguredAllowableValueSets(true);
+                                nodeValidationResult.setNodeCodeFoundInCodeSystemForConfiguredAllowableValueSets(true);
                             }
                         }
                         if (!codeSystemNameFound) {
                             if (nodeCodeSystemName.equals(valueSet.getCodeSystemName())) {
                                 codeSystemNameFound = true;
-                                vocabularyNodeValidationResult.setNodeCodeSystemNameFoundInCodeSystemForConfiguredAllowableValueSets(true);
+                                nodeValidationResult.setNodeCodeSystemNameFoundInCodeSystemForConfiguredAllowableValueSets(true);
                             }
                         }
                         if (!codeSystemDisplayNameFound) {
                             if (nodeDisplayName.equals(valueSet.getDisplayName())) {
                                 codeSystemDisplayNameFound = true;
-                                vocabularyNodeValidationResult.setNodeDisplayNameFoundInCodeSystemForConfiguredAllowableValueSets(true);
+                                nodeValidationResult.setNodeDisplayNameFoundInCodeSystemForConfiguredAllowableValueSets(true);
                             }
                         }
                     }
                 }
             }
         }
-        return buildVocabularyValidationResults(vocabularyNodeValidationResult);
+        return buildVocabularyValidationResults(nodeValidationResult);
     }
 
     protected List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult){

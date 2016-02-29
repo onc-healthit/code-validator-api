@@ -23,7 +23,9 @@ public interface VsacValuesSetRepository extends JpaRepository<VsacValueSet, Int
     @Transactional(readOnly = true)
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM VsacValueSet c WHERE c.code = :code and c.codeSystem = :codeSystem and c.codeSystemName = :codeSystemName and c.displayName = :displayName and c.valuesetOid in (:valuesetOids)")
     boolean existsByCodeAndCodeSystemAndCodeSystemNameAndDisplayNameInValuesetOid(@Param("code")String code, @Param("codeSystem")String codeSystem, @Param("codeSystemName")String codeSystemName, @Param("displayName")String displayName, @Param("valuesetOids")List<String> valuesetOids);
+
     List<VsacValueSet> findByCodeSystemAndValuesetOidIn(String codeSystem, List<String> valuesetOids);
+    List<VsacValueSet> findByValuesetOidIn(List<String> valuesetOids);
 
     @Transactional(readOnly = true)
     @Cacheable("loadedValuesets")
