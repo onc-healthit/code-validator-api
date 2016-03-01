@@ -107,28 +107,6 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-
-			<plugin>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.2.2.v20140723</version>
-				<configuration>
-					<scanIntervalSeconds>3</scanIntervalSeconds>
-					<useTestScope>true</useTestScope>
-					<jvmArgs>-Xmx2024m -Xms2024m -XX:PermSize=256m -XX:MaxPermSize=512m</jvmArgs>
-					<webApp>
-						<contextPath>/</contextPath>
-					</webApp>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.hsqldb</groupId>
-						<artifactId>hsqldb</artifactId>
-						<version>2.3.3</version>
-						<scope>runtime</scope>
-					</dependency>
-				</dependencies>
-			</plugin>
 		</plugins>
 	</build>
 </project>

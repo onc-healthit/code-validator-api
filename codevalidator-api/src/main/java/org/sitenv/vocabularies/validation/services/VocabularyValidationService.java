@@ -5,6 +5,7 @@ import org.sitenv.vocabularies.configuration.ConfiguredValidator;
 import org.sitenv.vocabularies.validation.VocabularyNodeValidator;
 import org.sitenv.vocabularies.validation.VocabularyValidatorFactory;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
+import org.sitenv.vocabularies.validation.utils.CCDADocumentNamespaces;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.annotation.Resource;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -52,7 +54,7 @@ public  class VocabularyValidationService {
         Map<String, ArrayList<VocabularyValidationResult>> vocabularyValidationResultMap = getInitializedResultMap();
         if (doc != null) {
             try {
-                XPath xpath = xPathFactory.newXPath();
+                XPath xpath = getNewXpath(doc);
                 for (ConfiguredExpression configuredExpression : vocabularyValidationConfigurations) {
                     String configuredXpathExpression = configuredExpression.getConfiguredXpathExpression();
                     NodeList nodes = findAllDocumentNodesByXpathExpression(xpath, configuredXpathExpression, doc);
@@ -84,6 +86,33 @@ public  class VocabularyValidationService {
         resultMap.put("warnings", new ArrayList<VocabularyValidationResult>());
         resultMap.put("info", new ArrayList<VocabularyValidationResult>());
         return resultMap;
+    }
+
+    private XPath getNewXpath(final Document doc){
+        XPath xpath = xPathFactory.newXPath();
+        xpath.setNamespaceContext(new NamespaceContext() {
+            @Override
+            public String getNamespaceURI(String prefix) {
+                String nameSpace;
+                if(CCDADocumentNamespaces.sdtc.name().equals(prefix)){
+                    nameSpace = CCDADocumentNamespaces.sdtc.getNamespace();
+                }else {
+                    nameSpace = CCDADocumentNamespaces.defaultNameSpaceForCcda.getNamespace();
+                }
+                return nameSpace;
+            }
+
+            @Override
+            public String getPrefix(String namespaceURI) {
+                return null;
+            }
+
+            @Override
+            public Iterator getPrefixes(String namespaceURI) {
+                return null;
+            }
+        });
+        return xpath;
     }
 
     private static NodeList findAllDocumentNodesByXpathExpression(XPath xpath, String configuredXpath, Document doc) throws XPathExpressionException {
