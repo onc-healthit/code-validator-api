@@ -15,6 +15,8 @@ public class ConfiguredValidator {
     String name;
     @XmlElement(name = "nodeType")
     String nodeType;
+    @XmlElement(name = "validationResultSeverityLevels")
+    ConfiguredValidationResultSeverityLevel configuredValidationResultSeverityLevel;
     @XmlElement(name = "allowedCodeSystemOids")
     String allowedCodeSystemOids;
 
@@ -40,6 +42,14 @@ public class ConfiguredValidator {
 
     public void setAllowedCodeSystemOids(String allowedCodeSystemOids) {
         this.allowedCodeSystemOids = allowedCodeSystemOids;
+    }
+
+    public ConfiguredValidationResultSeverityLevel getConfiguredValidationResultSeverityLevel() {
+        return configuredValidationResultSeverityLevel;
+    }
+
+    public void setConfiguredValidationResultSeverityLevel(ConfiguredValidationResultSeverityLevel configuredValidationResultSeverityLevel) {
+        this.configuredValidationResultSeverityLevel = configuredValidationResultSeverityLevel;
     }
 }
 

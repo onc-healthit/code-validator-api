@@ -1,5 +1,6 @@
 package org.sitenv.vocabularies.validation.validators;
 
+import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
@@ -52,5 +53,5 @@ public abstract class BaseValidator {
         return vocabularyValidationNodeAttributeType.getVocabularyValidationNodeAttributeType() + " is missing or is empty for the node being validated";
     }
 
-    protected abstract List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult);
+    protected abstract List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult, ConfiguredValidationResultSeverityLevel configuredValidationResultSeverityLevel);
 }

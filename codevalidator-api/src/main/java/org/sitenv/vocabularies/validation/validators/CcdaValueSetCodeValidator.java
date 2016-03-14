@@ -1,6 +1,7 @@
 package org.sitenv.vocabularies.validation.validators;
 
 import org.apache.log4j.Logger;
+import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
 import org.sitenv.vocabularies.validation.VocabularyNodeValidator;
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
@@ -81,10 +82,10 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
                 }
             }
         }
-        return buildVocabularyValidationResults(nodeValidationResult);
+        return buildVocabularyValidationResults(nodeValidationResult, configuredValidator.getConfiguredValidationResultSeverityLevel());
     }
 
-    protected List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult){
+    protected List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult, ConfiguredValidationResultSeverityLevel configuredNodeAttributeSeverityLevel){
         List<VocabularyValidationResult> vocabularyValidationResults = new ArrayList<>();
         if(!nodeValidationResult.isValid()) {
             if (nodeValidationResult.isNodeValuesetsFound()) {
@@ -104,7 +105,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
                     if (!nodeValidationResult.isNodeCodeFoundInCodeSystemForConfiguredAllowableValueSets()) {
                         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                         vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-                        vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.ERRORS);
+                        vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.valueOf(configuredNodeAttributeSeverityLevel.getCodeSeverityLevel()));
                         String validationMessage;
                         if(nodeValidationResult.getRequestedCode().isEmpty()){
                             validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODE);

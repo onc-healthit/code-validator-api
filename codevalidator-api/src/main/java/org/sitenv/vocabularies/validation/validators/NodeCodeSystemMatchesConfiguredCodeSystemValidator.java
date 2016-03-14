@@ -1,6 +1,7 @@
 package org.sitenv.vocabularies.validation.validators;
 
 import org.apache.log4j.Logger;
+import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
 import org.sitenv.vocabularies.validation.VocabularyNodeValidator;
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
@@ -36,14 +37,14 @@ public class NodeCodeSystemMatchesConfiguredCodeSystemValidator extends BaseVali
         for(String allowedConfiguredCodeSystemOid : allowedConfiguredCodeSystemOids){
             if (nodeCodeSystem.equalsIgnoreCase(allowedConfiguredCodeSystemOid)) {
                 nodeValidationResult.setValid(true);
-                return buildVocabularyValidationResults(nodeValidationResult);
+                return buildVocabularyValidationResults(nodeValidationResult, configuredValidator.getConfiguredValidationResultSeverityLevel());
             }
         }
-        return buildVocabularyValidationResults(nodeValidationResult);
+        return buildVocabularyValidationResults(nodeValidationResult, configuredValidator.getConfiguredValidationResultSeverityLevel());
     }
 
     @Override
-    protected List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult) {
+    protected List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult, ConfiguredValidationResultSeverityLevel configuredNodeAttributeSeverityLevel) {
         List<VocabularyValidationResult> vocabularyValidationResults = new ArrayList<>();
         if(!nodeValidationResult.isValid()) {
             VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
