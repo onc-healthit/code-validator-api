@@ -31,14 +31,14 @@ public class CcdaUnitValidator extends BaseValidator implements VocabularyNodeVa
 
 	@Override
 	public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath, Node node, int nodeIndex) {
-		List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedCodeSystemOids().split(",")));
+		List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedValuesetOids().split(",")));
 
 		getNodeAttributesToBeValidated(xpath, node);
 
 		NodeValidationResult nodeValidationResult = new NodeValidationResult();
         nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
         nodeValidationResult.setRequestedUnit(nodeUnit);
-        nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedCodeSystemOids());
+        nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
 		if(vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)){
             nodeValidationResult.setNodeValuesetsFound(true);
 			if (vsacValuesSetRepository.existsByCodeInValuesetOid(nodeUnit, allowedConfiguredCodeSystemOids)) {

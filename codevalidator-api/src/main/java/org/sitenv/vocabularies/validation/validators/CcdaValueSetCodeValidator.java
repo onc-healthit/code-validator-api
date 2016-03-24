@@ -35,7 +35,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
     @Override
     @Transactional(readOnly = true)
     public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath, Node node, int nodeIndex) {
-        List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedCodeSystemOids().split(",")));
+        List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedValuesetOids().split(",")));
 
         getNodeAttributesToBeValidated(xpath, node);
 
@@ -45,7 +45,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
         nodeValidationResult.setRequestedCodeSystemName(nodeCodeSystemName);
         nodeValidationResult.setRequestedCodeSystem(nodeCodeSystem);
         nodeValidationResult.setRequestedDisplayName(nodeDisplayName);
-        nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedCodeSystemOids());
+        nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
 
         if(vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)){
             nodeValidationResult.setNodeValuesetsFound(true);
@@ -54,7 +54,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
             } else {
                 List<VsacValueSet> valuesetsFoundByNodeCodeSystemInConfiguredAllowableValuesetOids = vsacValuesSetRepository.findByCodeSystemAndValuesetOidIn(nodeCodeSystem, allowedConfiguredCodeSystemOids);
                 if (!valuesetsFoundByNodeCodeSystemInConfiguredAllowableValuesetOids.isEmpty()) {
-                    nodeValidationResult.setNodeCodeSystemFoundInConfiguredAllowableValueSets(true);
+                    nodeValidationResult.setNodeCodeSystemFound(true);
                     boolean codeSystemCodeFound = false;
                     boolean codeSystemNameFound = false;
                     boolean codeSystemDisplayNameFound = false;
@@ -63,19 +63,19 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
                         if (!codeSystemCodeFound) {
                             if (nodeCode.equals(valueSet.getCode())) {
                                 codeSystemCodeFound = true;
-                                nodeValidationResult.setNodeCodeFoundInCodeSystemForConfiguredAllowableValueSets(true);
+                                nodeValidationResult.setNodeCodeFound(true);
                             }
                         }
                         if (!codeSystemNameFound) {
                             if (nodeCodeSystemName.equals(valueSet.getCodeSystemName())) {
                                 codeSystemNameFound = true;
-                                nodeValidationResult.setNodeCodeSystemNameFoundInCodeSystemForConfiguredAllowableValueSets(true);
+                                nodeValidationResult.setNodeCodeSystemNameFound(true);
                             }
                         }
                         if (!codeSystemDisplayNameFound) {
                             if (nodeDisplayName.equals(valueSet.getDisplayName())) {
                                 codeSystemDisplayNameFound = true;
-                                nodeValidationResult.setNodeDisplayNameFoundInCodeSystemForConfiguredAllowableValueSets(true);
+                                nodeValidationResult.setNodeDisplayNameFound(true);
                             }
                         }
                     }
@@ -89,7 +89,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
         List<VocabularyValidationResult> vocabularyValidationResults = new ArrayList<>();
         if(!nodeValidationResult.isValid()) {
             if (nodeValidationResult.isNodeValuesetsFound()) {
-                if (!nodeValidationResult.isNodeCodeSystemFoundInConfiguredAllowableValueSets()) {
+                if (!nodeValidationResult.isNodeCodeSystemFound()) {
                     VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                     vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
                     vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.ERRORS);
@@ -102,7 +102,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
                     vocabularyValidationResult.setMessage(validationMessage);
                     vocabularyValidationResults.add(vocabularyValidationResult);
                 } else {
-                    if (!nodeValidationResult.isNodeCodeFoundInCodeSystemForConfiguredAllowableValueSets()) {
+                    if (!nodeValidationResult.isNodeCodeFound()) {
                         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                         vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
                         vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.valueOf(configuredNodeAttributeSeverityLevel.getCodeSeverityLevel()));
@@ -115,7 +115,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
                         vocabularyValidationResult.setMessage(validationMessage);
                         vocabularyValidationResults.add(vocabularyValidationResult);
                     }
-                    if (!nodeValidationResult.isNodeCodeSystemNameFoundInCodeSystemForConfiguredAllowableValueSets()) {
+                    if (!nodeValidationResult.isNodeCodeSystemNameFound()) {
                         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                         vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
                         vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.WARNINGS);
@@ -128,7 +128,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
                         vocabularyValidationResult.setMessage(validationMessage);
                         vocabularyValidationResults.add(vocabularyValidationResult);
                     }
-                    if (!nodeValidationResult.isNodeDisplayNameFoundInCodeSystemForConfiguredAllowableValueSets()) {
+                    if (!nodeValidationResult.isNodeDisplayNameFound()) {
                         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                         vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
                         vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.WARNINGS);
