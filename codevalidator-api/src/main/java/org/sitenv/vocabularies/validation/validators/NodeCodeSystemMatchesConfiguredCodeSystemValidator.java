@@ -49,7 +49,7 @@ public class NodeCodeSystemMatchesConfiguredCodeSystemValidator extends BaseVali
         if(!nodeValidationResult.isValid()) {
             VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
             vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-            vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.ERRORS);
+            vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHALL);
             String validationMessage;
             if(nodeValidationResult.getRequestedCodeSystem().isEmpty()){
                 validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODESYSTEM);

@@ -82,7 +82,7 @@ public class CcdaCodeSystemCodeValidator extends BaseValidator implements Vocabu
                     if (!nodeValidationResult.isNodeDisplayNameFound()) {
                         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                         vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-                        vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.WARNINGS);
+                        vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHOULD);
                         String validationMessage;
                         if(nodeValidationResult.getRequestedDisplayName().isEmpty()){
                             validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.DISPLAYNAME);

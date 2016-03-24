@@ -57,10 +57,10 @@ public class CcdaUnitValidator extends BaseValidator implements VocabularyNodeVa
                 vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
                 String validationMessage;
                 if(nodeValidationResult.getRequestedUnit().isEmpty()){
-                    vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.WARNINGS);
+                    vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHOULD);
                     validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.UNIT);
                 }else{
-                    vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.ERRORS);
+                    vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHALL);
                     validationMessage = "Unit '" + nodeValidationResult.getRequestedUnit()+ "' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
                 }
                 vocabularyValidationResult.setMessage(validationMessage);

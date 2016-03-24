@@ -92,7 +92,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
                 if (!nodeValidationResult.isNodeCodeSystemFound()) {
                     VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                     vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-                    vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.ERRORS);
+                    vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHALL);
                     String validationMessage;
                     if(nodeValidationResult.getRequestedCodeSystem().isEmpty()){
                         validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODESYSTEM);
@@ -118,7 +118,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
                     if (!nodeValidationResult.isNodeCodeSystemNameFound()) {
                         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                         vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-                        vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.WARNINGS);
+                        vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHOULD);
                         String validationMessage;
                         if(nodeValidationResult.getRequestedCodeSystemName().isEmpty()){
                             validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODESYSTEMNAME);
@@ -131,7 +131,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
                     if (!nodeValidationResult.isNodeDisplayNameFound()) {
                         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                         vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-                        vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.WARNINGS);
+                        vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHOULD);
                         String validationMessage;
                         if(nodeValidationResult.getRequestedDisplayName().isEmpty()){
                             validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.DISPLAYNAME);

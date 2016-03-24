@@ -44,7 +44,7 @@ public abstract class BaseValidator {
     protected VocabularyValidationResult valuesetNotLoadedResult(NodeValidationResult nodeValidationResult){
         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
         vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-        vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.INFO);
+        vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.MAY);
         vocabularyValidationResult.setMessage("Value set code validation attempt for value set(s) ('" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ") that do not exist in service for code system " + nodeValidationResult.getRequestedCodeSystemName() + " (" + nodeValidationResult.getRequestedCodeSystem() + ")");
         return vocabularyValidationResult;
     }
