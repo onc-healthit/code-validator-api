@@ -23,7 +23,7 @@ public class NodeCodeSystemMatchesConfiguredCodeSystemValidator extends BaseVali
 
     @Override
     public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath, Node node, int nodeIndex) {
-        List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedCodeSystemOids().split(",")));
+        List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedValuesetOids().split(",")));
         getNodeAttributesToBeValidated(xpath, node);
 
         NodeValidationResult nodeValidationResult = new NodeValidationResult();
@@ -32,7 +32,7 @@ public class NodeCodeSystemMatchesConfiguredCodeSystemValidator extends BaseVali
         nodeValidationResult.setRequestedCodeSystemName(nodeCodeSystemName);
         nodeValidationResult.setRequestedCodeSystem(nodeCodeSystem);
         nodeValidationResult.setRequestedDisplayName(nodeDisplayName);
-        nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedCodeSystemOids());
+        nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
 
         for(String allowedConfiguredCodeSystemOid : allowedConfiguredCodeSystemOids){
             if (nodeCodeSystem.equalsIgnoreCase(allowedConfiguredCodeSystemOid)) {
@@ -49,7 +49,7 @@ public class NodeCodeSystemMatchesConfiguredCodeSystemValidator extends BaseVali
         if(!nodeValidationResult.isValid()) {
             VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
             vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-            vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.ERRORS);
+            vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHALL);
             String validationMessage;
             if(nodeValidationResult.getRequestedCodeSystem().isEmpty()){
                 validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODESYSTEM);

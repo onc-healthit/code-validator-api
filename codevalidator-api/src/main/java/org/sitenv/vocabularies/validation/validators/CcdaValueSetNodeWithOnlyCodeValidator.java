@@ -31,14 +31,14 @@ public class CcdaValueSetNodeWithOnlyCodeValidator extends BaseValidator impleme
 
 	@Override
 	public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath, Node node, int nodeIndex) {
-		List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedCodeSystemOids().split(",")));
+		List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedValuesetOids().split(",")));
 
 		getNodeAttributesToBeValidated(xpath, node);
 
 		NodeValidationResult nodeValidationResult = new NodeValidationResult();
 		nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
 		nodeValidationResult.setRequestedCode(nodeCode);
-		nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedCodeSystemOids());
+		nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
 		if(vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)){
 			nodeValidationResult.setNodeValuesetsFound(true);
 			if (vsacValuesSetRepository.existsByCodeInValuesetOid(nodeCode, allowedConfiguredCodeSystemOids)) {
@@ -55,7 +55,7 @@ public class CcdaValueSetNodeWithOnlyCodeValidator extends BaseValidator impleme
 			if (nodeValidationResult.isNodeValuesetsFound()) {
 				VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
 				vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-				vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.ERRORS);
+				vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHALL);
                 String validationMessage;
                 if(nodeValidationResult.getRequestedCode().isEmpty()){
                     validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODE);

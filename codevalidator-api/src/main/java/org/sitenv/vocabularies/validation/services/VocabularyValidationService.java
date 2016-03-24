@@ -60,12 +60,21 @@ public  class VocabularyValidationService {
                     NodeList nodes = findAllDocumentNodesByXpathExpression(xpath, configuredXpathExpression, doc);
                     for (int i = 0; i < nodes.getLength(); i++) {
                         Node node = nodes.item(i);
+                        List<VocabularyValidationResult> vocabularyValidationResults = new ArrayList<>();
+                        boolean validNode = false;
                         Iterator configIterator = configuredExpression.getConfiguredValidators().iterator();
-                        while(configIterator.hasNext()){
+                        while(configIterator.hasNext() && !validNode){
                             ConfiguredValidator configuredValidator = (ConfiguredValidator) configIterator.next();
                             VocabularyNodeValidator vocabularyValidator = vocabularyValidatorFactory.getVocabularyValidator(configuredValidator.getName());
-                            List<VocabularyValidationResult> vocabularyValidationResults = vocabularyValidator.validateNode(configuredValidator, xpath, node, i);
-                            for(VocabularyValidationResult vocabularyValidationResult : vocabularyValidationResults){
+                            List<VocabularyValidationResult> tempResults = vocabularyValidator.validateNode(configuredValidator, xpath, node, i);
+                            if(!tempResults.isEmpty()) {
+                                vocabularyValidationResults.addAll(tempResults);
+                            }else {
+                                validNode = true;
+                            }
+                        }
+                        if(!validNode) {
+                            for (VocabularyValidationResult vocabularyValidationResult : vocabularyValidationResults) {
                                 vocabularyValidationResult.getNodeValidationResult().setConfiguredXpathExpression(configuredXpathExpression);
                                 vocabularyValidationResultMap.get(vocabularyValidationResult.getVocabularyValidationResultLevel().getResultType()).add(vocabularyValidationResult);
                             }

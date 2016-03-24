@@ -1,9 +1,9 @@
 package org.sitenv.vocabularies.validation.dto.enums;
 
 public enum VocabularyValidationResultLevel {
-    INFO ("info"),
-    WARNINGS ("warnings"),
-    ERRORS ("errors");
+    MAY ("info"),
+    SHOULD ("warnings"),
+    SHALL ("errors");
 
     private final String resultType;
 

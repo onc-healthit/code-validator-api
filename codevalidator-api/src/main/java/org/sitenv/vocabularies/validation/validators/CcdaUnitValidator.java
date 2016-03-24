@@ -31,14 +31,14 @@ public class CcdaUnitValidator extends BaseValidator implements VocabularyNodeVa
 
 	@Override
 	public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath, Node node, int nodeIndex) {
-		List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedCodeSystemOids().split(",")));
+		List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedValuesetOids().split(",")));
 
 		getNodeAttributesToBeValidated(xpath, node);
 
 		NodeValidationResult nodeValidationResult = new NodeValidationResult();
         nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
         nodeValidationResult.setRequestedUnit(nodeUnit);
-        nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedCodeSystemOids());
+        nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
 		if(vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)){
             nodeValidationResult.setNodeValuesetsFound(true);
 			if (vsacValuesSetRepository.existsByCodeInValuesetOid(nodeUnit, allowedConfiguredCodeSystemOids)) {
@@ -55,11 +55,12 @@ public class CcdaUnitValidator extends BaseValidator implements VocabularyNodeVa
             if (nodeValidationResult.isNodeValuesetsFound()) {
                 VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                 vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-                vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.ERRORS);
                 String validationMessage;
                 if(nodeValidationResult.getRequestedUnit().isEmpty()){
+                    vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHOULD);
                     validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.UNIT);
                 }else{
+                    vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHALL);
                     validationMessage = "Unit '" + nodeValidationResult.getRequestedUnit()+ "' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
                 }
                 vocabularyValidationResult.setMessage(validationMessage);

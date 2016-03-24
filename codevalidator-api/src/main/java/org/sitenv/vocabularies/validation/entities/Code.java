@@ -22,7 +22,7 @@ public class Code {
     private String displayName;
 
     @Column(name = "CODESYSTEM")
-    private String codeSytem;
+    private String codeSystem;
 
     public Integer getId() {
         return Id;
@@ -48,11 +48,11 @@ public class Code {
         this.displayName = displayName;
     }
 
-    public String getCodeSytem() {
-        return codeSytem;
+    public String getCodeSystem() {
+        return codeSystem;
     }
 
-    public void setCodeSytem(String codeSytem) {
-        this.codeSytem = codeSytem;
+    public void setCodeSystem(String codeSystem) {
+        this.codeSystem = codeSystem;
     }
 }
