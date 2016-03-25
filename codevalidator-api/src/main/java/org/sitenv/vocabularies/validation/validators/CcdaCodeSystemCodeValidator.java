@@ -36,7 +36,7 @@ public class CcdaCodeSystemCodeValidator extends BaseValidator implements Vocabu
     public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath, Node node, int nodeIndex) {
         List<String> allowedConfiguredCodeSystemNames = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedCodesystemNames().split(",")));
 
-        getNodeAttributesToBeValidated(xpath, node);
+        initializeValuesFromNodeAttributesToBeValidated(xpath, node);
 
         NodeValidationResult nodeValidationResult = new NodeValidationResult();
         nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
