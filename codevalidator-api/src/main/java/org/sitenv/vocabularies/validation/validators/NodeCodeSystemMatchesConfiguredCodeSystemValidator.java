@@ -24,7 +24,7 @@ public class NodeCodeSystemMatchesConfiguredCodeSystemValidator extends BaseVali
     @Override
     public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath, Node node, int nodeIndex) {
         List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedValuesetOids().split(",")));
-        getNodeAttributesToBeValidated(xpath, node);
+        initializeValuesFromNodeAttributesToBeValidated(xpath, node);
 
         NodeValidationResult nodeValidationResult = new NodeValidationResult();
         nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));

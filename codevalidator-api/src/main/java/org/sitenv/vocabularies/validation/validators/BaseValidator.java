@@ -23,7 +23,7 @@ public abstract class BaseValidator {
     protected String nodeDisplayName;
     protected String nodeUnit;
 
-    protected void getNodeAttributesToBeValidated(XPath xpath, Node node) {
+    protected void initializeValuesFromNodeAttributesToBeValidated(XPath xpath, Node node) {
         try {
             XPathExpression expCode = xpath.compile("@code");
             XPathExpression expCodeSystem = xpath.compile("@codeSystem");
