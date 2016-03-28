@@ -25,7 +25,6 @@ import java.util.List;
 public class CcdaLanguageCodeNodeCountryCodeValuesetValidator extends BaseValidator implements VocabularyNodeValidator {
 	private static final Logger logger = Logger.getLogger(CcdaLanguageCodeNodeCountryCodeValuesetValidator.class);
 	private VsacValuesSetRepository vsacValuesSetRepository;
-	private String languageCode;
 
 	@Autowired
 	public CcdaLanguageCodeNodeCountryCodeValuesetValidator(VsacValuesSetRepository vsacValuesSetRepository) {
@@ -38,18 +37,29 @@ public class CcdaLanguageCodeNodeCountryCodeValuesetValidator extends BaseValida
 		List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedValuesetOids().split(",")));
 
 		initializeValuesFromNodeAttributesToBeValidated(xpath, node);
-		languageCode = StringUtils.substringAfter(nodeCode, "-");
+
 		NodeValidationResult nodeValidationResult = new NodeValidationResult();
 		nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
 		nodeValidationResult.setRequestedCode(nodeCode);
 		nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
-		if(vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)){
-			nodeValidationResult.setNodeValuesetsFound(true);
-			if (vsacValuesSetRepository.existsByCodeInValuesetOid(languageCode, allowedConfiguredCodeSystemOids)) {
-				nodeValidationResult.setValid(true);
+
+		if(needToValidateCountryCode()){
+			nodeCode = StringUtils.substringAfter(nodeCode, "-");
+			if (vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)) {
+				nodeValidationResult.setNodeValuesetsFound(true);
+				if (vsacValuesSetRepository.existsByCodeInValuesetOid(nodeCode, allowedConfiguredCodeSystemOids)) {
+					nodeValidationResult.setValid(true);
+				}
 			}
+		}else{
+			nodeValidationResult.setValid(true);
 		}
+
 		return buildVocabularyValidationResults(nodeValidationResult, configuredValidator.getConfiguredValidationResultSeverityLevel());
+	}
+
+	private boolean needToValidateCountryCode() {
+		return StringUtils.contains(nodeCode, "-");
 	}
 
 	@Override
@@ -60,12 +70,12 @@ public class CcdaLanguageCodeNodeCountryCodeValuesetValidator extends BaseValida
 				VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
 				vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
 				vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHALL);
-                String validationMessage;
-                if(nodeValidationResult.getRequestedCode().isEmpty()){
-                    validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODE);
-                }else{
-                    validationMessage = "Code '" + languageCode + " (from " + nodeValidationResult.getRequestedCode()+ ")' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
-                }
+				String validationMessage;
+				if(nodeValidationResult.getRequestedCode().isEmpty()){
+					validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODE);
+				}else{
+					validationMessage = "Code '" + nodeCode + " (from " + nodeValidationResult.getRequestedCode()+ ")' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
+				}
 				vocabularyValidationResult.setMessage(validationMessage);
 				vocabularyValidationResults.add(vocabularyValidationResult);
 			}else{

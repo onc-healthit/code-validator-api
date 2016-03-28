@@ -25,7 +25,7 @@ import java.util.List;
 public class CcdaLanguageCodeNodeLanguageCodeValuesetValidator extends BaseValidator implements VocabularyNodeValidator {
 	private static final Logger logger = Logger.getLogger(CcdaLanguageCodeNodeLanguageCodeValuesetValidator.class);
 	private VsacValuesSetRepository vsacValuesSetRepository;
-	private String countryCode;
+
 	@Autowired
 	public CcdaLanguageCodeNodeLanguageCodeValuesetValidator(VsacValuesSetRepository vsacValuesSetRepository) {
 		this.vsacValuesSetRepository = vsacValuesSetRepository;
@@ -37,14 +37,18 @@ public class CcdaLanguageCodeNodeLanguageCodeValuesetValidator extends BaseValid
 		List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedValuesetOids().split(",")));
 
 		initializeValuesFromNodeAttributesToBeValidated(xpath, node);
-		countryCode = StringUtils.substringBefore(nodeCode, "-");
+
 		NodeValidationResult nodeValidationResult = new NodeValidationResult();
 		nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
 		nodeValidationResult.setRequestedCode(nodeCode);
 		nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
+
 		if(vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)){
 			nodeValidationResult.setNodeValuesetsFound(true);
-			if (vsacValuesSetRepository.existsByCodeInValuesetOid(countryCode, allowedConfiguredCodeSystemOids)) {
+			if(StringUtils.contains(nodeCode, "-")){
+				nodeCode = StringUtils.substringBefore(nodeCode, "-");
+			}
+			if (vsacValuesSetRepository.existsByCodeInValuesetOid(nodeCode, allowedConfiguredCodeSystemOids)) {
 				nodeValidationResult.setValid(true);
 			}
 		}
@@ -63,7 +67,7 @@ public class CcdaLanguageCodeNodeLanguageCodeValuesetValidator extends BaseValid
                 if(nodeValidationResult.getRequestedCode().isEmpty()){
                     validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODE);
                 }else{
-                    validationMessage = "Code '" + countryCode + " (from " + nodeValidationResult.getRequestedCode()+ ")' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
+                    validationMessage = "Code '" + nodeCode + " (from " + nodeValidationResult.getRequestedCode()+ ")' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
                 }
 				vocabularyValidationResult.setMessage(validationMessage);
 				vocabularyValidationResults.add(vocabularyValidationResult);
