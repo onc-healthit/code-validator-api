@@ -92,7 +92,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
                 if (!nodeValidationResult.isNodeCodeSystemFound()) {
                     VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                     vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-                    vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHALL);
+                    vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHOULD);
                     String validationMessage;
                     if(nodeValidationResult.getRequestedCodeSystem().isEmpty()){
                         validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODESYSTEM);
