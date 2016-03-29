@@ -57,7 +57,7 @@ public class CcdaValueSetNodeWithOnlyCodeValidator extends BaseValidator impleme
 			if (nodeValidationResult.isNodeValuesetsFound()) {
 				VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
 				vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-				vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHALL);
+				vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.valueOf(configuredNodeAttributeSeverityLevel.getCodeSeverityLevel()));
                 String validationMessage;
                 if(nodeValidationResult.getRequestedCode().isEmpty()){
                     validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODE);
