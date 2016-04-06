@@ -10,7 +10,6 @@ import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLe
 import org.sitenv.vocabularies.validation.entities.VsacValueSet;
 import org.sitenv.vocabularies.validation.repositories.VsacValuesSetRepository;
 import org.sitenv.vocabularies.validation.utils.XpathUtils;
-import org.sitenv.vocabularies.validation.validators.enums.VocabularyValidationNodeAttributeType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,12 +92,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
                     VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                     vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
                     vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHOULD);
-                    String validationMessage;
-                    if(nodeValidationResult.getRequestedCodeSystem().isEmpty()){
-                        validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODESYSTEM);
-                    }else{
-                        validationMessage = "Code System " + nodeValidationResult.getRequestedCodeSystem() + " does not exist in value set(s) " + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode();
-                    }
+                    String validationMessage = "Code System " + nodeValidationResult.getRequestedCodeSystem() + " does not exist in value set(s) " + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode();
                     vocabularyValidationResult.setMessage(validationMessage);
                     vocabularyValidationResults.add(vocabularyValidationResult);
                 } else {
@@ -106,12 +100,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
                         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                         vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
                         vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.valueOf(configuredNodeAttributeSeverityLevel.getCodeSeverityLevel()));
-                        String validationMessage;
-                        if(nodeValidationResult.getRequestedCode().isEmpty()){
-                            validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODE);
-                        }else{
-                            validationMessage = "Code " + nodeValidationResult.getRequestedCode() + " does not exist in the code system " + nodeValidationResult.getRequestedCodeSystemName() + " (" + nodeValidationResult.getRequestedCodeSystem() + ") in the value set(s) " + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode();
-                        }
+                        String validationMessage = "Code " + nodeValidationResult.getRequestedCode() + " does not exist in the code system " + nodeValidationResult.getRequestedCodeSystemName() + " (" + nodeValidationResult.getRequestedCodeSystem() + ") in the value set(s) " + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode();
                         vocabularyValidationResult.setMessage(validationMessage);
                         vocabularyValidationResults.add(vocabularyValidationResult);
                     }
@@ -119,12 +108,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
                         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                         vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
                         vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHOULD);
-                        String validationMessage;
-                        if(nodeValidationResult.getRequestedCodeSystemName().isEmpty()){
-                            validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODESYSTEMNAME);
-                        }else{
-                            validationMessage = "Code System Name " + nodeValidationResult.getRequestedCodeSystemName() + " does not match expected name for the code system oid " + nodeValidationResult.getRequestedCodeSystem() + " in the value set(s) " + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode();
-                        }
+                        String validationMessage = "Code System Name " + nodeValidationResult.getRequestedCodeSystemName() + " does not match expected name for the code system oid " + nodeValidationResult.getRequestedCodeSystem() + " in the value set(s) " + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode();
                         vocabularyValidationResult.setMessage(validationMessage);
                         vocabularyValidationResults.add(vocabularyValidationResult);
                     }
@@ -132,12 +116,7 @@ public class CcdaValueSetCodeValidator extends BaseValidator implements Vocabula
                         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                         vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
                         vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHOULD);
-                        String validationMessage;
-                        if(nodeValidationResult.getRequestedDisplayName().isEmpty()){
-                            validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.DISPLAYNAME);
-                        }else{
-                            validationMessage = "Display Name " + nodeValidationResult.getRequestedDisplayName() + " does not exist in the code system " + nodeValidationResult.getRequestedCodeSystemName() + " (" + nodeValidationResult.getRequestedCodeSystem() + ") in the value set(s) " + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode();
-                        }
+                        String validationMessage = "Display Name " + nodeValidationResult.getRequestedDisplayName() + " does not exist in the code system " + nodeValidationResult.getRequestedCodeSystemName() + " (" + nodeValidationResult.getRequestedCodeSystem() + ") in the value set(s) " + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode();
                         vocabularyValidationResult.setMessage(validationMessage);
                         vocabularyValidationResults.add(vocabularyValidationResult);
                     }

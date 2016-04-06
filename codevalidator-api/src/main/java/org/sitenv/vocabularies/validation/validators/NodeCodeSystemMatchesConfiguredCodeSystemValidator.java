@@ -8,7 +8,6 @@ import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.utils.XpathUtils;
-import org.sitenv.vocabularies.validation.validators.enums.VocabularyValidationNodeAttributeType;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
 
@@ -50,12 +49,7 @@ public class NodeCodeSystemMatchesConfiguredCodeSystemValidator extends BaseVali
             VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
             vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
             vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHALL);
-            String validationMessage;
-            if(nodeValidationResult.getRequestedCodeSystem().isEmpty()){
-                validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODESYSTEM);
-            }else{
-                validationMessage = "Code system '" + nodeValidationResult.getRequestedCodeSystem()+ "' is not valid for the node found for (" + nodeValidationResult.getValidatedDocumentXpathExpression() + ")";
-            }
+            String validationMessage = "Code system '" + nodeValidationResult.getRequestedCodeSystem()+ "' is not valid for the node found for (" + nodeValidationResult.getValidatedDocumentXpathExpression() + ")";
             vocabularyValidationResult.setMessage(validationMessage);
             vocabularyValidationResults.add(vocabularyValidationResult);
         }
