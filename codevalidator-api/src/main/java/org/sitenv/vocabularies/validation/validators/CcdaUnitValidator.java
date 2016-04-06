@@ -9,7 +9,6 @@ import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.repositories.VsacValuesSetRepository;
 import org.sitenv.vocabularies.validation.utils.XpathUtils;
-import org.sitenv.vocabularies.validation.validators.enums.VocabularyValidationNodeAttributeType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,12 +57,7 @@ public class CcdaUnitValidator extends BaseValidator implements VocabularyNodeVa
                 VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                 vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
                 vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.valueOf(configuredNodeAttributeSeverityLevel.getCodeSeverityLevel()));
-                String validationMessage;
-                if(nodeValidationResult.getRequestedUnit().isEmpty()){
-                    validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.UNIT);
-                }else{
-                    validationMessage = "Unit '" + nodeValidationResult.getRequestedUnit()+ "' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
-                }
+                String validationMessage = "Unit '" + nodeValidationResult.getRequestedUnit()+ "' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
                 vocabularyValidationResult.setMessage(validationMessage);
                 vocabularyValidationResults.add(vocabularyValidationResult);
             }else{
