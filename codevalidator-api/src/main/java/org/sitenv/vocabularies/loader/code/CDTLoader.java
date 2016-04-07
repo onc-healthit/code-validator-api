@@ -2,7 +2,6 @@ package org.sitenv.vocabularies.loader.code;
 
 import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -21,8 +20,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Component(value = "CDT")
-public class CdtLoader extends BaseVocabularyLoader implements VocabularyLoader {
-    private static Logger logger = Logger.getLogger(CdtLoader.class);
+public class CDTLoader extends BaseVocabularyLoader implements VocabularyLoader {
+    private static Logger logger = Logger.getLogger(CDTLoader.class);
 
     public void load(List<File> filesToLoad, Connection connection) {
         StrBuilder insertQueryBuilder = null;
@@ -30,7 +29,6 @@ public class CdtLoader extends BaseVocabularyLoader implements VocabularyLoader 
         for (File file : filesToLoad) {
             if (file.isFile() && !file.isHidden()) {
                 InputStream inputStream = null;
-                POIFSFileSystem fileSystem = null;
                 XSSFWorkbook workBook = null;
                 try {
                     logger.debug("Loading CDT File: " + file.getName());
