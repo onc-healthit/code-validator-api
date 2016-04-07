@@ -1,13 +1,13 @@
 package org.sitenv.vocabularies.validation.validators;
 
 import org.apache.log4j.Logger;
+import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
 import org.sitenv.vocabularies.validation.VocabularyNodeValidator;
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.utils.XpathUtils;
-import org.sitenv.vocabularies.validation.validators.enums.VocabularyValidationNodeAttributeType;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
 
@@ -22,8 +22,8 @@ public class NodeCodeSystemMatchesConfiguredCodeSystemValidator extends BaseVali
 
     @Override
     public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath, Node node, int nodeIndex) {
-        List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedCodeSystemOids().split(",")));
-        getNodeAttributesToBeValidated(xpath, node);
+        List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedValuesetOids().split(",")));
+        initializeValuesFromNodeAttributesToBeValidated(xpath, node);
 
         NodeValidationResult nodeValidationResult = new NodeValidationResult();
         nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
@@ -31,30 +31,25 @@ public class NodeCodeSystemMatchesConfiguredCodeSystemValidator extends BaseVali
         nodeValidationResult.setRequestedCodeSystemName(nodeCodeSystemName);
         nodeValidationResult.setRequestedCodeSystem(nodeCodeSystem);
         nodeValidationResult.setRequestedDisplayName(nodeDisplayName);
-        nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedCodeSystemOids());
+        nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
 
         for(String allowedConfiguredCodeSystemOid : allowedConfiguredCodeSystemOids){
             if (nodeCodeSystem.equalsIgnoreCase(allowedConfiguredCodeSystemOid)) {
                 nodeValidationResult.setValid(true);
-                return buildVocabularyValidationResults(nodeValidationResult);
+                return buildVocabularyValidationResults(nodeValidationResult, configuredValidator.getConfiguredValidationResultSeverityLevel());
             }
         }
-        return buildVocabularyValidationResults(nodeValidationResult);
+        return buildVocabularyValidationResults(nodeValidationResult, configuredValidator.getConfiguredValidationResultSeverityLevel());
     }
 
     @Override
-    protected List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult) {
+    protected List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult, ConfiguredValidationResultSeverityLevel configuredNodeAttributeSeverityLevel) {
         List<VocabularyValidationResult> vocabularyValidationResults = new ArrayList<>();
         if(!nodeValidationResult.isValid()) {
             VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
             vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-            vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.ERRORS);
-            String validationMessage;
-            if(nodeValidationResult.getRequestedCodeSystem().isEmpty()){
-                validationMessage = getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType.CODESYSTEM);
-            }else{
-                validationMessage = "Code system '" + nodeValidationResult.getRequestedCodeSystem()+ "' is not valid for the node found for (" + nodeValidationResult.getValidatedDocumentXpathExpression() + ")";
-            }
+            vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHALL);
+            String validationMessage = "Code system '" + nodeValidationResult.getRequestedCodeSystem()+ "' is not valid for the node found for (" + nodeValidationResult.getValidatedDocumentXpathExpression() + ")";
             vocabularyValidationResult.setMessage(validationMessage);
             vocabularyValidationResults.add(vocabularyValidationResult);
         }

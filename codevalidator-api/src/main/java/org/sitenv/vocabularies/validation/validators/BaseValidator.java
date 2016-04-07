@@ -1,9 +1,9 @@
 package org.sitenv.vocabularies.validation.validators;
 
+import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
-import org.sitenv.vocabularies.validation.validators.enums.VocabularyValidationNodeAttributeType;
 import org.w3c.dom.Node;
 
 import javax.xml.xpath.XPath;
@@ -22,7 +22,7 @@ public abstract class BaseValidator {
     protected String nodeDisplayName;
     protected String nodeUnit;
 
-    protected void getNodeAttributesToBeValidated(XPath xpath, Node node) {
+    protected void initializeValuesFromNodeAttributesToBeValidated(XPath xpath, Node node) {
         try {
             XPathExpression expCode = xpath.compile("@code");
             XPathExpression expCodeSystem = xpath.compile("@codeSystem");
@@ -43,14 +43,10 @@ public abstract class BaseValidator {
     protected VocabularyValidationResult valuesetNotLoadedResult(NodeValidationResult nodeValidationResult){
         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
         vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-        vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.INFO);
+        vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.MAY);
         vocabularyValidationResult.setMessage("Value set code validation attempt for value set(s) ('" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ") that do not exist in service for code system " + nodeValidationResult.getRequestedCodeSystemName() + " (" + nodeValidationResult.getRequestedCodeSystem() + ")");
         return vocabularyValidationResult;
     }
 
-    protected String getMissingNodeAttributeMessage(VocabularyValidationNodeAttributeType vocabularyValidationNodeAttributeType){
-        return vocabularyValidationNodeAttributeType.getVocabularyValidationNodeAttributeType() + " is missing or is empty for the node being validated";
-    }
-
-    protected abstract List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult);
+    protected abstract List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult, ConfiguredValidationResultSeverityLevel configuredValidationResultSeverityLevel);
 }

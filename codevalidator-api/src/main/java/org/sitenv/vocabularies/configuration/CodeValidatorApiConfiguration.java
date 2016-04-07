@@ -166,6 +166,7 @@ public class CodeValidatorApiConfiguration {
     @Bean
     public DocumentBuilder documentBuilder() throws ParserConfigurationException {
         DocumentBuilderFactory domFactory =  DocumentBuilderFactory.newInstance();
+        domFactory.setNamespaceAware(true);
         return domFactory.newDocumentBuilder();
     }
 

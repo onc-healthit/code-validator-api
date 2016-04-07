@@ -13,13 +13,13 @@ public class NodeValidationResult {
 	private String requestedDisplayName;
     private String requestedUnit;
 	private String configuredAllowableValuesetOidsForNode;
+	private String configuredAllowableCodesystemNamesForNode;
 
 	private boolean nodeValuesetsFound;
-	private boolean nodeCodeSystemFoundInConfiguredAllowableValueSets;
-
-	private boolean nodeCodeFoundInCodeSystemForConfiguredAllowableValueSets;
-	private boolean nodeCodeSystemNameFoundInCodeSystemForConfiguredAllowableValueSets;
-	private boolean nodeDisplayNameFoundInCodeSystemForConfiguredAllowableValueSets;
+	private boolean nodeCodeSystemFound;
+	private boolean nodeCodeFound;
+	private boolean nodeCodeSystemNameFound;
+	private boolean nodeDisplayNameFound;
 
 	public boolean isValid() {
 		return isValid;
@@ -97,38 +97,6 @@ public class NodeValidationResult {
 		return configuredAllowableValuesetOidsForNode;
 	}
 
-	public boolean isNodeCodeSystemFoundInConfiguredAllowableValueSets() {
-		return nodeCodeSystemFoundInConfiguredAllowableValueSets;
-	}
-
-	public void setNodeCodeSystemFoundInConfiguredAllowableValueSets(boolean nodeCodeSystemFoundInConfiguredAllowableValueSets) {
-		this.nodeCodeSystemFoundInConfiguredAllowableValueSets = nodeCodeSystemFoundInConfiguredAllowableValueSets;
-	}
-
-	public boolean isNodeCodeFoundInCodeSystemForConfiguredAllowableValueSets() {
-		return nodeCodeFoundInCodeSystemForConfiguredAllowableValueSets;
-	}
-
-	public void setNodeCodeFoundInCodeSystemForConfiguredAllowableValueSets(boolean nodeCodeFoundInCodeSystemForConfiguredAllowableValueSets) {
-		this.nodeCodeFoundInCodeSystemForConfiguredAllowableValueSets = nodeCodeFoundInCodeSystemForConfiguredAllowableValueSets;
-	}
-
-	public boolean isNodeCodeSystemNameFoundInCodeSystemForConfiguredAllowableValueSets() {
-		return nodeCodeSystemNameFoundInCodeSystemForConfiguredAllowableValueSets;
-	}
-
-	public void setNodeCodeSystemNameFoundInCodeSystemForConfiguredAllowableValueSets(boolean nodeCodeSystemNameFoundInCodeSystemForConfiguredAllowableValueSets) {
-		this.nodeCodeSystemNameFoundInCodeSystemForConfiguredAllowableValueSets = nodeCodeSystemNameFoundInCodeSystemForConfiguredAllowableValueSets;
-	}
-
-	public boolean isNodeDisplayNameFoundInCodeSystemForConfiguredAllowableValueSets() {
-		return nodeDisplayNameFoundInCodeSystemForConfiguredAllowableValueSets;
-	}
-
-	public void setNodeDisplayNameFoundInCodeSystemForConfiguredAllowableValueSets(boolean nodeDisplayNameFoundInCodeSystemForConfiguredAllowableValueSets) {
-		this.nodeDisplayNameFoundInCodeSystemForConfiguredAllowableValueSets = nodeDisplayNameFoundInCodeSystemForConfiguredAllowableValueSets;
-	}
-
 	public void setConfiguredAllowableValuesetOidsForNode(String configuredAllowableValuesetOidsForNode) {
 		this.configuredAllowableValuesetOidsForNode = configuredAllowableValuesetOidsForNode;
 	}
@@ -148,4 +116,44 @@ public class NodeValidationResult {
     public void setRequestedUnit(String requestedUnit) {
         this.requestedUnit = requestedUnit;
     }
+
+	public String getConfiguredAllowableCodesystemNamesForNode() {
+		return configuredAllowableCodesystemNamesForNode;
+	}
+
+	public void setConfiguredAllowableCodesystemNamesForNode(String configuredAllowableCodesystemNamesForNode) {
+		this.configuredAllowableCodesystemNamesForNode = configuredAllowableCodesystemNamesForNode;
+	}
+
+	public boolean isNodeCodeSystemFound() {
+		return nodeCodeSystemFound;
+	}
+
+	public void setNodeCodeSystemFound(boolean nodeCodeSystemFound) {
+		this.nodeCodeSystemFound = nodeCodeSystemFound;
+	}
+
+	public boolean isNodeCodeFound() {
+		return nodeCodeFound;
+	}
+
+	public void setNodeCodeFound(boolean nodeCodeFound) {
+		this.nodeCodeFound = nodeCodeFound;
+	}
+
+	public boolean isNodeCodeSystemNameFound() {
+		return nodeCodeSystemNameFound;
+	}
+
+	public void setNodeCodeSystemNameFound(boolean nodeCodeSystemNameFound) {
+		this.nodeCodeSystemNameFound = nodeCodeSystemNameFound;
+	}
+
+	public boolean isNodeDisplayNameFound() {
+		return nodeDisplayNameFound;
+	}
+
+	public void setNodeDisplayNameFound(boolean nodeDisplayNameFound) {
+		this.nodeDisplayNameFound = nodeDisplayNameFound;
+	}
 }

@@ -1,5 +1,6 @@
 package org.sitenv.vocabularies.validation.validators;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
@@ -19,13 +20,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Component(value = "CcdaValueSetNodeWithOnlyCodeValidator")
-public class CcdaValueSetNodeWithOnlyCodeValidator extends BaseValidator implements VocabularyNodeValidator {
-	private static final Logger logger = Logger.getLogger(CcdaValueSetNodeWithOnlyCodeValidator.class);
+@Component(value = "CcdaLanguageCodeNodeLanguageCodeValuesetValidator")
+public class CcdaLanguageCodeNodeLanguageCodeValuesetValidator extends BaseValidator implements VocabularyNodeValidator {
+	private static final Logger logger = Logger.getLogger(CcdaLanguageCodeNodeLanguageCodeValuesetValidator.class);
 	private VsacValuesSetRepository vsacValuesSetRepository;
 
 	@Autowired
-	public CcdaValueSetNodeWithOnlyCodeValidator(VsacValuesSetRepository vsacValuesSetRepository) {
+	public CcdaLanguageCodeNodeLanguageCodeValuesetValidator(VsacValuesSetRepository vsacValuesSetRepository) {
 		this.vsacValuesSetRepository = vsacValuesSetRepository;
 	}
 
@@ -40,8 +41,12 @@ public class CcdaValueSetNodeWithOnlyCodeValidator extends BaseValidator impleme
 		nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
 		nodeValidationResult.setRequestedCode(nodeCode);
 		nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
+
 		if(vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)){
 			nodeValidationResult.setNodeValuesetsFound(true);
+			if(StringUtils.contains(nodeCode, "-")){
+				nodeCode = StringUtils.substringBefore(nodeCode, "-");
+			}
 			if (vsacValuesSetRepository.existsByCodeInValuesetOid(nodeCode, allowedConfiguredCodeSystemOids)) {
 				nodeValidationResult.setValid(true);
 			}
@@ -57,7 +62,7 @@ public class CcdaValueSetNodeWithOnlyCodeValidator extends BaseValidator impleme
 				VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
 				vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
 				vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.valueOf(configuredNodeAttributeSeverityLevel.getCodeSeverityLevel()));
-                String validationMessage = "Code '" + nodeValidationResult.getRequestedCode()+ "' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
+                String validationMessage = "Code '" + nodeCode + " (from " + nodeValidationResult.getRequestedCode()+ ")' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
 				vocabularyValidationResult.setMessage(validationMessage);
 				vocabularyValidationResults.add(vocabularyValidationResult);
 			}else{
