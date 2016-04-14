@@ -42,7 +42,7 @@ public class CcdaUnitValidator extends BaseValidator implements VocabularyNodeVa
         nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
 		if(vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)){
             nodeValidationResult.setNodeValuesetsFound(true);
-			if (vsacValuesSetRepository.existsByCodeInValuesetOid(nodeUnit, allowedConfiguredCodeSystemOids)) {
+			if (vsacValuesSetRepository.codeExistsInValueset(nodeUnit, allowedConfiguredCodeSystemOids)) {
                 nodeValidationResult.setValid(true);
 			}
 		}

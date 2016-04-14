@@ -47,7 +47,7 @@ public class CcdaLanguageCodeNodeLanguageCodeValuesetValidator extends BaseValid
 			if(StringUtils.contains(nodeCode, "-")){
 				nodeCode = StringUtils.substringBefore(nodeCode, "-");
 			}
-			if (vsacValuesSetRepository.existsByCodeInValuesetOid(nodeCode, allowedConfiguredCodeSystemOids)) {
+			if (vsacValuesSetRepository.codeExistsInValueset(nodeCode, allowedConfiguredCodeSystemOids)) {
 				nodeValidationResult.setValid(true);
 			}
 		}
