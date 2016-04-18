@@ -41,7 +41,7 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
             VocabularyLoader loader = vocabularyLoaderFactory.getVocabularyLoader(directory.getName());
             if (loader != null && filesToLoad != null) {
                 logger.debug("Loader built...");
-                //logger.debug("Loading file: " + loadFile.getAbsolutePath() + "...");
+                logger.info("Loading files in : " + directory.getName() + "...");
                 loader.load(Arrays.asList(filesToLoad), connection);
                 logger.debug("File loaded...");
             } else {
@@ -101,6 +101,7 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
                 logger.info("Value Sets loaded...");
             }
             connection.commit();
+
             logger.info("!!!!*********** VOCABULARY DATABASE HAS FINISHED LOADING - SERVER WILL CONTINUE AND SHOULD BE DONE SHORTLY. ***********!!!!");
         } catch (Exception e) {
             logger.error("Failed to load configured vocabulary directory.", e);
@@ -117,6 +118,6 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
 
     @Override
     public void destroy() throws Exception {
-
+        logger.info("Destroying Loader Bean. Loading is done.");
     }
 }

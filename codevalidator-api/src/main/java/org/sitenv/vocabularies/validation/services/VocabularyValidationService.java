@@ -8,7 +8,6 @@ import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.utils.CCDADocumentNamespaces;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -29,7 +28,6 @@ import java.util.*;
  * Created by Brian on 2/10/2016.
  */
 @Service
-@Transactional(readOnly=true)
 public  class VocabularyValidationService {
     @Resource(name="vocabularyValidationConfigurations")
     List<ConfiguredExpression> vocabularyValidationConfigurations;

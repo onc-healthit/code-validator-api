@@ -11,7 +11,6 @@ import org.sitenv.vocabularies.validation.repositories.VsacValuesSetRepository;
 import org.sitenv.vocabularies.validation.utils.XpathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Node;
 
 import javax.xml.xpath.XPath;
@@ -30,7 +29,6 @@ public class CcdaUnitValidator extends BaseValidator implements VocabularyNodeVa
 	}
 
 	@Override
-    @Transactional(readOnly = true)
 	public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath, Node node, int nodeIndex) {
 		List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedValuesetOids().split(",")));
 
