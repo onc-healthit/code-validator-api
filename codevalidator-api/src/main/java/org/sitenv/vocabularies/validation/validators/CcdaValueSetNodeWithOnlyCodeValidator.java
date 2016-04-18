@@ -11,7 +11,6 @@ import org.sitenv.vocabularies.validation.repositories.VsacValuesSetRepository;
 import org.sitenv.vocabularies.validation.utils.XpathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Node;
 
 import javax.xml.xpath.XPath;
@@ -30,7 +29,6 @@ public class CcdaValueSetNodeWithOnlyCodeValidator extends BaseValidator impleme
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath, Node node, int nodeIndex) {
 		List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedValuesetOids().split(",")));
 
@@ -42,7 +40,7 @@ public class CcdaValueSetNodeWithOnlyCodeValidator extends BaseValidator impleme
 		nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
 		if(vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)){
 			nodeValidationResult.setNodeValuesetsFound(true);
-			if (vsacValuesSetRepository.existsByCodeInValuesetOid(nodeCode, allowedConfiguredCodeSystemOids)) {
+			if (vsacValuesSetRepository.codeExistsInValueset(nodeCode, allowedConfiguredCodeSystemOids)) {
 				nodeValidationResult.setValid(true);
 			}
 		}

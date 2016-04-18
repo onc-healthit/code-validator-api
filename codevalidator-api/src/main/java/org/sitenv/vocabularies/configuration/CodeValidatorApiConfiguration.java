@@ -9,10 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.concurrent.ConcurrentMapCache;
-import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +25,6 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -37,14 +32,15 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathFactory;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Created by Brian on 2/5/2016.
  */
 @Configuration
-@EnableTransactionManagement
-@EnableCaching
 @ComponentScan("org.sitenv.vocabularies")
 @EnableJpaRepositories("org.sitenv.vocabularies.validation.repositories")
 public class CodeValidatorApiConfiguration {
@@ -107,7 +103,7 @@ public class CodeValidatorApiConfiguration {
         ds.setUrl(HSQL_JDBC_URL_TEMPLATE);
         ds.setUsername("sa");
         ds.setPassword("");
-        ds.setInitialSize(3);
+        ds.setInitialSize(10);
         ds.setDriverClassName("org.hsqldb.jdbcDriver");
         return ds;
     }
@@ -192,12 +188,5 @@ public class CodeValidatorApiConfiguration {
         map.put("jaxb.formatted.output", true);
         jaxb2Marshaller.setMarshallerProperties(map);
         return jaxb2Marshaller;
-    }
-
-    @Bean
-    CacheManager cacheManager() {
-        SimpleCacheManager cacheManager = new SimpleCacheManager();
-        cacheManager.setCaches(Arrays.asList(new ConcurrentMapCache("loadedValuesets")));
-        return cacheManager;
     }
 }
