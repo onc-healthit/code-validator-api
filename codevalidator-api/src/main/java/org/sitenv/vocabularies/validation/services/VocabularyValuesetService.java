@@ -24,4 +24,8 @@ public class VocabularyValuesetService {
     public List<VsacValueSet> getValuesetsByOids(Set<String> valuesetOids){
         return vsacValuesSetRepository.findByValuesetOidIn(new ArrayList<>(valuesetOids));
     }
+
+    public boolean isFoundByCodeInValuesetOids(String code, Set<String> valuesetOids){
+        return vsacValuesSetRepository.codeExistsInValueset(code, new ArrayList<>(valuesetOids));
+    }
 }

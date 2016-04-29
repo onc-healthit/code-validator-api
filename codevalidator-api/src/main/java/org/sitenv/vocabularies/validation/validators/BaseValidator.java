@@ -21,6 +21,7 @@ public abstract class BaseValidator {
     protected String nodeCodeSystemName;
     protected String nodeDisplayName;
     protected String nodeUnit;
+    protected String classCode;
 
     protected void initializeValuesFromNodeAttributesToBeValidated(XPath xpath, Node node) {
         try {
@@ -29,12 +30,14 @@ public abstract class BaseValidator {
             XPathExpression expCodeSystemName = xpath.compile("@codeSystemName");
             XPathExpression expDisplayName = xpath.compile("@displayName");
             XPathExpression expUnit = xpath.compile("@unit");
+            XPathExpression expClassCode = xpath.compile("@classCode");
 
             nodeCode = ((String) expCode.evaluate(node, XPathConstants.STRING)).toUpperCase();
             nodeCodeSystem = ((String) expCodeSystem.evaluate(node, XPathConstants.STRING)).toUpperCase();
             nodeCodeSystemName = ((String) expCodeSystemName.evaluate(node, XPathConstants.STRING)).toUpperCase();
             nodeDisplayName = ((String) expDisplayName.evaluate(node, XPathConstants.STRING)).toUpperCase();
             nodeUnit = ((String) expUnit.evaluate(node, XPathConstants.STRING)).toUpperCase();
+            classCode = ((String) expClassCode .evaluate(node, XPathConstants.STRING)).toUpperCase();
         } catch (XPathExpressionException e) {
             throw new RuntimeException("ERROR getting node values " + e.getMessage());
         }
