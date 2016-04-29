@@ -22,4 +22,8 @@ public class VocabularyCodeService {
     public boolean isFoundByCodeAndDisplayNameInCodeSystems(String code, String displayName, Set<String> codeSystems){
         return codeRepository.foundCodeAndDisplayNameInCodesystem(code, displayName, new ArrayList<>(codeSystems));
     }
+
+    public boolean isFoundByCodeInCodeSystems(String code, Set<String> codeSystems){
+        return codeRepository.foundCodeInCodesystems(code, new ArrayList<>(codeSystems));
+    }
 }
