@@ -5,6 +5,7 @@ import org.sitenv.vocabularies.configuration.ConfiguredValidator;
 import org.sitenv.vocabularies.validation.VocabularyNodeValidator;
 import org.sitenv.vocabularies.validation.VocabularyValidatorFactory;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
+import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.utils.CCDADocumentNamespaces;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,18 +66,20 @@ public  class VocabularyValidationService {
                             ConfiguredValidator configuredValidator = (ConfiguredValidator) configIterator.next();
                             VocabularyNodeValidator vocabularyValidator = vocabularyValidatorFactory.getVocabularyValidator(configuredValidator.getName());
                             List<VocabularyValidationResult> tempResults = vocabularyValidator.validateNode(configuredValidator, xpath, node, i);
-                            if(!tempResults.isEmpty()) {
+                            if(foundValidationError(tempResults)) {
                                 vocabularyValidationResults.addAll(tempResults);
                             }else {
+                                vocabularyValidationResults.clear();
+                                vocabularyValidationResults.addAll(tempResults);
                                 validNode = true;
                             }
                         }
-                        if(!validNode) {
-                            for (VocabularyValidationResult vocabularyValidationResult : vocabularyValidationResults) {
-                                vocabularyValidationResult.getNodeValidationResult().setConfiguredXpathExpression(configuredXpathExpression);
-                                vocabularyValidationResultMap.get(vocabularyValidationResult.getVocabularyValidationResultLevel().getResultType()).add(vocabularyValidationResult);
-                            }
+
+                        for (VocabularyValidationResult vocabularyValidationResult : vocabularyValidationResults) {
+                            vocabularyValidationResult.getNodeValidationResult().setConfiguredXpathExpression(configuredXpathExpression);
+                            vocabularyValidationResultMap.get(vocabularyValidationResult.getVocabularyValidationResultLevel().getResultType()).add(vocabularyValidationResult);
                         }
+
                     }
 
                 }
@@ -125,6 +128,15 @@ public  class VocabularyValidationService {
     private static NodeList findAllDocumentNodesByXpathExpression(XPath xpath, String configuredXpath, Document doc) throws XPathExpressionException {
         NodeList result = (NodeList) xpath.compile(configuredXpath).evaluate(doc, XPathConstants.NODESET);
         return result;
+    }
+
+    private boolean foundValidationError(List<VocabularyValidationResult> results){
+        for(VocabularyValidationResult result : results){
+            if(result.getVocabularyValidationResultLevel().equals(VocabularyValidationResultLevel.SHOULD)){
+                return true;
+            }
+        }
+        return false;
     }
 
     private  List<VocabularyValidationResult> convertMapToList(Map<String, ArrayList<VocabularyValidationResult>> resultMap) {
