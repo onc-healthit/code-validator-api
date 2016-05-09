@@ -12,6 +12,8 @@ public class NodeValidationResult {
 	private String requestedCodeSystemName;
 	private String requestedDisplayName;
     private String requestedUnit;
+	private String requestedClassCode;
+	private String requestedText;
 	private String configuredAllowableValuesetOidsForNode;
 	private String configuredAllowableCodesystemNamesForNode;
 
@@ -155,5 +157,21 @@ public class NodeValidationResult {
 
 	public void setNodeDisplayNameFound(boolean nodeDisplayNameFound) {
 		this.nodeDisplayNameFound = nodeDisplayNameFound;
+	}
+
+	public String getRequestedClassCode() {
+		return requestedClassCode;
+	}
+
+	public void setRequestedClassCode(String requestedClassCode) {
+		this.requestedClassCode = requestedClassCode;
+	}
+
+	public String getRequestedText() {
+		return requestedText;
+	}
+
+	public void setRequestedText(String requestedText) {
+		this.requestedText = requestedText;
 	}
 }

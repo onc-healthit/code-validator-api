@@ -11,7 +11,6 @@ import org.sitenv.vocabularies.validation.repositories.CodeRepository;
 import org.sitenv.vocabularies.validation.utils.XpathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Node;
 
 import javax.xml.xpath.XPath;
@@ -31,7 +30,6 @@ public class CcdaCodeSystemCodeValidator extends BaseValidator implements Vocabu
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath, Node node, int nodeIndex) {
         List<String> allowedConfiguredCodeSystemNames = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedCodesystemNames().split(",")));
 
@@ -76,7 +74,7 @@ public class CcdaCodeSystemCodeValidator extends BaseValidator implements Vocabu
                     if (!nodeValidationResult.isNodeDisplayNameFound()) {
                         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                         vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-                        vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHOULD);
+                        vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.MAY);
                         String validationMessage = "Display Name " + nodeValidationResult.getRequestedDisplayName() + " does not exist in the code system " + nodeValidationResult.getRequestedCodeSystem() + " in the configured code system name(s) " + nodeValidationResult.getConfiguredAllowableCodesystemNamesForNode();
                         vocabularyValidationResult.setMessage(validationMessage);
                         vocabularyValidationResults.add(vocabularyValidationResult);

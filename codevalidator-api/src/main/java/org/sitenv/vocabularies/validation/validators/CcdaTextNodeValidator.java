@@ -18,13 +18,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Component(value = "CcdaUnitValidator")
-public class CcdaUnitValidator extends BaseValidator implements VocabularyNodeValidator {
-	private static final Logger logger = Logger.getLogger(CcdaUnitValidator.class);
+@Component(value = "CcdaTextNodeValidator")
+public class CcdaTextNodeValidator extends BaseValidator implements VocabularyNodeValidator {
+	private static final Logger logger = Logger.getLogger(CcdaTextNodeValidator.class);
 	private VsacValuesSetRepository vsacValuesSetRepository;
 
 	@Autowired
-	public CcdaUnitValidator(VsacValuesSetRepository vsacValuesSetRepository) {
+	public CcdaTextNodeValidator(VsacValuesSetRepository vsacValuesSetRepository) {
 		this.vsacValuesSetRepository = vsacValuesSetRepository;
 	}
 
@@ -36,11 +36,11 @@ public class CcdaUnitValidator extends BaseValidator implements VocabularyNodeVa
 
 		NodeValidationResult nodeValidationResult = new NodeValidationResult();
         nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
-        nodeValidationResult.setRequestedUnit(nodeUnit);
+        nodeValidationResult.setRequestedText(nodeText);
         nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
 		if(vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)){
             nodeValidationResult.setNodeValuesetsFound(true);
-			if (vsacValuesSetRepository.codeExistsInValueset(nodeUnit, allowedConfiguredCodeSystemOids)) {
+			if (vsacValuesSetRepository.codeExistsInValueset(nodeText, allowedConfiguredCodeSystemOids)) {
                 nodeValidationResult.setValid(true);
 			}
 		}
@@ -55,7 +55,7 @@ public class CcdaUnitValidator extends BaseValidator implements VocabularyNodeVa
                 VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                 vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
                 vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.valueOf(configuredNodeAttributeSeverityLevel.getCodeSeverityLevel()));
-                String validationMessage = "Unit '" + nodeValidationResult.getRequestedUnit()+ "' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
+                String validationMessage = nodeValidationResult.getRequestedText() + "' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
                 vocabularyValidationResult.setMessage(validationMessage);
                 vocabularyValidationResults.add(vocabularyValidationResult);
             }else{

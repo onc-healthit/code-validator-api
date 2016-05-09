@@ -32,7 +32,7 @@ public class VsacLoader extends BaseVocabularyLoader implements VocabularyLoader
                 POIFSFileSystem fileSystem = null;
                 HSSFWorkbook workBook = null;
                 try {
-                    logger.debug("Loading Value Set File: " + file.getName());
+                    logger.info("Loading Value Set File: " + file.getName());
                     inputStream = new FileInputStream(file);
                     fileSystem = new POIFSFileSystem(inputStream);
                     workBook = new HSSFWorkbook(fileSystem);
