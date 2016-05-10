@@ -1,10 +1,12 @@
 package org.sitenv.vocabularies.validation.services;
 
+import org.sitenv.vocabularies.validation.entities.Code;
 import org.sitenv.vocabularies.validation.repositories.CodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,5 +27,9 @@ public class VocabularyCodeService {
 
     public boolean isFoundByCodeInCodeSystems(String code, Set<String> codeSystems){
         return codeRepository.foundCodeInCodesystems(code, new ArrayList<>(codeSystems));
+    }
+
+    public List<Code> getByCodeInCodeSystems(String code, List<String> codesystems){
+        return codeRepository.findByCodeAndCodeSystemIn(code, codesystems);
     }
 }
