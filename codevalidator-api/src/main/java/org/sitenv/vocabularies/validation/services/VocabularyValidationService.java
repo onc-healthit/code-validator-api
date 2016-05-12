@@ -29,7 +29,7 @@ import java.util.*;
  * Created by Brian on 2/10/2016.
  */
 @Service
-public  class VocabularyValidationService {
+public class VocabularyValidationService {
     @Resource(name="vocabularyValidationConfigurations")
     List<ConfiguredExpression> vocabularyValidationConfigurations;
     @Resource(name="documentBuilder")
