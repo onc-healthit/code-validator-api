@@ -45,7 +45,7 @@ import java.util.Properties;
 @EnableJpaRepositories("org.sitenv.vocabularies.validation.repositories")
 public class CodeValidatorApiConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(CodeValidatorApiConfiguration.class);
-    private static final String HSQL_JDBC_URL_TEMPLATE = "jdbc:hsqldb:file:vocabularydatabase/db;hsqldb.default_table_type=cached;hsqldb.write_delay_millis=10;readonly=false";
+    private static final String HSQL_JDBC_URL_TEMPLATE = "jdbc:hsqldb:mem:vocabularydatabase/db;hsqldb.default_table_type=cached;hsqldb.write_delay_millis=10;readonly=false";
     @Value("classpath:schema.sql")
     private Resource HSQL_SCHEMA_SCRIPT;
     @Autowired

@@ -14,6 +14,9 @@ import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
 
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,9 +33,15 @@ public class CcdaUnitValidator extends BaseValidator implements VocabularyNodeVa
 
 	@Override
 	public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath, Node node, int nodeIndex) {
-		List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedValuesetOids().split(",")));
+		String nodeUnit;
+		try{
+			XPathExpression exp = xpath.compile("@unit");
+			nodeUnit = ((String) exp.evaluate(node, XPathConstants.STRING)).toUpperCase();
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException("ERROR getting node values " + e.getMessage());
+		}
 
-		initializeValuesFromNodeAttributesToBeValidated(xpath, node);
+		List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedValuesetOids().split(",")));
 
 		NodeValidationResult nodeValidationResult = new NodeValidationResult();
         nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));

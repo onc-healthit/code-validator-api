@@ -25,4 +25,6 @@ public interface CodeRepository extends JpaRepository<Code, Integer> {
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Code c WHERE c.displayName = :displayName and c.codeSystem in (:codesystems)")
     boolean foundDisplayNameInCodesystems(@Param("displayName")String displayName, @Param("codesystems")List<String> codesystems);
 
+    List<Code> findByCodeAndCodeSystemIn(String code, List<String> codesystems);
+
 }
