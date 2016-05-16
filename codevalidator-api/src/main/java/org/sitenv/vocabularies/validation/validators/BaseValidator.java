@@ -4,47 +4,13 @@ import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityL
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
-import org.w3c.dom.Node;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
 import java.util.List;
 
 /**
  * Created by Brian on 2/15/2016.
  */
 public abstract class BaseValidator {
-    protected String nodeCode;
-    protected String nodeCodeSystem;
-    protected String nodeCodeSystemName;
-    protected String nodeDisplayName;
-    protected String nodeUnit;
-    protected String classCode;
-    protected String nodeText;
-
-    protected void initializeValuesFromNodeAttributesToBeValidated(XPath xpath, Node node) {
-        try {
-            XPathExpression expCode = xpath.compile("@code");
-            XPathExpression expCodeSystem = xpath.compile("@codeSystem");
-            XPathExpression expCodeSystemName = xpath.compile("@codeSystemName");
-            XPathExpression expDisplayName = xpath.compile("@displayName");
-            XPathExpression expUnit = xpath.compile("@unit");
-            XPathExpression expClassCode = xpath.compile("@classCode");
-            XPathExpression expText = xpath.compile("text()");
-
-            nodeCode = ((String) expCode.evaluate(node, XPathConstants.STRING)).toUpperCase();
-            nodeCodeSystem = ((String) expCodeSystem.evaluate(node, XPathConstants.STRING)).toUpperCase();
-            nodeCodeSystemName = ((String) expCodeSystemName.evaluate(node, XPathConstants.STRING)).toUpperCase();
-            nodeDisplayName = ((String) expDisplayName.evaluate(node, XPathConstants.STRING)).toUpperCase();
-            nodeUnit = ((String) expUnit.evaluate(node, XPathConstants.STRING)).toUpperCase();
-            classCode = ((String) expClassCode.evaluate(node, XPathConstants.STRING)).toUpperCase();
-            nodeText = ((String) expText.evaluate(node, XPathConstants.STRING)).toUpperCase();
-        } catch (XPathExpressionException e) {
-            throw new RuntimeException("ERROR getting node values " + e.getMessage());
-        }
-    }
 
     protected VocabularyValidationResult valuesetNotLoadedResult(NodeValidationResult nodeValidationResult){
         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();

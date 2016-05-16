@@ -29,7 +29,7 @@ import java.util.*;
  * Created by Brian on 2/10/2016.
  */
 @Service
-public  class VocabularyValidationService {
+public class VocabularyValidationService {
     @Resource(name="vocabularyValidationConfigurations")
     List<ConfiguredExpression> vocabularyValidationConfigurations;
     @Resource(name="documentBuilder")
@@ -52,10 +52,11 @@ public  class VocabularyValidationService {
     public List<VocabularyValidationResult> validate(Document doc) {
         Map<String, ArrayList<VocabularyValidationResult>> vocabularyValidationResultMap = getInitializedResultMap();
         if (doc != null) {
+            String configuredXpathExpression = "";
             try {
                 XPath xpath = getNewXpath(doc);
                 for (ConfiguredExpression configuredExpression : vocabularyValidationConfigurations) {
-                    String configuredXpathExpression = configuredExpression.getConfiguredXpathExpression();
+                    configuredXpathExpression = configuredExpression.getConfiguredXpathExpression();
                     NodeList nodes = findAllDocumentNodesByXpathExpression(xpath, configuredXpathExpression, doc);
                     for (int i = 0; i < nodes.getLength(); i++) {
                         Node node = nodes.item(i);
@@ -84,7 +85,7 @@ public  class VocabularyValidationService {
 
                 }
             } catch (XPathExpressionException e) {
-                e.printStackTrace();
+                System.err.println("ERROR VALIDATING DOCUMENT FOR THE FOLLOWING CONFIGURED EXPRESSION: " + configuredXpathExpression);
             }
         }
         return convertMapToList(vocabularyValidationResultMap);
