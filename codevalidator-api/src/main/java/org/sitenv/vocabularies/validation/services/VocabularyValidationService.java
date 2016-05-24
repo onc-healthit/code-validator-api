@@ -133,7 +133,7 @@ public class VocabularyValidationService {
 
     private boolean foundValidationError(List<VocabularyValidationResult> results){
         for(VocabularyValidationResult result : results){
-            if(result.getVocabularyValidationResultLevel().equals(VocabularyValidationResultLevel.SHOULD)){
+            if(result.getVocabularyValidationResultLevel().equals(VocabularyValidationResultLevel.SHALL)){
                 return true;
             }
         }
