@@ -3,7 +3,7 @@ package org.sitenv.vocabularies.configuration;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.sitenv.vocabularies.loader.VocabularyLoadRunner;
 import org.sitenv.vocabularies.loader.VocabularyLoaderFactory;
-import org.sitenv.vocabularies.validation.VocabularyValidatorFactory;
+import org.sitenv.vocabularies.validation.NodeValidatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,13 +130,13 @@ public class CodeValidatorApiConfiguration {
     @Bean
     public ServiceLocatorFactoryBean vocabularyValidatorFactoryServiceLocatorFactoryBean() {
         ServiceLocatorFactoryBean bean = new ServiceLocatorFactoryBean();
-        bean.setServiceLocatorInterface(VocabularyValidatorFactory.class);
+        bean.setServiceLocatorInterface(NodeValidatorFactory.class);
         return bean;
     }
 
     @Bean
-    public VocabularyValidatorFactory vocabularyValidatorFactory() {
-        return (VocabularyValidatorFactory) vocabularyValidatorFactoryServiceLocatorFactoryBean().getObject();
+    public NodeValidatorFactory vocabularyValidatorFactory() {
+        return (NodeValidatorFactory) vocabularyValidatorFactoryServiceLocatorFactoryBean().getObject();
     }
 
     @Autowired

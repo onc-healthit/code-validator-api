@@ -1,15 +1,15 @@
-package org.sitenv.vocabularies.validation.validators;
+package org.sitenv.vocabularies.validation.validators.NodeTypes;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
-import org.sitenv.vocabularies.validation.VocabularyNodeValidator;
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.repositories.VsacValuesSetRepository;
 import org.sitenv.vocabularies.validation.utils.XpathUtils;
+import org.sitenv.vocabularies.validation.validators.NodeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
@@ -22,13 +22,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Component(value = "CcdaLanguageCodeNodeLanguageCodeValuesetValidator")
-public class CcdaLanguageCodeNodeLanguageCodeValuesetValidator extends BaseValidator implements VocabularyNodeValidator {
-	private static final Logger logger = Logger.getLogger(CcdaLanguageCodeNodeLanguageCodeValuesetValidator.class);
+@Component(value = "LanguageCodeNodeCountryCodeValuesetValidator")
+public class LanguageCodeNodeCountryCodeValuesetValidator extends NodeValidator {
+	private static final Logger logger = Logger.getLogger(LanguageCodeNodeCountryCodeValuesetValidator.class);
 	private VsacValuesSetRepository vsacValuesSetRepository;
 
 	@Autowired
-	public CcdaLanguageCodeNodeLanguageCodeValuesetValidator(VsacValuesSetRepository vsacValuesSetRepository) {
+	public LanguageCodeNodeCountryCodeValuesetValidator(VsacValuesSetRepository vsacValuesSetRepository) {
 		this.vsacValuesSetRepository = vsacValuesSetRepository;
 	}
 
@@ -49,16 +49,23 @@ public class CcdaLanguageCodeNodeLanguageCodeValuesetValidator extends BaseValid
 		nodeValidationResult.setRequestedCode(nodeCode);
 		nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
 
-		if(vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)){
-			nodeValidationResult.setNodeValuesetsFound(true);
-			if(StringUtils.contains(nodeCode, "-")){
-				nodeCode = StringUtils.substringBefore(nodeCode, "-");
+		if(needToValidateCountryCode(nodeCode)){
+			nodeCode = StringUtils.substringAfter(nodeCode, "-");
+			if (vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)) {
+				nodeValidationResult.setNodeValuesetsFound(true);
+				if (vsacValuesSetRepository.codeExistsInValueset(nodeCode, allowedConfiguredCodeSystemOids)) {
+					nodeValidationResult.setValid(true);
+				}
 			}
-			if (vsacValuesSetRepository.codeExistsInValueset(nodeCode, allowedConfiguredCodeSystemOids)) {
-				nodeValidationResult.setValid(true);
-			}
+		}else{
+			nodeValidationResult.setValid(true);
 		}
+
 		return buildVocabularyValidationResults(nodeValidationResult, configuredValidator.getConfiguredValidationResultSeverityLevel());
+	}
+
+	private boolean needToValidateCountryCode(String nodeCode) {
+		return StringUtils.contains(nodeCode, "-");
 	}
 
 	@Override
@@ -69,7 +76,7 @@ public class CcdaLanguageCodeNodeLanguageCodeValuesetValidator extends BaseValid
 				VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
 				vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
 				vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.valueOf(configuredNodeAttributeSeverityLevel.getCodeSeverityLevel()));
-                String validationMessage = "Code '" + nodeValidationResult.getRequestedCode() + " (from " + nodeValidationResult.getRequestedCode()+ ")' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
+				String validationMessage = "Code '" + nodeValidationResult.getRequestedCode() + " (from " + nodeValidationResult.getRequestedCode()+ ")' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
 				vocabularyValidationResult.setMessage(validationMessage);
 				vocabularyValidationResults.add(vocabularyValidationResult);
 			}else{
