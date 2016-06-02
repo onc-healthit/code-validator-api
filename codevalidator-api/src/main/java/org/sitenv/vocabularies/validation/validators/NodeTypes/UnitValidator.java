@@ -1,14 +1,14 @@
-package org.sitenv.vocabularies.validation.validators;
+package org.sitenv.vocabularies.validation.validators.NodeTypes;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
-import org.sitenv.vocabularies.validation.VocabularyNodeValidator;
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.repositories.VsacValuesSetRepository;
 import org.sitenv.vocabularies.validation.utils.XpathUtils;
+import org.sitenv.vocabularies.validation.validators.NodeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
@@ -21,22 +21,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Component(value = "CcdaTextNodeValidator")
-public class CcdaTextNodeValidator extends BaseValidator implements VocabularyNodeValidator {
-	private static final Logger logger = Logger.getLogger(CcdaTextNodeValidator.class);
+@Component(value = "UnitValidator")
+public class UnitValidator extends NodeValidator {
+	private static final Logger logger = Logger.getLogger(UnitValidator.class);
 	private VsacValuesSetRepository vsacValuesSetRepository;
 
 	@Autowired
-	public CcdaTextNodeValidator(VsacValuesSetRepository vsacValuesSetRepository) {
+	public UnitValidator(VsacValuesSetRepository vsacValuesSetRepository) {
 		this.vsacValuesSetRepository = vsacValuesSetRepository;
 	}
 
 	@Override
 	public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath, Node node, int nodeIndex) {
-		String nodeText;
+		String nodeUnit;
 		try{
-			XPathExpression exp = xpath.compile("text()");
-			nodeText = ((String) exp.evaluate(node, XPathConstants.STRING)).toUpperCase();
+			XPathExpression exp = xpath.compile("@unit");
+			nodeUnit = ((String) exp.evaluate(node, XPathConstants.STRING)).toUpperCase();
 		} catch (XPathExpressionException e) {
 			throw new RuntimeException("ERROR getting node values " + e.getMessage());
 		}
@@ -45,11 +45,11 @@ public class CcdaTextNodeValidator extends BaseValidator implements VocabularyNo
 
 		NodeValidationResult nodeValidationResult = new NodeValidationResult();
         nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
-        nodeValidationResult.setRequestedText(nodeText);
+        nodeValidationResult.setRequestedUnit(nodeUnit);
         nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
 		if(vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)){
             nodeValidationResult.setNodeValuesetsFound(true);
-			if (vsacValuesSetRepository.codeExistsInValueset(nodeText, allowedConfiguredCodeSystemOids)) {
+			if (vsacValuesSetRepository.codeExistsInValueset(nodeUnit, allowedConfiguredCodeSystemOids)) {
                 nodeValidationResult.setValid(true);
 			}
 		}
@@ -64,7 +64,7 @@ public class CcdaTextNodeValidator extends BaseValidator implements VocabularyNo
                 VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                 vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
                 vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.valueOf(configuredNodeAttributeSeverityLevel.getCodeSeverityLevel()));
-                String validationMessage = nodeValidationResult.getRequestedText() + "' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
+                String validationMessage = "Unit '" + nodeValidationResult.getRequestedUnit()+ "' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
                 vocabularyValidationResult.setMessage(validationMessage);
                 vocabularyValidationResults.add(vocabularyValidationResult);
             }else{
