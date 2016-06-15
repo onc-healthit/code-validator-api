@@ -1,4 +1,4 @@
-package org.sitenv.vocabularies.validation.validators.NodeTypes;
+package org.sitenv.vocabularies.validation.validators.nodetypes;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;

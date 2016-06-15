@@ -126,6 +126,10 @@
 			<plugin>
 				<groupId>external.atlassian.jgitflow</groupId>
 				<artifactId>jgitflow-maven-plugin</artifactId>
+				<configuration>
+					<noDeploy>true</noDeploy>
+					<allowUntracked>true</allowUntracked>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
