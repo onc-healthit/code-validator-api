@@ -1,4 +1,4 @@
-package org.sitenv.vocabularies.validation.validators.NodeTypes;
+package org.sitenv.vocabularies.validation.validators.nodetypes;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
