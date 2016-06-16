@@ -2,8 +2,8 @@ package org.sitenv.vocabularies.validation.services;
 
 import org.sitenv.vocabularies.configuration.ConfiguredExpression;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
-import org.sitenv.vocabularies.validation.VocabularyNodeValidator;
-import org.sitenv.vocabularies.validation.VocabularyValidatorFactory;
+import org.sitenv.vocabularies.validation.NodeValidation;
+import org.sitenv.vocabularies.validation.NodeValidatorFactory;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.utils.CCDADocumentNamespaces;
@@ -37,7 +37,7 @@ public class VocabularyValidationService {
     @Resource(name="xPathFactory")
     XPathFactory xPathFactory;
     @Autowired
-    VocabularyValidatorFactory vocabularyValidatorFactory;
+    NodeValidatorFactory vocabularyValidatorFactory;
 
     public List<VocabularyValidationResult> validate(String uri) throws IOException, SAXException {
         Document doc = documentBuilder.parse(uri);
@@ -65,7 +65,7 @@ public class VocabularyValidationService {
                         Iterator configIterator = configuredExpression.getConfiguredValidators().iterator();
                         while(configIterator.hasNext() && !validNode){
                             ConfiguredValidator configuredValidator = (ConfiguredValidator) configIterator.next();
-                            VocabularyNodeValidator vocabularyValidator = vocabularyValidatorFactory.getVocabularyValidator(configuredValidator.getName());
+                            NodeValidation vocabularyValidator = vocabularyValidatorFactory.getVocabularyValidator(configuredValidator.getName());
                             List<VocabularyValidationResult> tempResults = vocabularyValidator.validateNode(configuredValidator, xpath, node, i);
                             if(foundValidationError(tempResults)) {
                                 vocabularyValidationResults.addAll(tempResults);
@@ -133,7 +133,7 @@ public class VocabularyValidationService {
 
     private boolean foundValidationError(List<VocabularyValidationResult> results){
         for(VocabularyValidationResult result : results){
-            if(result.getVocabularyValidationResultLevel().equals(VocabularyValidationResultLevel.SHOULD)){
+            if(result.getVocabularyValidationResultLevel().equals(VocabularyValidationResultLevel.SHALL)){
                 return true;
             }
         }

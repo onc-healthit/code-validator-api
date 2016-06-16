@@ -1,14 +1,14 @@
-package org.sitenv.vocabularies.validation.validators;
+package org.sitenv.vocabularies.validation.validators.nodetypes;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
-import org.sitenv.vocabularies.validation.VocabularyNodeValidator;
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.repositories.CodeRepository;
 import org.sitenv.vocabularies.validation.utils.XpathUtils;
+import org.sitenv.vocabularies.validation.validators.NodeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
@@ -21,14 +21,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Component(value = "CcdaCodeSystemCodeValidator")
-public class CcdaCodeSystemCodeValidator extends BaseValidator implements VocabularyNodeValidator {
-    private static final Logger logger = Logger.getLogger(CcdaCodeSystemCodeValidator.class);
+@Component(value = "CodeSystemCodeValidator")
+public class CodeSystemCodeValidator extends NodeValidator {
+    private static final Logger logger = Logger.getLogger(CodeSystemCodeValidator.class);
     private CodeRepository codeRepository;
 
 
     @Autowired
-    public CcdaCodeSystemCodeValidator(CodeRepository codeRepository) {
+    public CodeSystemCodeValidator(CodeRepository codeRepository) {
         this.codeRepository = codeRepository;
     }
 

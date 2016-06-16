@@ -1,13 +1,13 @@
-package org.sitenv.vocabularies.validation.validators;
+package org.sitenv.vocabularies.validation.validators.nodetypes;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
-import org.sitenv.vocabularies.validation.VocabularyNodeValidator;
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.utils.XpathUtils;
+import org.sitenv.vocabularies.validation.validators.NodeValidator;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
 
@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component(value = "NodeCodeSystemMatchesConfiguredCodeSystemValidator")
-public class NodeCodeSystemMatchesConfiguredCodeSystemValidator extends BaseValidator implements VocabularyNodeValidator {
+public class NodeCodeSystemMatchesConfiguredCodeSystemValidator extends NodeValidator {
     private static final Logger logger = Logger.getLogger(NodeCodeSystemMatchesConfiguredCodeSystemValidator.class);
 
     @Override
