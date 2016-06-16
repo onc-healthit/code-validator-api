@@ -1,4 +1,4 @@
-package org.sitenv.vocabularies.validation.validators.NodeTypes;
+package org.sitenv.vocabularies.validation.validators.nodetypes;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
@@ -21,22 +21,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Component(value = "ValueSetNodeWithOnlyCodeValidator")
-public class ValueSetNodeWithOnlyCodeValidator extends NodeValidator {
-	private static final Logger logger = Logger.getLogger(ValueSetNodeWithOnlyCodeValidator.class);
+@Component(value = "TextNodeValidator")
+public class TextNodeValidator extends NodeValidator {
+	private static final Logger logger = Logger.getLogger(TextNodeValidator.class);
 	private VsacValuesSetRepository vsacValuesSetRepository;
 
 	@Autowired
-	public ValueSetNodeWithOnlyCodeValidator(VsacValuesSetRepository vsacValuesSetRepository) {
+	public TextNodeValidator(VsacValuesSetRepository vsacValuesSetRepository) {
 		this.vsacValuesSetRepository = vsacValuesSetRepository;
 	}
 
 	@Override
 	public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath, Node node, int nodeIndex) {
-		String nodeCode;
+		String nodeText;
 		try{
-			XPathExpression exp = xpath.compile("@code");
-			nodeCode = ((String) exp.evaluate(node, XPathConstants.STRING)).toUpperCase();
+			XPathExpression exp = xpath.compile("text()");
+			nodeText = ((String) exp.evaluate(node, XPathConstants.STRING)).toUpperCase();
 		} catch (XPathExpressionException e) {
 			throw new RuntimeException("ERROR getting node values " + e.getMessage());
 		}
@@ -44,13 +44,13 @@ public class ValueSetNodeWithOnlyCodeValidator extends NodeValidator {
 		List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedValuesetOids().split(",")));
 
 		NodeValidationResult nodeValidationResult = new NodeValidationResult();
-		nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
-		nodeValidationResult.setRequestedCode(nodeCode);
-		nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
+        nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
+        nodeValidationResult.setRequestedText(nodeText);
+        nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
 		if(vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)){
-			nodeValidationResult.setNodeValuesetsFound(true);
-			if (vsacValuesSetRepository.codeExistsInValueset(nodeCode, allowedConfiguredCodeSystemOids)) {
-				nodeValidationResult.setValid(true);
+            nodeValidationResult.setNodeValuesetsFound(true);
+			if (vsacValuesSetRepository.codeExistsInValueset(nodeText, allowedConfiguredCodeSystemOids)) {
+                nodeValidationResult.setValid(true);
 			}
 		}
 		return buildVocabularyValidationResults(nodeValidationResult, configuredValidator.getConfiguredValidationResultSeverityLevel());
@@ -58,20 +58,19 @@ public class ValueSetNodeWithOnlyCodeValidator extends NodeValidator {
 
 	@Override
 	protected List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult, ConfiguredValidationResultSeverityLevel configuredNodeAttributeSeverityLevel) {
-		List<VocabularyValidationResult> vocabularyValidationResults = new ArrayList<>();
-		if(!nodeValidationResult.isValid()) {
-			if (nodeValidationResult.isNodeValuesetsFound()) {
-				VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
-				vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-				vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.valueOf(configuredNodeAttributeSeverityLevel.getCodeSeverityLevel()));
-                String validationMessage = "Code '" + nodeValidationResult.getRequestedCode()+ "' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
-				vocabularyValidationResult.setMessage(validationMessage);
-				vocabularyValidationResults.add(vocabularyValidationResult);
-			}else{
-				vocabularyValidationResults.add(valuesetNotLoadedResult(nodeValidationResult));
-			}
-		}
+        List<VocabularyValidationResult> vocabularyValidationResults = new ArrayList<>();
+        if(!nodeValidationResult.isValid()) {
+            if (nodeValidationResult.isNodeValuesetsFound()) {
+                VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
+                vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
+                vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.valueOf(configuredNodeAttributeSeverityLevel.getCodeSeverityLevel()));
+                String validationMessage = nodeValidationResult.getRequestedText() + "' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
+                vocabularyValidationResult.setMessage(validationMessage);
+                vocabularyValidationResults.add(vocabularyValidationResult);
+            }else{
+                vocabularyValidationResults.add(valuesetNotLoadedResult(nodeValidationResult));
+            }
+        }
 		return vocabularyValidationResults;
 	}
-
 }
