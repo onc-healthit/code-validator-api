@@ -28,6 +28,7 @@
 					<configuration>
 						<noDeploy>true</noDeploy>
 						<allowUntracked>true</allowUntracked>
+						<autoVersionSubmodules>true</autoVersionSubmodules>
 					</configuration>
 				</plugin>
 			</plugins>
