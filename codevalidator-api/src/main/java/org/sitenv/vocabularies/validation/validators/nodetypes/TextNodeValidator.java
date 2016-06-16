@@ -1,14 +1,14 @@
-package org.sitenv.vocabularies.validation.validators;
+package org.sitenv.vocabularies.validation.validators.nodetypes;
 
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
-import org.sitenv.vocabularies.validation.VocabularyNodeValidator;
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.repositories.VsacValuesSetRepository;
 import org.sitenv.vocabularies.validation.utils.XpathUtils;
+import org.sitenv.vocabularies.validation.validators.NodeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
@@ -21,13 +21,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Component(value = "CcdaTextNodeValidator")
-public class CcdaTextNodeValidator extends BaseValidator implements VocabularyNodeValidator {
-	private static final Logger logger = Logger.getLogger(CcdaTextNodeValidator.class);
+@Component(value = "TextNodeValidator")
+public class TextNodeValidator extends NodeValidator {
+	private static final Logger logger = Logger.getLogger(TextNodeValidator.class);
 	private VsacValuesSetRepository vsacValuesSetRepository;
 
 	@Autowired
-	public CcdaTextNodeValidator(VsacValuesSetRepository vsacValuesSetRepository) {
+	public TextNodeValidator(VsacValuesSetRepository vsacValuesSetRepository) {
 		this.vsacValuesSetRepository = vsacValuesSetRepository;
 	}
 
