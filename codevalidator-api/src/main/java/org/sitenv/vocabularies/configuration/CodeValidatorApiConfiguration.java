@@ -1,24 +1,18 @@
 package org.sitenv.vocabularies.configuration;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.sitenv.vocabularies.loader.VocabularyLoadRunner;
 import org.sitenv.vocabularies.loader.VocabularyLoaderFactory;
 import org.sitenv.vocabularies.validation.NodeValidatorFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.Resource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.DatabasePopulator;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -44,12 +38,6 @@ import java.util.Properties;
 @ComponentScan("org.sitenv.vocabularies")
 @EnableJpaRepositories("org.sitenv.vocabularies.validation.repositories")
 public class CodeValidatorApiConfiguration {
-    private static final Logger LOG = LoggerFactory.getLogger(CodeValidatorApiConfiguration.class);
-    private static final String HSQL_JDBC_URL_TEMPLATE = "jdbc:hsqldb:mem:vocabularydatabase/db;hsqldb.default_table_type=cached;hsqldb.write_delay_millis=10;readonly=false";
-    @Value("classpath:schema.sql")
-    private Resource HSQL_SCHEMA_SCRIPT;
-    @Autowired
-    private Environment environment;
 
     @Bean
     public EntityManagerFactory entityManagerFactory() {
@@ -82,30 +70,12 @@ public class CodeValidatorApiConfiguration {
         return new HibernateExceptionTranslator();
     }
 
-    @Autowired
-    @Bean
-    public DataSourceInitializer dataSourceInitializer(final DataSource dataSource) {
-        final DataSourceInitializer initializer = new DataSourceInitializer();
-        initializer.setDataSource(dataSource);
-        initializer.setDatabasePopulator(databasePopulator());
-        return initializer;
-    }
-
-    private DatabasePopulator databasePopulator() {
-        final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(HSQL_SCHEMA_SCRIPT);
-        return populator;
-    }
-
     @Bean
     public DataSource dataSource() {
-        BasicDataSource ds = new BasicDataSource();
-        ds.setUrl(HSQL_JDBC_URL_TEMPLATE);
-        ds.setUsername("sa");
-        ds.setPassword("");
-        ds.setInitialSize(10);
-        ds.setDriverClassName("org.hsqldb.jdbcDriver");
-        return ds;
+        return new EmbeddedDatabaseBuilder()
+                .setType(EmbeddedDatabaseType.HSQL)
+                .addScript("classpath:schema.sql")
+                .build();
     }
 
     @Bean
@@ -141,7 +111,7 @@ public class CodeValidatorApiConfiguration {
 
     @Autowired
     @Bean
-    VocabularyLoadRunner vocabularyLoadRunner(final Environment environment, final VocabularyLoaderFactory vocabularyLoaderFactory, final  DataSourceInitializer dataSourceInitializer, final DataSource dataSource){
+    VocabularyLoadRunner vocabularyLoadRunner(final Environment environment, final VocabularyLoaderFactory vocabularyLoaderFactory, final DataSource dataSource){
         VocabularyLoadRunner vocabularyLoadRunner = null;
         String localCodeRepositoryDir = environment.getProperty("vocabulary.localCodeRepositoryDir");
         String localValueSetRepositoryDir = environment.getProperty("vocabulary.localValueSetRepositoryDir");
