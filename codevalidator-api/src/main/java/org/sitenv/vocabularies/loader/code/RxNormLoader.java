@@ -48,7 +48,7 @@ public class RxNormLoader extends BaseVocabularyLoader implements VocabularyLoad
                         insertQueryBuilder.append(",'");
                         insertQueryBuilder.append(line[0]);
                         insertQueryBuilder.append("','");
-                        insertQueryBuilder.append(line[14].replaceAll("'", "''"));
+                        insertQueryBuilder.append(line[14].toUpperCase().replaceAll("'", "''"));
                         insertQueryBuilder.append("','");
                         insertQueryBuilder.append(file.getParentFile().getName());
                         insertQueryBuilder.append("')");
