@@ -42,7 +42,7 @@ public class LoincLoader extends BaseVocabularyLoader implements VocabularyLoade
                         if ((count++ == 0)) {
                             continue; // skip header row
                         } else {
-                            String[] line = StringUtils.splitPreserveAllTokens(available, ",");
+                            String[] line = available.replaceAll("^\"", "").split("\"?(,|$)(?=(([^\"]*\"){2})*[^\"]*$) *\"?");
                             if (pendingCount++ > 0) {
                                 insertQueryBuilder.append(",");
                             }
