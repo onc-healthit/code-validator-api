@@ -85,7 +85,7 @@ public class CodeSystemCodeValidator extends NodeValidator {
                         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                         vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
                         vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.valueOf(configuredNodeAttributeSeverityLevel.getCodeSeverityLevel()));
-                        String validationMessage = "Code " + nodeValidationResult.getRequestedCode() + " does not exist in the code system " + nodeValidationResult.getRequestedCodeSystem() + " in the configured code system name(s) " + nodeValidationResult.getConfiguredAllowableCodesystemNamesForNode();
+                        String validationMessage = "Code: " + nodeValidationResult.getRequestedCode() + " , Code System: " + nodeValidationResult.getRequestedCodeSystem() + " are not found in the configured code system name(s) " + nodeValidationResult.getConfiguredAllowableCodesystemNamesForNode();
                         vocabularyValidationResult.setMessage(validationMessage);
                         vocabularyValidationResults.add(vocabularyValidationResult);
                     }
