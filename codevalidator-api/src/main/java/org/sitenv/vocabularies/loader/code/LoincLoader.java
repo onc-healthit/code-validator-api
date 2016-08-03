@@ -42,7 +42,7 @@ public class LoincLoader extends BaseVocabularyLoader implements VocabularyLoade
                         if ((count++ == 0)) {
                             continue; // skip header row
                         } else {
-                            String[] line = StringUtils.splitPreserveAllTokens(available, ",", 3);
+                            String[] line = available.replaceAll("^\"", "").split("\"?(,|$)(?=(([^\"]*\"){2})*[^\"]*$) *\"?");
                             if (pendingCount++ > 0) {
                                 insertQueryBuilder.append(",");
                             }
@@ -51,7 +51,7 @@ public class LoincLoader extends BaseVocabularyLoader implements VocabularyLoade
                             insertQueryBuilder.append(",'");
                             insertQueryBuilder.append(StringUtils.strip(line[0], "\"").toUpperCase());
                             insertQueryBuilder.append("','");
-                            insertQueryBuilder.append(StringUtils.strip(line[1], "\"").toUpperCase().replaceAll("'", "''"));
+                            insertQueryBuilder.append(StringUtils.strip(line[29], "\"").toUpperCase().replaceAll("'", "''"));
                             insertQueryBuilder.append("','");
                             insertQueryBuilder.append(file.getParentFile().getName());
                             insertQueryBuilder.append("')");
