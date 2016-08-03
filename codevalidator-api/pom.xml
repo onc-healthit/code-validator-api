@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>org.sitenv.vocabulary</groupId>
 		<artifactId>codevalidator</artifactId>
-		<version>1.0.2-SNAPSHOT</version>
+		<version>1.0.3-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.sitenv.vocabulary</groupId>
 	<artifactId>codevalidator-api</artifactId>
-	<version>${parent.version}</version>
+	<version>1.0.3-SNAPSHOT</version>
 	<name>Code Validator API</name>
 	<url>http://www.sitenv.org</url>
 
