@@ -27,7 +27,7 @@ public class RxNormLoader extends BaseVocabularyLoader implements VocabularyLoad
         FileReader fileReader = null;
         BufferedReader br = null;
         try {
-            String insertQueryPrefix = "insert into CODES (ID, CODE, DISPLAYNAME, CODESYSTEM) values ";
+            String insertQueryPrefix = codeTableInsertSQLPrefix;
             StrBuilder insertQueryBuilder = new StrBuilder(insertQueryPrefix);
             int totalCount = 0, pendingCount = 0;
 
@@ -51,6 +51,8 @@ public class RxNormLoader extends BaseVocabularyLoader implements VocabularyLoad
                         insertQueryBuilder.append(line[14].toUpperCase().replaceAll("'", "''"));
                         insertQueryBuilder.append("','");
                         insertQueryBuilder.append(file.getParentFile().getName());
+                        insertQueryBuilder.append("','");
+                        insertQueryBuilder.append(CodeSystemOIDs.RXNORM.codesystemOID());
                         insertQueryBuilder.append("')");
 
                         if ((++totalCount % 5000) == 0) {

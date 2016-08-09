@@ -15,15 +15,16 @@ import java.util.List;
 /**
  * Created by Brian on 2/7/2016.
  */
-public class Icd10BaseLoader extends IcdLoader implements VocabularyLoader {
+public abstract class Icd10BaseLoader extends IcdLoader implements VocabularyLoader {
     private static Logger logger = Logger.getLogger(Icd10BaseLoader.class);
+    protected String oid;
 
     @Override
     public void load(List<File> filesToLoad, Connection connection) {
         BufferedReader br = null;
         FileReader fileReader = null;
         try {
-            String insertQueryPrefix = "insert into CODES (ID, CODE, DISPLAYNAME, CODESYSTEM) values ";
+            String insertQueryPrefix = codeTableInsertSQLPrefix;
             StrBuilder insertQueryBuilder = new StrBuilder(insertQueryPrefix);
             int totalCount = 0, pendingCount = 0;
 
@@ -45,6 +46,8 @@ public class Icd10BaseLoader extends IcdLoader implements VocabularyLoader {
                         insertQueryBuilder.append(available.substring(77).trim().toUpperCase().replaceAll("'", "''"));
                         insertQueryBuilder.append("','");
                         insertQueryBuilder.append(file.getParentFile().getName());
+                        insertQueryBuilder.append("','");
+                        insertQueryBuilder.append(oid);
                         insertQueryBuilder.append("')");
 
                         if ((++totalCount % 2500) == 0) {
@@ -75,4 +78,6 @@ public class Icd10BaseLoader extends IcdLoader implements VocabularyLoader {
             }
         }
     }
+
+    protected abstract void setOID(String oid);
 }

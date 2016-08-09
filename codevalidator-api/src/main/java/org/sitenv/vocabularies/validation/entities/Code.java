@@ -24,6 +24,17 @@ public class Code {
     @Column(name = "CODESYSTEM")
     private String codeSystem;
 
+    @Column(name = "CODESYSTEMOID")
+    private String codeSystemOID;
+
+    public String getCodeSystemOID() {
+        return codeSystemOID;
+    }
+
+    public void setCodeSystemOID(String codeSystemOID) {
+        this.codeSystemOID = codeSystemOID;
+    }
+
     public Integer getId() {
         return Id;
     }

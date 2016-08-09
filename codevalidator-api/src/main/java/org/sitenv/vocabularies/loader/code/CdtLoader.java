@@ -25,7 +25,7 @@ public class CdtLoader extends BaseVocabularyLoader implements VocabularyLoader 
 
     public void load(List<File> filesToLoad, Connection connection) {
         StrBuilder insertQueryBuilder = null;
-        String insertQueryPrefix = "insert into CODES (ID, CODE, DISPLAYNAME, CODESYSTEM) values ";
+        String insertQueryPrefix = codeTableInsertSQLPrefix;
         for (File file : filesToLoad) {
             if (file.isFile() && !file.isHidden()) {
                 InputStream inputStream = null;
@@ -65,6 +65,8 @@ public class CdtLoader extends BaseVocabularyLoader implements VocabularyLoader 
                                 insertQueryBuilder.append(displayName.replaceAll("'", "''").toUpperCase().trim());
                                 insertQueryBuilder.append("','");
                                 insertQueryBuilder.append(file.getParentFile().getName());
+                                insertQueryBuilder.append("','");
+                                insertQueryBuilder.append(CodeSystemOIDs.CDT.codesystemOID());
                                 insertQueryBuilder.append("')");
                             }
                         }

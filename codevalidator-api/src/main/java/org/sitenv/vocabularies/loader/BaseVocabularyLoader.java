@@ -9,6 +9,8 @@ import java.sql.SQLException;
  */
 public abstract class BaseVocabularyLoader {
 
+    public final String codeTableInsertSQLPrefix = "insert into CODES (ID, CODE, DISPLAYNAME, CODESYSTEM, CODESYSTEMOID) values ";
+
     public boolean doInsert(String sql, Connection connection) throws SQLException {
         PreparedStatement preparedStatement = null;
         boolean inserted = true;
