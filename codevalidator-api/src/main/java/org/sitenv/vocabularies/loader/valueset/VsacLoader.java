@@ -2,19 +2,14 @@ package org.sitenv.vocabularies.loader.valueset;
 
 import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.*;
 import org.sitenv.vocabularies.loader.BaseVocabularyLoader;
 import org.sitenv.vocabularies.loader.VocabularyLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -24,22 +19,18 @@ public class VsacLoader extends BaseVocabularyLoader implements VocabularyLoader
     private static Logger logger = Logger.getLogger(VsacLoader.class);
 
     public void load(List<File> filesToLoad, Connection connection) {
-        StrBuilder insertQueryBuilder = null;
+        StrBuilder insertQueryBuilder = new StrBuilder();
         String insertQueryPrefix = "insert into VALUESETS (ID, CODE, DISPLAYNAME, CODESYSTEMNAME, CODESYSTEMVERSION, CODESYSTEM, TTY, VALUESETNAME, VALUESETOID, VALUESETTYPE, VALUESETDEFINITIONVERSION, VALUESETSTEWARD) values ";
         for (File file : filesToLoad) {
             if (file.isFile() && !file.isHidden()) {
-                InputStream inputStream = null;
-                POIFSFileSystem fileSystem = null;
-                HSSFWorkbook workBook = null;
+               Workbook workBook;
                 try {
                     logger.info("Loading Value Set File: " + file.getName());
-                    inputStream = new FileInputStream(file);
-                    fileSystem = new POIFSFileSystem(inputStream);
-                    workBook = new HSSFWorkbook(fileSystem);
+                    workBook = WorkbookFactory.create(file);
 
                     for (int i = 1; i < workBook.getNumberOfSheets(); i++) {
-                        insertQueryBuilder = new StrBuilder(insertQueryPrefix);
-                        HSSFSheet sheet = workBook.getSheetAt(i);
+                        insertQueryBuilder.append(insertQueryPrefix);
+                        Sheet sheet = workBook.getSheetAt(i);
                         String valueSetName = sheet.getRow(1).getCell(1).getStringCellValue();
                         String valueSetOid = sheet.getRow(2).getCell(1).getStringCellValue();
                         String valueSetType = sheet.getRow(3).getCell(1).getStringCellValue();
@@ -110,18 +101,15 @@ public class VsacLoader extends BaseVocabularyLoader implements VocabularyLoader
                             }
                         }
                         doInsert(insertQueryBuilder.toString(), connection);
+                        insertQueryBuilder.clear();
+                        workBook.close();
                     }
                 } catch(SQLException e){
-                    logger.error("SQL ERROR loading valueset. " + e.getLocalizedMessage());
+                    logger.error("SQL ERROR loading valueset into database. " + e.getLocalizedMessage());
                 } catch (IOException e) {
                     logger.error("IO ERROR loading valueset. " + e.getLocalizedMessage());
-                } finally {
-                    try {
-                        workBook.close();
-                        inputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                } catch (InvalidFormatException e) {
+                    logger.error("Error reading file. " + e.getLocalizedMessage());
                 }
             }
         }

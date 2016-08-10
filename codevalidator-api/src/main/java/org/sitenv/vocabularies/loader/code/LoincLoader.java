@@ -27,7 +27,7 @@ public class LoincLoader extends BaseVocabularyLoader implements VocabularyLoade
         BufferedReader br = null;
         FileReader fileReader = null;
         try {
-            String insertQueryPrefix = "insert into CODES (ID, CODE, DISPLAYNAME, CODESYSTEM) values ";
+            String insertQueryPrefix = codeTableInsertSQLPrefix;
             StrBuilder insertQueryBuilder = new StrBuilder(insertQueryPrefix);
             int totalCount = 0, pendingCount = 0;
 
@@ -54,6 +54,8 @@ public class LoincLoader extends BaseVocabularyLoader implements VocabularyLoade
                             insertQueryBuilder.append(StringUtils.strip(line[29], "\"").toUpperCase().replaceAll("'", "''"));
                             insertQueryBuilder.append("','");
                             insertQueryBuilder.append(file.getParentFile().getName());
+                            insertQueryBuilder.append("','");
+                            insertQueryBuilder.append(CodeSystemOIDs.LOINC.codesystemOID());
                             insertQueryBuilder.append("')");
 
                             if ((++totalCount % 5000) == 0) {

@@ -67,7 +67,7 @@ public class ValueSetCodeValidator extends NodeValidator {
                 nodeValidationResult.setValid(true);
             } else {
                 if (vsacValuesSetRepository.codeSystemExistsInValueset(nodeCodeSystem, allowedConfiguredCodeSystemOids)) {
-                    nodeValidationResult.setNodeCodeSystemFound(true);
+                    nodeValidationResult.setNodeCodeSystemOIDFound(true);
                     if(vsacValuesSetRepository.codeExistsByCodeSystemInValuesetOid(nodeCode, nodeCodeSystem, allowedConfiguredCodeSystemOids)){
                         nodeValidationResult.setNodeCodeFound(true);
                         if(nodeDisplayName.isEmpty() || vsacValuesSetRepository.displayNameExistsForCodeByCodeSystemInValuesetOid(nodeDisplayName, nodeCode, nodeCodeSystem, allowedConfiguredCodeSystemOids)){
@@ -94,7 +94,7 @@ public class ValueSetCodeValidator extends NodeValidator {
                     vocabularyValidationResult.setMessage("Code " + nodeValidationResult.getRequestedCode() + " does not exist in the code system " + nodeValidationResult.getRequestedCodeSystemName() + " (" + nodeValidationResult.getRequestedCodeSystem() + ") in the value set(s) " + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode());
                     vocabularyValidationResults.add(vocabularyValidationResult);
                 }
-                if (!nodeValidationResult.isNodeCodeSystemFound()) {
+                if (!nodeValidationResult.isNodeCodeSystemOIDFound()) {
                     VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                     vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
                     vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.MAY);

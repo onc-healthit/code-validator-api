@@ -8,4 +8,8 @@ import org.springframework.stereotype.Component;
  */
 @Component(value = "ICD9CM_SG")
 public class Icd9CmSgLoader extends Icd9BaseLoader implements VocabularyLoader {
+    @Override
+    protected void setOID(String oid) {
+        oid = CodeSystemOIDs.ICD9CMSG.codesystemOID();
+    }
 }
