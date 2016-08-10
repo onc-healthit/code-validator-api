@@ -17,8 +17,9 @@ public class NodeValidationResult {
 	private String configuredAllowableValuesetOidsForNode;
 	private String configuredAllowableCodesystemNamesForNode;
 
+	private boolean nodeCodeSystemOIDFound;
 	private boolean nodeValuesetsFound;
-	private boolean nodeCodeSystemFound;
+	private boolean codeSystemFound;
 	private boolean nodeCodeFound;
 	private boolean nodeCodeSystemNameFound;
 	private boolean nodeDisplayNameFound;
@@ -127,12 +128,12 @@ public class NodeValidationResult {
 		this.configuredAllowableCodesystemNamesForNode = configuredAllowableCodesystemNamesForNode;
 	}
 
-	public boolean isNodeCodeSystemFound() {
-		return nodeCodeSystemFound;
+	public boolean isCodeSystemFound() {
+		return codeSystemFound;
 	}
 
-	public void setNodeCodeSystemFound(boolean nodeCodeSystemFound) {
-		this.nodeCodeSystemFound = nodeCodeSystemFound;
+	public void setCodeSystemFound(boolean codeSystemFound) {
+		this.codeSystemFound = codeSystemFound;
 	}
 
 	public boolean isNodeCodeFound() {
@@ -173,5 +174,13 @@ public class NodeValidationResult {
 
 	public void setRequestedText(String requestedText) {
 		this.requestedText = requestedText;
+	}
+
+	public boolean isNodeCodeSystemOIDFound() {
+		return nodeCodeSystemOIDFound;
+	}
+
+	public void setNodeCodeSystemOIDFound(boolean nodeCodeSystemOIDFound) {
+		this.nodeCodeSystemOIDFound = nodeCodeSystemOIDFound;
 	}
 }

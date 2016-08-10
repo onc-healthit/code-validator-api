@@ -19,11 +19,17 @@ public interface CodeRepository extends JpaRepository<Code, Integer> {
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Code c WHERE c.code = :code and c.displayName = :displayName and c.codeSystem in (:codesystems)")
     boolean foundCodeAndDisplayNameInCodesystem(@Param("code")String code, @Param("displayName")String displayName, @Param("codesystems")List<String> codesystems);
 
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Code c WHERE c.code = :code and c.displayName = :displayName and c.codeSystemOID = :codeSystemOID and c.codeSystem in (:codesystems)")
+    boolean foundCodeAndDisplayNameAndCodeSystemOIDInCodesystem(@Param("code")String code, @Param("displayName")String displayName, @Param("codeSystemOID")String codeSystemOID, @Param("codesystems")List<String> codesystems);
+
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Code c WHERE c.code = :code and c.codeSystem in (:codesystems)")
     boolean foundCodeInCodesystems(@Param("code")String code, @Param("codesystems")List<String> codesystems);
 
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Code c WHERE c.displayName = :displayName and c.codeSystem in (:codesystems)")
     boolean foundDisplayNameInCodesystems(@Param("displayName")String displayName, @Param("codesystems")List<String> codesystems);
+
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Code c WHERE c.codeSystemOID = :codeSystemOID and c.codeSystem in (:codesystems)")
+    boolean foundCodeSystemOIDInCodesystems(@Param("codeSystemOID")String codeSystemOID, @Param("codesystems")List<String> codesystems);
 
     List<Code> findByCodeAndCodeSystemIn(String code, List<String> codesystems);
 
