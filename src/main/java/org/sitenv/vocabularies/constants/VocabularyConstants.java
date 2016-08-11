@@ -1,6 +1,5 @@
 package org.sitenv.vocabularies.constants;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
