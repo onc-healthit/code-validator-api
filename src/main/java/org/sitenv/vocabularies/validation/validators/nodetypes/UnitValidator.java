@@ -63,7 +63,11 @@ public class UnitValidator extends NodeValidator {
             if (nodeValidationResult.isNodeValuesetsFound()) {
                 VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                 vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-                vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.valueOf(configuredNodeAttributeSeverityLevel.getCodeSeverityLevel()));
+				if(nodeValidationResult.getRequestedUnit().indexOf('{') > -1){
+					vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHOULD);
+				}else{
+					vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.valueOf(configuredNodeAttributeSeverityLevel.getCodeSeverityLevel()));
+				}
                 String validationMessage = "Unit '" + nodeValidationResult.getRequestedUnit()+ "' does not exist in the value set (" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ")";
                 vocabularyValidationResult.setMessage(validationMessage);
                 vocabularyValidationResults.add(vocabularyValidationResult);
