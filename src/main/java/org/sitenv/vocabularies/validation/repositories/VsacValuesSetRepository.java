@@ -23,14 +23,17 @@ public interface VsacValuesSetRepository extends JpaRepository<VsacValueSet, Int
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM VsacValueSet c WHERE c.codeSystem = :codeSystem and c.valuesetOid in (:valuesetOids)")
     boolean codeSystemExistsInValueset(@Param("codeSystem") String codeSystem, @Param("valuesetOids")List<String> valuesetOids);
 
-    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM VsacValueSet c WHERE c.code = :code and c.codeSystem = :codeSystem and c.valuesetOid in (:valuesetOids)")
-    boolean codeExistsByCodeSystemInValuesetOid(@Param("code")String code, @Param("codeSystem")String codeSystem, @Param("valuesetOids")List<String> valuesetOids);
-
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM VsacValueSet c WHERE c.displayName = :displayName and c.code = :code and c.codeSystem = :codeSystem and c.valuesetOid in (:valuesetOids)")
-    boolean displayNameExistsForCodeByCodeSystemInValuesetOid(@Param("displayName")String displayName, @Param("code")String code, @Param("codeSystem")String codeSystem, @Param("valuesetOids")List<String> valuesetOids);
+    boolean displayNameExistsForCodeByCodeSystemInValueset(@Param("displayName")String displayName, @Param("code")String code, @Param("codeSystem")String codeSystem, @Param("valuesetOids")List<String> valuesetOids);
 
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM VsacValueSet c WHERE c.codeSystemName = :codeSystemName and c.code = :code and c.codeSystem = :codeSystem and c.valuesetOid in (:valuesetOids)")
-    boolean codeSystemNameExistsForCodeByCodeSystemInValuesetOid(@Param("codeSystemName")String codeSystemName, @Param("code")String code, @Param("codeSystem")String codeSystem, @Param("valuesetOids")List<String> valuesetOids);
+    boolean codeSystemNameExistsForCodeByCodeSystemInValueset(@Param("codeSystemName")String codeSystemName, @Param("code")String code, @Param("codeSystem")String codeSystem, @Param("valuesetOids")List<String> valuesetOids);
+
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM VsacValueSet c WHERE c.displayName = :displayName and c.valuesetOid in (:valuesetOids)")
+    boolean displayNameExistsInValueset(@Param("displayName")String displayName, @Param("valuesetOids")List<String> valuesetOids);
+
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM VsacValueSet c WHERE c.codeSystemName = :codeSystemName and c.valuesetOid in (:valuesetOids)")
+    boolean codeSystemNameExistsInValueset(@Param("codeSystemName")String codeSystemName, @Param("valuesetOids")List<String> valuesetOids);
 
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM VsacValueSet c WHERE c.code = :code and c.valuesetOid in (:valuesetOids)")
     boolean codeExistsInValueset(@Param("code") String code, @Param("valuesetOids")List<String> valuesetOids);
