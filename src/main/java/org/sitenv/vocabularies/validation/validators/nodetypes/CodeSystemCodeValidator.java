@@ -103,7 +103,7 @@ public class CodeSystemCodeValidator extends NodeValidator {
                 if (!nodeValidationResult.isNodeCodeSystemOIDFound()) {
                     VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
                     vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
-                    vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.valueOf(configuredNodeAttributeSeverityLevel.getCodeSeverityLevel()));
+                    vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.MAY);
                     String validationMessage = "Code system OID " + nodeValidationResult.getRequestedCodeSystem() + " does not exist in the configured code system name(s) " + nodeValidationResult.getConfiguredAllowableCodesystemNamesForNode();
                     vocabularyValidationResult.setMessage(validationMessage);
                     vocabularyValidationResults.add(vocabularyValidationResult);
