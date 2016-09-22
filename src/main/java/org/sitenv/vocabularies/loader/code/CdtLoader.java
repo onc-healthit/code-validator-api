@@ -8,7 +8,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.sitenv.vocabularies.loader.BaseVocabularyLoader;
-import org.sitenv.vocabularies.loader.VocabularyLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -20,7 +19,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Component(value = "CDT")
-public class CdtLoader extends BaseVocabularyLoader implements VocabularyLoader {
+    public class CdtLoader extends BaseVocabularyLoader {
     private static Logger logger = Logger.getLogger(CdtLoader.class);
 
     public void load(List<File> filesToLoad, Connection connection) {
