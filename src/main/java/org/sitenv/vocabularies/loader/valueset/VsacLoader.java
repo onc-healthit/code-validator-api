@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.sitenv.vocabularies.loader.BaseVocabularyLoader;
+import org.sitenv.vocabularies.loader.VocabularyLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -14,7 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Component(value = "VSAC")
-public class VsacLoader extends BaseVocabularyLoader {
+public class VsacLoader extends BaseVocabularyLoader implements VocabularyLoader {
     private static Logger logger = Logger.getLogger(VsacLoader.class);
 
     public void load(List<File> filesToLoad, Connection connection) {
