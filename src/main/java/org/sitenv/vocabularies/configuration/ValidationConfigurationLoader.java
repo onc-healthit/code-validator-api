@@ -34,7 +34,15 @@ public class ValidationConfigurationLoader implements InitializingBean {
             fis = new FileInputStream(fileName);
             return configurations = (Configurations) unmarshaller.unmarshal(new StreamSource(fis));
         } finally {
-            fis.close();
+            if (fis == null) {
+                throw new RuntimeException("Error loading validation configuration: " +
+                (validationConfigurationFilePath == null
+                        ?"validationConfigurationFilePath not set"
+                        :"could not parse " + validationConfigurationFilePath)
+                );
+            } else {
+                fis.close();
+            }
         }
     }
 
