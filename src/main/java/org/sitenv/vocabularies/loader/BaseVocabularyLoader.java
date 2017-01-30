@@ -17,6 +17,7 @@ public abstract class BaseVocabularyLoader {
         try{
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.execute();
+            connection.commit();
         }finally {
             if(preparedStatement != null){
                 preparedStatement.close();
