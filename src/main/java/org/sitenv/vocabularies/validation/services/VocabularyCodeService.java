@@ -22,14 +22,31 @@ public class VocabularyCodeService {
     }
 
     public boolean isFoundByCodeAndDisplayNameInCodeSystems(String code, String displayName, Set<String> codeSystems){
-        return codeRepository.foundCodeAndDisplayNameInCodesystem(code, displayName, new ArrayList<>(codeSystems));
+        String cleanedCode = code.trim().toUpperCase();
+        String cleanedDisplayName = displayName.trim().toUpperCase();
+        ArrayList<String> cleanedCodeSystems = new ArrayList<>();
+        for(String codeSystem : codeSystems){
+            cleanedCodeSystems.add(codeSystem.trim().toUpperCase());
+        }
+
+        return codeRepository.foundCodeAndDisplayNameInCodesystem(cleanedCode, cleanedDisplayName, cleanedCodeSystems);
     }
 
     public boolean isFoundByCodeInCodeSystems(String code, Set<String> codeSystems){
-        return codeRepository.foundCodeInCodesystems(code, new ArrayList<>(codeSystems));
+        String cleanedCode = code.trim().toUpperCase();
+        ArrayList<String> cleanedCodeSystems = new ArrayList<>();
+        for(String codeSystem : codeSystems){
+            cleanedCodeSystems.add(codeSystem.trim().toUpperCase());
+        }
+        return codeRepository.foundCodeInCodesystems(cleanedCode, cleanedCodeSystems);
     }
 
-    public List<Code> getByCodeInCodeSystems(String code, List<String> codesystems){
-        return codeRepository.findByCodeAndCodeSystemIn(code, codesystems);
+    public List<Code> getByCodeInCodeSystems(String code, List<String> codeSystems){
+        String cleanedCode = code.trim().toUpperCase();
+        ArrayList<String> cleanedCodeSystems = new ArrayList<>();
+        for(String codeSystem : codeSystems){
+            cleanedCodeSystems.add(codeSystem.trim().toUpperCase());
+        }
+        return codeRepository.findByCodeAndCodeSystemIn(cleanedCode, cleanedCodeSystems);
     }
 }

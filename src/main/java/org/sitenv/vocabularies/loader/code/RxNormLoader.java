@@ -3,7 +3,7 @@ package org.sitenv.vocabularies.loader.code;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
-import org.sitenv.vocabularies.loader.BaseVocabularyLoader;
+import org.sitenv.vocabularies.loader.BaseCodeLoader;
 import org.sitenv.vocabularies.loader.VocabularyLoader;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ import java.util.List;
  * Created by Brian on 2/7/2016.
  */
 @Component(value = "RXNORM")
-public class RxNormLoader extends BaseVocabularyLoader implements VocabularyLoader {
+public class RxNormLoader extends BaseCodeLoader implements VocabularyLoader {
     private static Logger logger = Logger.getLogger(RxNormLoader.class);
 
     @Override
@@ -27,46 +27,34 @@ public class RxNormLoader extends BaseVocabularyLoader implements VocabularyLoad
         FileReader fileReader = null;
         BufferedReader br = null;
         try {
-            String insertQueryPrefix = codeTableInsertSQLPrefix;
-            StrBuilder insertQueryBuilder = new StrBuilder(insertQueryPrefix);
+            StrBuilder insertQueryBuilder = new StrBuilder(codeTableInsertSQLPrefix);
             int totalCount = 0, pendingCount = 0;
 
             for (File file : filesToLoad) {
                 if (file.isFile() && !file.isHidden()) {
                     logger.debug("Loading RxNorm File: " + file.getName());
-                    int count = 0;
+                    String codeSystem = file.getParentFile().getName();
                     fileReader = new FileReader(file);
                     br = new BufferedReader(fileReader);
                     String available;
                     while ((available = br.readLine()) != null) {
                         String[] line = StringUtils.splitPreserveAllTokens(available, "|", 16);
-                        if (pendingCount++ > 0) {
-                            insertQueryBuilder.append(",");
-                        }
-                        insertQueryBuilder.append("(");
-                        insertQueryBuilder.append("DEFAULT");
-                        insertQueryBuilder.append(",'");
-                        insertQueryBuilder.append(line[0]);
-                        insertQueryBuilder.append("','");
-                        insertQueryBuilder.append(line[14].toUpperCase().replaceAll("'", "''"));
-                        insertQueryBuilder.append("','");
-                        insertQueryBuilder.append(file.getParentFile().getName());
-                        insertQueryBuilder.append("','");
-                        insertQueryBuilder.append(CodeSystemOIDs.RXNORM.codesystemOID());
-                        insertQueryBuilder.append("')");
+                        String code = line[0];
+                        String displayName = line[14];
 
-                        if ((++totalCount % 5000) == 0) {
-                            doInsert(insertQueryBuilder.toString(), connection);
+                        buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, CodeSystemOIDs.RXNORM.codesystemOID());
+
+                        if ((++totalCount % BATCH_SIZE) == 0) {
+                            insertCode(insertQueryBuilder.toString(), connection);
                             insertQueryBuilder.clear();
-                            insertQueryBuilder.append(insertQueryPrefix);
+                            insertQueryBuilder.append(codeTableInsertSQLPrefix);
                             pendingCount = 0;
                         }
-
                     }
                 }
             }
             if (pendingCount > 0) {
-                doInsert(insertQueryBuilder.toString(), connection);
+                insertCode(insertQueryBuilder.toString(), connection);
             }
         } catch (IOException e) {
             logger.error(e);
