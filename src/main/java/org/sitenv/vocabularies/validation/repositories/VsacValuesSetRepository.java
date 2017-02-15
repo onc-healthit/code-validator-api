@@ -40,4 +40,5 @@ public interface VsacValuesSetRepository extends JpaRepository<VsacValueSet, Int
 
     List<VsacValueSet> findByValuesetOidIn(List<String> valuesetOids);
 
+    List<VsacValueSet> findByCodeAndValuesetOidIn(String code, List<String> valuesetOids);
 }

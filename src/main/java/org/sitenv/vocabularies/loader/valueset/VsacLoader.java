@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.sitenv.vocabularies.loader.BaseVocabularyLoader;
+import org.sitenv.vocabularies.loader.BaseCodeLoader;
 import org.sitenv.vocabularies.loader.VocabularyLoader;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Component(value = "VSAC")
-public class VsacLoader extends BaseVocabularyLoader implements VocabularyLoader {
+public class VsacLoader extends BaseCodeLoader implements VocabularyLoader {
     private static Logger logger = Logger.getLogger(VsacLoader.class);
 
     public void load(List<File> filesToLoad, Connection connection) {
@@ -55,14 +55,14 @@ public class VsacLoader extends BaseVocabularyLoader implements VocabularyLoader
                                     valueSetVersion = row.getCell(1).getStringCellValue().toUpperCase().trim();
                                 }
                                 if (row.getRowNum() == 5) {
-                                    valueSetSteward = row.getCell(1).getStringCellValue().replaceAll("'", "''").toUpperCase().trim();
+                                    valueSetSteward = row.getCell(1).getStringCellValue().toUpperCase().trim();
                                 }
                             }
 
                             if(row.getRowNum() > 10){
                                 if(row.getCell(0) != null) {
-                                    preparedStatement.setString(1, row.getCell(0).getStringCellValue().replaceAll("'", "''").toUpperCase().trim());
-                                    preparedStatement.setString(2, row.getCell(1).getStringCellValue().replaceAll("'", "''").toUpperCase().trim());
+                                    preparedStatement.setString(1, row.getCell(0).getStringCellValue().toUpperCase().trim());
+                                    preparedStatement.setString(2, row.getCell(1).getStringCellValue().toUpperCase().trim());
                                     preparedStatement.setString(3, row.getCell(2).getStringCellValue().toUpperCase().trim());
                                     preparedStatement.setString(4, row.getCell(3).getStringCellValue().trim());
                                     preparedStatement.setString(5, row.getCell(4).getStringCellValue().toUpperCase().trim());

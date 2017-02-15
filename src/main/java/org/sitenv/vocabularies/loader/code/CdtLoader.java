@@ -7,8 +7,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.sitenv.vocabularies.loader.BaseVocabularyLoader;
-import org.sitenv.vocabularies.loader.VocabularyLoader;
+import org.sitenv.vocabularies.loader.BaseCodeLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -20,14 +19,16 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Component(value = "CDT")
-    public class CdtLoader extends BaseVocabularyLoader implements VocabularyLoader {
+    public class CdtLoader extends BaseCodeLoader {
     private static Logger logger = Logger.getLogger(CdtLoader.class);
 
+    @Override
     public void load(List<File> filesToLoad, Connection connection) {
         StrBuilder insertQueryBuilder = null;
         String insertQueryPrefix = codeTableInsertSQLPrefix;
         for (File file : filesToLoad) {
             if (file.isFile() && !file.isHidden()) {
+                String codeSystem = file.getParentFile().getName();
                 InputStream inputStream = null;
                 XSSFWorkbook workBook = null;
                 try {
@@ -50,27 +51,13 @@ import java.util.List;
                                 codeCell.setCellType(Cell.CELL_TYPE_STRING);
                                 descriptionCell.setCellType(Cell.CELL_TYPE_STRING);
 
-
                                 code = codeCell.getStringCellValue();
                                 displayName = descriptionCell.getStringCellValue();
 
-                                if(count > 26){
-                                    insertQueryBuilder.append(",");
-                                }
-                                insertQueryBuilder.append("(");
-                                insertQueryBuilder.append("DEFAULT");
-                                insertQueryBuilder.append(",'");
-                                insertQueryBuilder.append(code.toUpperCase().trim());
-                                insertQueryBuilder.append("','");
-                                insertQueryBuilder.append(displayName.replaceAll("'", "''").toUpperCase().trim());
-                                insertQueryBuilder.append("','");
-                                insertQueryBuilder.append(file.getParentFile().getName());
-                                insertQueryBuilder.append("','");
-                                insertQueryBuilder.append(CodeSystemOIDs.CDT.codesystemOID());
-                                insertQueryBuilder.append("')");
+                                buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, CodeSystemOIDs.CDT.codesystemOID());
                             }
                         }
-                        doInsert(insertQueryBuilder.toString(), connection);
+                        insertCode(insertQueryBuilder.toString(), connection);
                     }
                 } catch (IOException e) {
                     logger.error(e);

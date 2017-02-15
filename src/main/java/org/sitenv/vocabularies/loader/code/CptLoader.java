@@ -1,10 +1,8 @@
 package org.sitenv.vocabularies.loader.code;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.loader.BaseCodeLoader;
-import org.sitenv.vocabularies.loader.VocabularyLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -18,37 +16,42 @@ import java.util.List;
 /**
  * Created by Brian on 2/7/2016.
  */
-@Component(value = "RXNORM")
-public class RxNormLoader extends BaseCodeLoader implements VocabularyLoader {
-    private static Logger logger = Logger.getLogger(RxNormLoader.class);
+@Component(value = "CPT")
+public class CptLoader extends BaseCodeLoader {
+    private static Logger logger = Logger.getLogger(CptLoader.class);
+    private String oid;
+
+    public CptLoader() {
+        this.oid = CodeSystemOIDs.CPT4.codesystemOID();
+    }
 
     @Override
     public void load(List<File> filesToLoad, Connection connection) {
-        FileReader fileReader = null;
         BufferedReader br = null;
+        FileReader fileReader = null;
         try {
             StrBuilder insertQueryBuilder = new StrBuilder(codeTableInsertSQLPrefix);
             int totalCount = 0, pendingCount = 0;
 
             for (File file : filesToLoad) {
                 if (file.isFile() && !file.isHidden()) {
-                    logger.debug("Loading RxNorm File: " + file.getName());
+                    logger.debug("Loading CPT File: " + file.getName());
                     String codeSystem = file.getParentFile().getName();
                     fileReader = new FileReader(file);
                     br = new BufferedReader(fileReader);
-                    String available;
-                    while ((available = br.readLine()) != null) {
-                        String[] line = StringUtils.splitPreserveAllTokens(available, "|", 16);
-                        String code = line[0];
-                        String displayName = line[14];
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        if (!line.isEmpty()) {
+                            String code = line.substring(0, 5);
+                            String displayName = line.substring(line.indexOf(" "));
+                            buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, oid);
 
-                        buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, CodeSystemOIDs.RXNORM.codesystemOID());
-
-                        if ((++totalCount % BATCH_SIZE) == 0) {
-                            insertCode(insertQueryBuilder.toString(), connection);
-                            insertQueryBuilder.clear();
-                            insertQueryBuilder.append(codeTableInsertSQLPrefix);
-                            pendingCount = 0;
+                            if ((++totalCount % BATCH_SIZE) == 0) {
+                                insertCode(insertQueryBuilder.toString(), connection);
+                                insertQueryBuilder.clear();
+                                insertQueryBuilder.append(codeTableInsertSQLPrefix);
+                                pendingCount = 0;
+                            }
                         }
                     }
                 }
