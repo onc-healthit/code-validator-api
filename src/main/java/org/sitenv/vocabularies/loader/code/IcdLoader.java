@@ -12,7 +12,7 @@ public abstract class IcdLoader extends BaseCodeLoader {
 	}
 	
 	protected static String buildDelimitedIcdCode(String code) {
-		int codeLen = code.length();
+		int codeLen = code.trim().length();
 		
 		if (codeLen <= 3) {
 			return code;
