@@ -35,7 +35,7 @@ public abstract class Icd10BaseLoader extends IcdLoader {
                     String available;
                     while ((available = br.readLine()) != null) {
                         String code = buildDelimitedIcdCode(available.substring(6, 13));
-                        String shortDisplayName = available.substring(17, 78);
+                        String shortDisplayName = available.substring(16, 77);
                         String longDisplayName = available.substring(77);
 
                         buildCodeInsertQueryString(insertQueryBuilder, code, shortDisplayName, codeSystem, oid);
