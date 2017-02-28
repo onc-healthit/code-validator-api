@@ -3,7 +3,7 @@
 
 	<groupId>org.sitenv.vocabulary</groupId>
 	<artifactId>codevalidator-api</artifactId>
-	<version>1.0.7-SNAPSHOT</version>
+	<version>1.0.8-SNAPSHOT</version>
 	<name>Code Validator API</name>
 	<url>http://www.sitenv.org</url>
 
