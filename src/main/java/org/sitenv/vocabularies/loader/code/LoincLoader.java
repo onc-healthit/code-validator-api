@@ -47,8 +47,8 @@ public class LoincLoader extends BaseCodeLoader implements VocabularyLoader {
                             String codeSystem = file.getParentFile().getName();
                             String oid = CodeSystemOIDs.LOINC.codesystemOID();
                             String longCommonName = StringUtils.strip(line[29], "\"");
-                            String componentName = StringUtils.strip(line[29], "\"");
-                            String shortName = StringUtils.strip(line[1], "\"");
+                            String componentName = StringUtils.strip(line[1], "\"");
+                            String shortName = StringUtils.strip(line[23], "\"");
 
                             buildCodeInsertQueryString(insertQueryBuilder, code, longCommonName, codeSystem, oid);
                             buildCodeInsertQueryString(insertQueryBuilder, code, componentName, codeSystem, oid);
