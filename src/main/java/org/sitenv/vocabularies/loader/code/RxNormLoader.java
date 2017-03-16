@@ -39,7 +39,7 @@ public class RxNormLoader extends BaseCodeLoader implements VocabularyLoader {
                     String available;
                     while ((available = br.readLine()) != null) {
                         String[] line = StringUtils.splitPreserveAllTokens(available, "|", 16);
-                        String code = line[7];
+                        String code = line[0];
                         String displayName = line[14];
 
                         buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, CodeSystemOIDs.RXNORM.codesystemOID());
