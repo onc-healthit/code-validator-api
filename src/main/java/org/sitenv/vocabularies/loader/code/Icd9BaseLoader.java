@@ -3,6 +3,8 @@ package org.sitenv.vocabularies.loader.code;
 import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.loader.BaseCodeLoader;
+import org.sitenv.vocabularies.validation.dao.CodeSystemCodeDAO;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,6 +13,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 import static org.sitenv.vocabularies.loader.code.IcdLoader.buildDelimitedIcdCode;
 
@@ -22,9 +26,11 @@ public abstract class Icd9BaseLoader extends BaseCodeLoader {
     protected String oid;
 
     @Override
-    public void load(List<File> filesToLoad, Connection connection) {
+    public long load(List<File> filesToLoad, DataSource datasource) {
+        long n = 0;
         BufferedReader br = null;
         FileReader fileReader = null;
+        JdbcTemplate t = new JdbcTemplate(datasource);
         try {
             StrBuilder insertQueryBuilder = new StrBuilder(codeTableInsertSQLPrefix);
             int totalCount = 0, pendingCount = 0;
@@ -41,24 +47,30 @@ public abstract class Icd9BaseLoader extends BaseCodeLoader {
                             String code = buildDelimitedIcdCode(line.substring(0, 5));
                             String displayName = line.substring(6);
                             buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, oid);
+//
+//                            if ((++totalCount % BATCH_SIZE) == 0) {
+//                                insertCode(insertQueryBuilder.toString(), connection);
+//                                insertQueryBuilder.clear();
+//                                insertQueryBuilder.append(codeTableInsertSQLPrefix);
+//                                pendingCount = 0;
+//                            }
+                            n++;
+                            t.update(insertQueryBuilder.toString());
+                            insertQueryBuilder.clear();
+                            insertQueryBuilder.append(codeTableInsertSQLPrefix);
+//                            t.update(codeTableInsertSQLPrefix,code.trim().toUpperCase(),displayName.trim().toUpperCase(),codeSystem,oid);
 
-                            if ((++totalCount % BATCH_SIZE) == 0) {
-                                insertCode(insertQueryBuilder.toString(), connection);
-                                insertQueryBuilder.clear();
-                                insertQueryBuilder.append(codeTableInsertSQLPrefix);
-                                pendingCount = 0;
-                            }
                         }
                     }
                 }
             }
-            if (pendingCount > 0) {
-                insertCode(insertQueryBuilder.toString(), connection);
-            }
+//            if (pendingCount > 0) {
+//                insertCode(insertQueryBuilder.toString(), connection);
+//            }
         } catch (IOException e) {
             logger.error(e);
-        } catch (SQLException e) {
-            e.printStackTrace();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
         } finally {
             if (br != null) {
                 try {
@@ -69,5 +81,6 @@ public abstract class Icd9BaseLoader extends BaseCodeLoader {
                 }
             }
         }
+        return n;
     }
 }

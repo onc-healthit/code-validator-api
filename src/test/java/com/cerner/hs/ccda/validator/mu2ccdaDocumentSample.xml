@@ -1,0 +1,2741 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClinicalDocument xsi:schemaLocation="urn:hl7-org:v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:hl7-org:v3" xmlns:voc="urn:hl7-org:v3/voc" xmlns:sdtc="urn:hl7-org:sdtc">
+	<realmCode code="US"/>
+	<typeId extension="POCD_HD000040" root="2.16.840.1.113883.1.3"/>
+	<templateId root="2.16.840.1.113883.10.20.22.1.1"/>
+	<templateId root="2.16.840.1.113883.10.20.22.1.2"/>
+	<id root="2.1.5.234.99.1.3.8.1.1300410"/>
+	<code code="34133-9" displayName="Transition of Care" codeSystemName="LOINC" codeSystem="2.16.840.1.113883.6.1"/>
+	<title>Transition of Care474</title>
+	<effectiveTime value="20130904161226-0400"/>
+	<confidentialityCode code="N" displayName="Normal" codeSystem="2.16.840.1.113883.5.25" codeSystemName="HL7 ConfidentialityCode"/>
+	<languageCode code="en-US"/>
+	<recordTarget>
+		<patientRole>
+			<id root="2.1.5.234.99.1.3.7.1" extension="5100208019" assigningAuthorityName="DRD: Siemens Test Locally-assigned Medical Record Number"/>
+			<id root="2.1.5.234.99.1.3.7.4" extension="7" assigningAuthorityName="CentraState Med Ctr - DRD: Siemens Test Locally-assigned Alternate Visit Identifier"/>
+			<id root="2.1.5.234.99.1.3.7.3" extension="5100208019" assigningAuthorityName="CentraState Med Ctr - DRD: Siemens Test Locally-assigned Patient Account Number"/>
+			<id root="2.1.5.234.99.1.3.7.2" extension="5100208019" assigningAuthorityName="EntrpAuth: Siemens Test Locally-assigned MPI Number"/>
+			<id root="2.16.840.1.113883.4.1" extension="123456789" assigningAuthorityName="SSN"/>
+			<addr use="HP">
+				<streetAddressLine>428 Apple Blvd</streetAddressLine>
+				<postBox nullFlavor="NI"/>
+				<city>Malvern</city>
+				<state>PA</state>
+				<postalCode>124</postalCode>
+				<country>United States of America</country>
+			</addr>
+			<telecom use="HP" value="tel:888-233-4545"/>
+			<telecom use="HP" value="mailto:VKdevTest@aol.com"/>
+			<patient>
+				<name>
+					<prefix nullFlavor="NI"/>
+					<given>DevTest</given>
+					<given nullFlavor="NI"/>
+					<family>VK</family>
+					<suffix nullFlavor="NI"/>
+				</name>
+				<administrativeGenderCode code="M" displayName="Male" codeSystem="2.16.840.1.113883.5.1" codeSystemName="HL7 AdministrativeGenderCode">
+					<translation code="0" displayName="0" codeSystem="2.1.5.234.99.1.3.2.2" codeSystemName="Siemens Test Locally-assigned Gender codes"/>
+				</administrativeGenderCode>
+				<birthTime value="19670101"/>
+				<maritalStatusCode nullFlavor="NI"/>
+				<raceCode code="2028-9" displayName="A ASIAN INDIAN" codeSystem="2.16.840.1.113883.6.238" codeSystemName="Race &amp; Ethnicity - CDC"/>
+				<sdtc:raceCode nullFlavor="NI">
+					<translation code="CustOther" displayName="OTHER (NOT LISTED)" codeSystem="2.1.5.234.99.1.3.2.8" codeSystemName="Siemens Test Locally-assigned race codes"/>
+				</sdtc:raceCode>
+				<sdtc:raceCode nullFlavor="NI">
+					<translation code="CHINESE" displayName="CHINESE" codeSystem="2.1.5.234.99.1.3.2.8" codeSystemName="Siemens Test Locally-assigned race codes"/>
+				</sdtc:raceCode>
+				<ethnicGroupCode nullFlavor="NI">
+					<translation code="Hispanic_or_Latino" displayName="Hispanic or Latino" codeSystem="2.1.5.234.99.1.3.2.9" codeSystemName="Siemens Test Locally-assigned ethnicGroup codes"/>
+				</ethnicGroupCode>
+				<languageCommunication>
+					<languageCode code="eng"/>
+					<preferenceInd value="false"/>
+				</languageCommunication>
+				<languageCommunication>
+					<languageCode code="HIN"/>
+					<preferenceInd value="true"/>
+				</languageCommunication>
+			</patient>
+			<providerOrganization>
+				<id root="2.1.5.234.99.1.3.6.5" extension="Entity:2" assigningAuthorityName="CentraState Healthcare System"/>
+				<name>CentraState Med Ctr - DRD</name>
+				<telecom use="WP" value="tel:610-555-1212"/>
+				<telecom use="WP" value="tel:6105545555"/>
+				<addr use="WP">
+					<streetAddressLine>51 Valley Stream Parkway</streetAddressLine>
+					<postBox nullFlavor="NI"/>
+					<city>Malvern</city>
+					<state>PA</state>
+					<postalCode>19355</postalCode>
+					<country>0108081206Country</country>
+				</addr>
+				<addr use="WP">
+					<streetAddressLine>Secondary Address</streetAddressLine>
+					<postBox nullFlavor="NI"/>
+					<city>Malvern</city>
+					<state>PA</state>
+					<postalCode>123456</postalCode>
+					<country>United States of America</country>
+				</addr>
+			</providerOrganization>
+		</patientRole>
+	</recordTarget>
+	<author>
+		<time value="20130904161226-0400"/>
+		<assignedAuthor>
+			<id root="2.16.840.1.113883.4.6" extension="1234567890" assigningAuthorityName="NPI"/>
+			<addr use="WP">
+				<streetAddressLine>15 North Valley Road</streetAddressLine>
+				<postBox nullFlavor="NI"/>
+				<city>Malvern</city>
+				<state nullFlavor="NI"/>
+				<postalCode>19355</postalCode>
+				<country>United States of America</country>
+			</addr>
+			<telecom use="WP" value="tel:610-555-1231"/>
+			<assignedPerson>
+				<name>
+					<prefix nullFlavor="NI"/>
+					<given>Thomas</given>
+					<given nullFlavor="NI"/>
+					<family>Anderson</family>
+					<suffix nullFlavor="NI"/>
+				</name>
+			</assignedPerson>
+		</assignedAuthor>
+	</author>
+	<custodian>
+		<assignedCustodian>
+			<representedCustodianOrganization>
+				<id nullFlavor="NI"/>
+				<name>CentraState Healthcare System</name>
+				<telecom value="tel:--610-555-1212"/>
+				<addr>
+					<streetAddressLine>51 Valley Stream Parkway</streetAddressLine>
+					<postBox nullFlavor="NI"/>
+					<city>Malvern</city>
+					<state>PA</state>
+					<postalCode>19355</postalCode>
+					<country>0108081206Country</country>
+				</addr>
+			</representedCustodianOrganization>
+		</assignedCustodian>
+	</custodian>
+	<legalAuthenticator>
+		<time value="20130904161226-0400"/>
+		<signatureCode code="S"/>
+		<assignedEntity>
+			<id nullFlavor="NI"/>
+			<addr nullFlavor="NI"/>
+			<telecom nullFlavor="NI"/>
+			<assignedPerson>
+				<name>
+					<prefix nullFlavor="NI"/>
+					<given>Thomas</given>
+					<given nullFlavor="NI"/>
+					<family>Anderson</family>
+					<suffix nullFlavor="NI"/>
+				</name>
+			</assignedPerson>
+		</assignedEntity>
+	</legalAuthenticator>
+	<documentationOf>
+		<serviceEvent classCode="PCPR">
+			<effectiveTime>
+				<low value="20110101090400-0500"/>
+				<high nullFlavor="NI"/>
+			</effectiveTime>
+			<performer typeCode="PRF">
+				<functionCode code="PP" displayName="Primary Care Provider" codeSystem="2.16.840.1.113883.12.443" codeSystemName="Provider Role">
+					<originalText>Primary Care Provider</originalText>
+				</functionCode>
+				<assignedEntity>
+					<id root="2.1.5.234.99.1.3.2.10" extension="External:1945255" assigningAuthorityName="Siemens Test Locally-assigned staff codes"/>
+					<addr use="HP">
+						<streetAddressLine>65 Valley Stream Parkway Malvern PA</streetAddressLine>
+						<postBox nullFlavor="NI"/>
+						<city nullFlavor="NI"/>
+						<state nullFlavor="NI"/>
+						<postalCode nullFlavor="NI"/>
+						<country nullFlavor="NI"/>
+					</addr>
+					<telecom nullFlavor="NI"/>
+					<assignedPerson>
+						<name>
+							<prefix nullFlavor="NI"/>
+							<given>PrimaryFirst</given>
+							<family>PrimaryLast</family>
+						</name>
+					</assignedPerson>
+				</assignedEntity>
+			</performer>
+		</serviceEvent>
+	</documentationOf>
+	<componentOf>
+		<encompassingEncounter>
+			<id root="2.16.840.1.113883.19" extension="490999"/>
+			<effectiveTime>
+				<low value="20110101090400-0500"/>
+				<high nullFlavor="NI"/>
+			</effectiveTime>
+			<encounterParticipant typeCode="REF">
+				<assignedEntity>
+					<id root="2.1.5.234.99.1.3.2.10" extension="External:1948053" assigningAuthorityName="Siemens Test Locally-assigned staff codes"/>
+					<addr use="HP">
+						<streetAddressLine>51 Valley Stream Parkway Malvern PA</streetAddressLine>
+						<postBox nullFlavor="NI"/>
+						<city nullFlavor="NI"/>
+						<state nullFlavor="NI"/>
+						<postalCode nullFlavor="NI"/>
+						<country nullFlavor="NI"/>
+					</addr>
+					<telecom use="HP" value="tel:212 123 1223"/>
+					<telecom use="HP" value="mailto:vinayak.siemens.com"/>
+					<assignedPerson>
+						<name>
+							<prefix nullFlavor="NI"/>
+							<given>RefferingFirst</given>
+							<family>RefferingLast</family>
+						</name>
+					</assignedPerson>
+				</assignedEntity>
+			</encounterParticipant>
+			<encounterParticipant typeCode="CON">
+				<assignedEntity>
+					<id root="2.1.5.234.99.1.3.2.10" extension="MSI:8866" assigningAuthorityName="Siemens Test Locally-assigned staff codes"/>
+					<addr use="WP">
+						<streetAddressLine>51 Valley Stream Parkway</streetAddressLine>
+						<postBox nullFlavor="NI"/>
+						<city>Malvern</city>
+						<state>PA</state>
+						<postalCode>19355</postalCode>
+						<country>0108081206Country</country>
+					</addr>
+					<addr use="WP">
+						<streetAddressLine>Secondary Address</streetAddressLine>
+						<postBox nullFlavor="NI"/>
+						<city>Malvern</city>
+						<state>PA</state>
+						<postalCode>123456</postalCode>
+						<country>United States of America</country>
+					</addr>
+					<telecom use="WP" value="tel:610-555-1212"/>
+					<telecom use="WP" value="tel:6105545555"/>
+					<assignedPerson>
+						<name>
+							<prefix>MD</prefix>
+							<given>Beverly</given>
+							<family>Coats</family>
+						</name>
+					</assignedPerson>
+				</assignedEntity>
+			</encounterParticipant>
+			<encounterParticipant typeCode="CON">
+				<assignedEntity>
+					<id root="2.1.5.234.99.1.3.2.10" extension="MSI:6243" assigningAuthorityName="Siemens Test Locally-assigned staff codes"/>
+					<addr use="WP">
+						<streetAddressLine>420 Coleman Street</streetAddressLine>
+						<postBox nullFlavor="NI"/>
+						<city>AllenTown</city>
+						<state>PA</state>
+						<postalCode>23332</postalCode>
+						<country>United States of America</country>
+					</addr>
+					<telecom use="WP" value="tel:123-433-3444"/>
+					<telecom use="WP" value="mailto:cole@boss.com"/>
+					<assignedPerson>
+						<name>
+							<prefix>MD</prefix>
+							<given>Dori</given>
+							<family>Coleman</family>
+						</name>
+					</assignedPerson>
+				</assignedEntity>
+			</encounterParticipant>
+			<encounterParticipant typeCode="CON">
+				<assignedEntity>
+					<id root="2.1.5.234.99.1.3.2.10" extension="MSI:10365" assigningAuthorityName="Siemens Test Locally-assigned staff codes"/>
+					<addr use="WP">
+						<streetAddressLine>51 Valley Stream Parkway</streetAddressLine>
+						<postBox nullFlavor="NI"/>
+						<city>Malvern</city>
+						<state>PA</state>
+						<postalCode>19355</postalCode>
+						<country>0108081206Country</country>
+					</addr>
+					<addr use="WP">
+						<streetAddressLine>Secondary Address</streetAddressLine>
+						<postBox nullFlavor="NI"/>
+						<city>Malvern</city>
+						<state>PA</state>
+						<postalCode>123456</postalCode>
+						<country>United States of America</country>
+					</addr>
+					<telecom use="WP" value="tel:610-555-1212"/>
+					<telecom use="WP" value="tel:6105545555"/>
+					<assignedPerson>
+						<name>
+							<prefix nullFlavor="NI"/>
+							<given>Danny</given>
+							<family>Edison</family>
+						</name>
+					</assignedPerson>
+				</assignedEntity>
+			</encounterParticipant>
+			<encounterParticipant typeCode="ADM">
+				<assignedEntity>
+					<id root="2.1.5.234.99.1.3.2.10" extension="MSI:000158" assigningAuthorityName="Siemens Test Locally-assigned staff codes"/>
+					<addr use="WP">
+						<streetAddressLine>418 Malberry street</streetAddressLine>
+						<postBox nullFlavor="NI"/>
+						<city>Bryn Mawr</city>
+						<state>PA</state>
+						<postalCode>12345</postalCode>
+						<country>United States of America</country>
+					</addr>
+					<addr use="WP">
+						<streetAddressLine>Secondary Office Street</streetAddressLine>
+						<postBox nullFlavor="NI"/>
+						<city>Exton</city>
+						<state>PA</state>
+						<postalCode>34344</postalCode>
+						<country>United States of America</country>
+					</addr>
+					<telecom use="WP" value="tel:123-456-6798"/>
+					<telecom use="WP" value="tel:344-434-4444"/>
+					<telecom use="WP" value="mailto:r.allred@medical.com"/>
+					<assignedPerson>
+						<name>
+							<prefix>DO</prefix>
+							<given>Rachel</given>
+							<family>Allred</family>
+						</name>
+					</assignedPerson>
+				</assignedEntity>
+			</encounterParticipant>
+			<encounterParticipant typeCode="ATND">
+				<assignedEntity>
+					<id root="2.1.5.234.99.1.3.2.10" extension="MSI:33445" assigningAuthorityName="Siemens Test Locally-assigned staff codes"/>
+					<addr use="WP">
+						<streetAddressLine>412 MacAurthur Rd</streetAddressLine>
+						<postBox nullFlavor="NI"/>
+						<city>DowningTown</city>
+						<state>PA</state>
+						<postalCode>23455</postalCode>
+						<country>United States of America</country>
+					</addr>
+					<addr use="WP">
+						<streetAddressLine>Secondary Street Address</streetAddressLine>
+						<postBox nullFlavor="NI"/>
+						<city>Exton</city>
+						<state>PA</state>
+						<postalCode>23222</postalCode>
+						<country>United States of America</country>
+					</addr>
+					<telecom use="WP" value="tel:334-444-5333"/>
+					<telecom use="WP" value="tel:122-334-443"/>
+					<telecom use="WP" value="mailto:VK@Exton.com"/>
+					<assignedPerson>
+						<name>
+							<prefix nullFlavor="NI"/>
+							<given>S</given>
+							<family>Brown</family>
+						</name>
+					</assignedPerson>
+				</assignedEntity>
+			</encounterParticipant>
+			<location>
+				<healthCareFacility>
+					<id root="2.1.5.234.99.1.3.6.5" extension="MRU:39562" assigningAuthorityName="CentraState Med Ctr - DRD"/>
+					<location>
+						<name>2CCU DRD</name>
+					</location>
+				</healthCareFacility>
+			</location>
+		</encompassingEncounter>
+	</componentOf>
+	<!--***********************************************-->
+	<!--              CDA Structured Body                 -->
+	<!--***********************************************-->
+	<component>
+		<structuredBody>
+			<component>
+				<section>
+					<templateId root="2.16.840.1.113883.10.20.22.2.5"/>
+					<templateId root="2.16.840.1.113883.10.20.22.2.5.1"/>
+					<code code="11450-4" codeSystem="2.16.840.1.113883.6.1"/>
+					<title>Problems</title>
+					<!--****  Problems Section Narrative Block  ****-->
+					<text>
+						<content styleCode="Bold">Encounter Diagnosis</content>
+						<br/>
+						<list listType="unordered">
+							<item>
+								<content ID="ZProblems.Problems.3037778">Acute Pain Acute/Chronic:Acute, Onset:Today, Rank:2 - Medium, Severity:Mild, Status:Active. </content>
+							</item>
+							<item>
+								<content ID="ZProblems.Problems.3060278">Bradycardia Rank:1 - High, Rank:1, Status:Inactive. </content>
+							</item>
+							<item>
+								<content ID="ZProblems.Problems.3042778">Chronic Pain Status:Active. </content>
+							</item>
+							<item>
+								<content ID="ZProblems.Problems.3062778">Hyperglycemia Status:Active. </content>
+							</item>
+							<item>
+								<content ID="ZProblems.Problems.3052778">Pain Onset Date:2012-03-06 00:00:00, Status:Active. </content>
+							</item>
+						</list>
+						<content styleCode="Bold">Additional Problems</content>
+						<br/>
+						<list listType="unordered">
+							<item>
+								<content ID="ZProblems.Problems.3045278">Acute Confusion 
+								 </content><list>
+										<item>Status:Active.</item>
+									</list>
+							</item>
+							<item>
+								<content ID="ZProblems.Problems.3052804">Chronic Sadness Onset:Childbirth, Onset Date:2012-11-06 00:00:00, Rank:2 - Medium, Status:Active. </content>
+							</item>
+						</list>
+					</text>
+					<!--**** Problems Section Structured Body ****-->
+					<entry typeCode="DRIV">
+						<act classCode="ACT" moodCode="EVN" >
+							<templateId root="2.16.840.1.113883.10.20.22.4.3"/>
+							<id nullFlavor="NI"/>
+							<code code="CONC" codeSystem="2.16.840.1.113883.5.6"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low nullFlavor="UNK"/>
+							</effectiveTime>
+							<author>
+								<time value="20120823181328+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.4"/>
+									<id root="2.1.5.234.99.1.3.2.6.1" extension="3037778"/>
+									<code code="55607006" codeSystem="2.16.840.1.113883.6.96" displayName="Problem" codeSystemName="SNOMED CT"/>
+									<text>
+										<reference value="#ZProblems.Problems.3037778"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<value xsi:type="CD" nullFlavor="UNK"/>
+									<entryRelationship typeCode="REFR" inversionInd="false">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.6"/>
+											<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+											<text>
+												<reference value="#ZProblems.Problems.3037778"/>
+											</text>
+											<statusCode code="completed"/>
+											<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+												<translation xsi:type="CE" code="S75" displayName="Active" codeSystem="2.1.5.234.99.1.11.2" codeSystemName="Siemens Test Locally-assigned Problem status codes from CVE2"/>
+											</value>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry typeCode="DRIV">
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.3"/>
+							<id nullFlavor="NI"/>
+							<code code="CONC" codeSystem="2.16.840.1.113883.5.6"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low nullFlavor="UNK"/>
+							</effectiveTime>
+							<author>
+								<time value="20120823182131+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.4"/>
+									<id root="2.1.5.234.99.1.3.2.6.1" extension="3042778"/>
+									<code code="55607006" codeSystem="2.16.840.1.113883.6.96" displayName="Problem" codeSystemName="SNOMED CT"/>
+									<text>
+										<reference value="#ZProblems.Problems.3042778"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<value xsi:type="CD" nullFlavor="UNK">
+										<translation xsi:type="CD" code="S313" displayName="Chronic Pain" codeSystem="2.1.5.234.99.1.11.1" codeSystemName="Siemens Test Locally-assigned Problem codes from CVE2"/>
+										<translation xsi:type="CD" code="10000546" displayName="Chronic Pain" codeSystem="2.16.840.1.113883.6.97" codeSystemName="ICNP"/>
+									</value>
+									<entryRelationship typeCode="REFR" inversionInd="false">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.6"/>
+											<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+											<text>
+												<reference value="#ZProblems.Problems.3042778"/>
+											</text>
+											<statusCode code="completed"/>
+											<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+												<translation xsi:type="CE" code="S75" displayName="Active" codeSystem="2.1.5.234.99.1.11.2" codeSystemName="Siemens Test Locally-assigned Problem status codes from CVE2"/>
+											</value>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry typeCode="DRIV">
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.3"/>
+							<id nullFlavor="NI"/>
+							<code code="CONC" codeSystem="2.16.840.1.113883.5.6"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low nullFlavor="UNK"/>
+							</effectiveTime>
+							<author>
+								<time value="20120905002648+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.4"/>
+									<id root="2.1.5.234.99.1.3.2.6.1" extension="3045278"/>
+									<code code="55607006" codeSystem="2.16.840.1.113883.6.96" displayName="Problem" codeSystemName="SNOMED CT"/>
+									<text>
+										<reference value="#ZProblems.Problems.3045278"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<value xsi:type="CD" nullFlavor="UNK">
+										<translation xsi:type="CD" code="S1648" displayName="Acute Confusion" codeSystem="2.1.5.234.99.1.11.1" codeSystemName="Siemens Test Locally-assigned Problem codes from CVE2"/>
+										<translation xsi:type="CD" code="10000449" displayName="Acute Confusion" codeSystem="2.16.840.1.113883.6.97" codeSystemName="ICNP"/>
+									</value>
+									<entryRelationship typeCode="REFR" inversionInd="false">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.6"/>
+											<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+											<text>
+												<reference value="#ZProblems.Problems.3045278"/>
+											</text>
+											<statusCode code="completed"/>
+											<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+												<translation xsi:type="CE" code="S75" displayName="Active" codeSystem="2.1.5.234.99.1.11.2" codeSystemName="Siemens Test Locally-assigned Problem status codes from CVE2"/>
+											</value>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry typeCode="DRIV">
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.3"/>
+							<id nullFlavor="NI"/>
+							<code code="CONC" codeSystem="2.16.840.1.113883.5.6"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low value="20120306"/>
+							</effectiveTime>
+							<author>
+								<time value="20130222195651+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.4"/>
+									<id root="2.1.5.234.99.1.3.2.6.1" extension="3052778"/>
+									<code code="55607006" codeSystem="2.16.840.1.113883.6.96" displayName="Problem" codeSystemName="SNOMED CT"/>
+									<text>
+										<reference value="#ZProblems.Problems.3052778"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low value="20120306"/>
+									</effectiveTime>
+									<value xsi:type="CD" nullFlavor="UNK">
+										<translation xsi:type="CD" code="S451" displayName="Pain" codeSystem="2.1.5.234.99.1.11.1" codeSystemName="Siemens Test Locally-assigned Problem codes from CVE2"/>
+										<translation xsi:type="CD" code="10023130" displayName="Pain" codeSystem="2.16.840.1.113883.6.97" codeSystemName="ICNP"/>
+									</value>
+									<entryRelationship typeCode="REFR" inversionInd="false">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.6"/>
+											<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+											<text>
+												<reference value="#ZProblems.Problems.3052778"/>
+											</text>
+											<statusCode code="completed"/>
+											<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+												<translation xsi:type="CE" code="S75" displayName="Active" codeSystem="2.1.5.234.99.1.11.2" codeSystemName="Siemens Test Locally-assigned Problem status codes from CVE2"/>
+											</value>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry typeCode="DRIV">
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.3"/>
+							<id nullFlavor="NI"/>
+							<code code="CONC" codeSystem="2.16.840.1.113883.5.6"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low value="20121106"/>
+							</effectiveTime>
+							<author>
+								<time value="20130711204542+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.4"/>
+									<id root="2.1.5.234.99.1.3.2.6.1" extension="3052804"/>
+									<code code="55607006" codeSystem="2.16.840.1.113883.6.96" displayName="Problem" codeSystemName="SNOMED CT"/>
+									<text>
+										<reference value="#ZProblems.Problems.3052804"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low value="20121106"/>
+									</effectiveTime>
+									<value xsi:type="CD" nullFlavor="UNK">
+										<translation xsi:type="CD" code="S1658" displayName="Chronic Sadness" codeSystem="2.1.5.234.99.1.11.1" codeSystemName="Siemens Test Locally-assigned Problem codes from CVE2"/>
+										<translation xsi:type="CD" code="10000551" displayName="Chronic Sadness" codeSystem="2.16.840.1.113883.6.97" codeSystemName="ICNP"/>
+									</value>
+									<entryRelationship typeCode="REFR" inversionInd="false">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.6"/>
+											<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+											<text>
+												<reference value="#ZProblems.Problems.3052804"/>
+											</text>
+											<statusCode code="completed"/>
+											<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+												<translation xsi:type="CE" code="S75" displayName="Active" codeSystem="2.1.5.234.99.1.11.2" codeSystemName="Siemens Test Locally-assigned Problem status codes from CVE2"/>
+											</value>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry typeCode="DRIV">
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.3"/>
+							<id nullFlavor="NI"/>
+							<code code="CONC" codeSystem="2.16.840.1.113883.5.6"/>
+							<statusCode code="aborted"/>
+							<effectiveTime>
+								<low nullFlavor="UNK"/>
+							</effectiveTime>
+							<author>
+								<time value="20130730184629+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.4"/>
+									<id root="2.1.5.234.99.1.3.2.6.1" extension="3060278"/>
+									<code code="55607006" codeSystem="2.16.840.1.113883.6.96" displayName="Problem" codeSystemName="SNOMED CT"/>
+									<text>
+										<reference value="#ZProblems.Problems.3060278"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<value xsi:type="CD" nullFlavor="UNK">
+										<translation xsi:type="CD" code="S2431" displayName="Bradycardia" codeSystem="2.1.5.234.99.1.11.1" codeSystemName="Siemens Test Locally-assigned Problem codes from CVE2"/>
+										<translation xsi:type="CD" code="10027274" displayName="Bradycardia" codeSystem="2.16.840.1.113883.6.97" codeSystemName="ICNP"/>
+									</value>
+									<entryRelationship typeCode="REFR" inversionInd="false">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.6"/>
+											<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+											<text>
+												<reference value="#ZProblems.Problems.3060278"/>
+											</text>
+											<statusCode code="completed"/>
+											<value xsi:type="CE" code="73425007" displayName="Inactive" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+												<translation xsi:type="CE" code="S250" displayName="Inactive" codeSystem="2.1.5.234.99.1.11.2" codeSystemName="Siemens Test Locally-assigned Problem status codes from CVE2"/>
+											</value>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry typeCode="DRIV">
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.3"/>
+							<id nullFlavor="NI"/>
+							<code code="CONC" codeSystem="2.16.840.1.113883.5.6"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low nullFlavor="UNK"/>
+							</effectiveTime>
+							<author>
+								<time value="20121127182926+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.4"/>
+									<id root="2.1.5.234.99.1.3.2.6.1" extension="3062778"/>
+									<code code="55607006" codeSystem="2.16.840.1.113883.6.96" displayName="Problem" codeSystemName="SNOMED CT"/>
+									<text>
+										<reference value="#ZProblems.Problems.3062778"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<value xsi:type="CD" nullFlavor="UNK">
+										<translation xsi:type="CD" code="S2444" displayName="Hyperglycemia" codeSystem="2.1.5.234.99.1.11.1" codeSystemName="Siemens Test Locally-assigned Problem codes from CVE2"/>
+										<translation xsi:type="CD" code="10027550" displayName="Hyperglycemia" codeSystem="2.16.840.1.113883.6.97" codeSystemName="ICNP"/>
+									</value>
+									<entryRelationship typeCode="REFR" inversionInd="false">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.6"/>
+											<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+											<text>
+												<reference value="#ZProblems.Problems.3062778"/>
+											</text>
+											<statusCode code="completed"/>
+											<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+												<translation xsi:type="CE" code="S75" displayName="Active" codeSystem="2.1.5.234.99.1.11.2" codeSystemName="Siemens Test Locally-assigned Problem status codes from CVE2"/>
+											</value>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+				</section>
+			</component>
+			<component>
+				<section>
+					<templateId root="2.16.840.1.113883.10.20.22.2.22"/>
+					<templateId root="2.16.840.1.113883.10.20.22.2.22.1"/>
+					<code code="46240-8" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="History of encounters"/>
+					<title>Encounters</title>
+					<!--****  Encounters Section Narrative Block  ****-->
+					<text>
+						<content styleCode="Bold">Encounter Diagnosis</content>
+						<br/>
+						<list listType="unordered">
+							<item>
+								<content ID="ZEncounters.Diagnosis.3037778">Acute Pain Acute/Chronic:Acute, Onset:Today, Rank:2 - Medium, Severity:Mild, Status:Active. </content>
+							</item>
+							<item>
+								<content ID="ZEncounters.Diagnosis.3060278">Bradycardia Rank:1 - High, Rank:1, Status:Inactive. </content>
+							</item>
+							<item>
+								<content ID="ZEncounters.Diagnosis.3042778">Chronic Pain Status:Active. </content>
+							</item>
+							<item>
+								<content ID="ZEncounters.Diagnosis.3062778">Hyperglycemia Status:Active. </content>
+							</item>
+							<item>
+								<content ID="ZEncounters.Diagnosis.3052778">Pain Onset Date:2012-03-06 00:00:00, Status:Active. </content>
+							</item>
+						</list>
+					</text>
+					<!--**** Encounters Section Structured Body ****-->
+					<entry typeCode="DRIV">
+						<encounter classCode="ENC" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.49"/>
+							<id root="2.1.5.234.99.1.3.7.5" extension="490999"/>
+							<effectiveTime value="20110101090400-0500"/>
+							<entryRelationship typeCode="COMP">
+								<act classCode="ACT" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.80"/>
+									<code xsi:type="CE" code="29308-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="ENCOUNTER DIAGNOSIS"/>
+									<statusCode code="active"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<author>
+										<time value="20120823181328+0000"/>
+										<assignedAuthor>
+											<id nullFlavor="NI"/>
+											<addr nullFlavor="NI"/>
+											<telecom nullFlavor="NI"/>
+										</assignedAuthor>
+									</author>
+									<entryRelationship typeCode="SUBJ" inversionInd="false">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.4"/>
+											<id root="2.1.5.234.99.1.3.2.6.1" extension="3037778"/>
+											<code code="55607006" codeSystem="2.16.840.1.113883.6.96" displayName="Problem" codeSystemName="SNOMED CT"/>
+											<text>
+												<reference value="#ZEncounters.Diagnosis.3037778"/>
+											</text>
+											<statusCode code="completed"/>
+											<effectiveTime>
+												<low nullFlavor="UNK"/>
+											</effectiveTime>
+											<value xsi:type="CD" nullFlavor="UNK"/>
+											<entryRelationship typeCode="REFR" inversionInd="false">
+												<observation classCode="OBS" moodCode="EVN">
+													<templateId root="2.16.840.1.113883.10.20.22.4.6"/>
+													<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+													<text>
+														<reference value="#ZEncounters.Diagnosis.3037778"/>
+													</text>
+													<statusCode code="completed"/>
+													<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+														<translation xsi:type="CE" code="S75" displayName="Active" codeSystem="2.1.5.234.99.1.11.2" codeSystemName="Siemens Test Locally-assigned Problem status codes from CVE2"/>
+													</value>
+												</observation>
+											</entryRelationship>
+										</observation>
+									</entryRelationship>
+								</act>
+							</entryRelationship>
+						</encounter>
+					</entry>
+					<entry typeCode="DRIV">
+						<encounter classCode="ENC" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.49"/>
+							<id root="2.1.5.234.99.1.3.7.5" extension="490999"/>
+							<effectiveTime value="20110101090400-0500"/>
+							<entryRelationship typeCode="COMP">
+								<act classCode="ACT" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.80"/>
+									<code xsi:type="CE" code="29308-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="ENCOUNTER DIAGNOSIS"/>
+									<statusCode code="active"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<author>
+										<time value="20120823182131+0000"/>
+										<assignedAuthor>
+											<id nullFlavor="NI"/>
+											<addr nullFlavor="NI"/>
+											<telecom nullFlavor="NI"/>
+										</assignedAuthor>
+									</author>
+									<entryRelationship typeCode="SUBJ" inversionInd="false">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.4"/>
+											<id root="2.1.5.234.99.1.3.2.6.1" extension="3042778"/>
+											<code code="55607006" codeSystem="2.16.840.1.113883.6.96" displayName="Problem" codeSystemName="SNOMED CT"/>
+											<text>
+												<reference value="#ZEncounters.Diagnosis.3042778"/>
+											</text>
+											<statusCode code="completed"/>
+											<effectiveTime>
+												<low nullFlavor="UNK"/>
+											</effectiveTime>
+											<value xsi:type="CD" nullFlavor="UNK">
+												<translation xsi:type="CD" code="S313" displayName="Chronic Pain" codeSystem="2.1.5.234.99.1.11.1" codeSystemName="Siemens Test Locally-assigned Problem codes from CVE2"/>
+												<translation xsi:type="CD" code="10000546" displayName="Chronic Pain" codeSystem="2.16.840.1.113883.6.97" codeSystemName="ICNP"/>
+											</value>
+											<entryRelationship typeCode="REFR" inversionInd="false">
+												<observation classCode="OBS" moodCode="EVN">
+													<templateId root="2.16.840.1.113883.10.20.22.4.6"/>
+													<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+													<text>
+														<reference value="#ZEncounters.Diagnosis.3042778"/>
+													</text>
+													<statusCode code="completed"/>
+													<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+														<translation xsi:type="CE" code="S75" displayName="Active" codeSystem="2.1.5.234.99.1.11.2" codeSystemName="Siemens Test Locally-assigned Problem status codes from CVE2"/>
+													</value>
+												</observation>
+											</entryRelationship>
+										</observation>
+									</entryRelationship>
+								</act>
+							</entryRelationship>
+						</encounter>
+					</entry>
+					<entry typeCode="DRIV">
+						<encounter classCode="ENC" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.49"/>
+							<id root="2.1.5.234.99.1.3.7.5" extension="490999"/>
+							<effectiveTime value="20110101090400-0500"/>
+							<entryRelationship typeCode="COMP">
+								<act classCode="ACT" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.80"/>
+									<code xsi:type="CE" code="29308-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="ENCOUNTER DIAGNOSIS"/>
+									<statusCode code="active"/>
+									<effectiveTime>
+										<low value="20120306"/>
+									</effectiveTime>
+									<author>
+										<time value="20130222195651+0000"/>
+										<assignedAuthor>
+											<id nullFlavor="NI"/>
+											<addr nullFlavor="NI"/>
+											<telecom nullFlavor="NI"/>
+										</assignedAuthor>
+									</author>
+									<entryRelationship typeCode="SUBJ" inversionInd="false">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.4"/>
+											<id root="2.1.5.234.99.1.3.2.6.1" extension="3052778"/>
+											<code code="55607006" codeSystem="2.16.840.1.113883.6.96" displayName="Problem" codeSystemName="SNOMED CT"/>
+											<text>
+												<reference value="#ZEncounters.Diagnosis.3052778"/>
+											</text>
+											<statusCode code="completed"/>
+											<effectiveTime>
+												<low value="20120306"/>
+											</effectiveTime>
+											<value xsi:type="CD" nullFlavor="UNK">
+												<translation xsi:type="CD" code="S451" displayName="Pain" codeSystem="2.1.5.234.99.1.11.1" codeSystemName="Siemens Test Locally-assigned Problem codes from CVE2"/>
+												<translation xsi:type="CD" code="10023130" displayName="Pain" codeSystem="2.16.840.1.113883.6.97" codeSystemName="ICNP"/>
+											</value>
+											<entryRelationship typeCode="REFR" inversionInd="false">
+												<observation classCode="OBS" moodCode="EVN">
+													<templateId root="2.16.840.1.113883.10.20.22.4.6"/>
+													<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+													<text>
+														<reference value="#ZEncounters.Diagnosis.3052778"/>
+													</text>
+													<statusCode code="completed"/>
+													<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+														<translation xsi:type="CE" code="S75" displayName="Active" codeSystem="2.1.5.234.99.1.11.2" codeSystemName="Siemens Test Locally-assigned Problem status codes from CVE2"/>
+													</value>
+												</observation>
+											</entryRelationship>
+										</observation>
+									</entryRelationship>
+								</act>
+							</entryRelationship>
+						</encounter>
+					</entry>
+					<entry typeCode="DRIV">
+						<encounter classCode="ENC" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.49"/>
+							<id root="2.1.5.234.99.1.3.7.5" extension="490999"/>
+							<effectiveTime value="20110101090400-0500"/>
+							<entryRelationship typeCode="COMP">
+								<act classCode="ACT" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.80"/>
+									<code xsi:type="CE" code="29308-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="ENCOUNTER DIAGNOSIS"/>
+									<statusCode code="aborted"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<author>
+										<time value="20130730184629+0000"/>
+										<assignedAuthor>
+											<id nullFlavor="NI"/>
+											<addr nullFlavor="NI"/>
+											<telecom nullFlavor="NI"/>
+										</assignedAuthor>
+									</author>
+									<entryRelationship typeCode="SUBJ" inversionInd="false">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.4"/>
+											<id root="2.1.5.234.99.1.3.2.6.1" extension="3060278"/>
+											<code code="55607006" codeSystem="2.16.840.1.113883.6.96" displayName="Problem" codeSystemName="SNOMED CT"/>
+											<text>
+												<reference value="#ZEncounters.Diagnosis.3060278"/>
+											</text>
+											<statusCode code="completed"/>
+											<effectiveTime>
+												<low nullFlavor="UNK"/>
+											</effectiveTime>
+											<value xsi:type="CD" nullFlavor="UNK">
+												<translation xsi:type="CD" code="S2431" displayName="Bradycardia" codeSystem="2.1.5.234.99.1.11.1" codeSystemName="Siemens Test Locally-assigned Problem codes from CVE2"/>
+												<translation xsi:type="CD" code="10027274" displayName="Bradycardia" codeSystem="2.16.840.1.113883.6.97" codeSystemName="ICNP"/>
+											</value>
+											<entryRelationship typeCode="REFR" inversionInd="false">
+												<observation classCode="OBS" moodCode="EVN">
+													<templateId root="2.16.840.1.113883.10.20.22.4.6"/>
+													<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+													<text>
+														<reference value="#ZEncounters.Diagnosis.3060278"/>
+													</text>
+													<statusCode code="completed"/>
+													<value xsi:type="CE" code="73425007" displayName="Inactive" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+														<translation xsi:type="CE" code="S250" displayName="Inactive" codeSystem="2.1.5.234.99.1.11.2" codeSystemName="Siemens Test Locally-assigned Problem status codes from CVE2"/>
+													</value>
+												</observation>
+											</entryRelationship>
+										</observation>
+									</entryRelationship>
+								</act>
+							</entryRelationship>
+						</encounter>
+					</entry>
+					<entry typeCode="DRIV">
+						<encounter classCode="ENC" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.49"/>
+							<id root="2.1.5.234.99.1.3.7.5" extension="490999"/>
+							<effectiveTime value="20110101090400-0500"/>
+							<entryRelationship typeCode="COMP">
+								<act classCode="ACT" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.80"/>
+									<code xsi:type="CE" code="29308-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="ENCOUNTER DIAGNOSIS"/>
+									<statusCode code="active"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<author>
+										<time value="20121127182926+0000"/>
+										<assignedAuthor>
+											<id nullFlavor="NI"/>
+											<addr nullFlavor="NI"/>
+											<telecom nullFlavor="NI"/>
+										</assignedAuthor>
+									</author>
+									<entryRelationship typeCode="SUBJ" inversionInd="false">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.4"/>
+											<id root="2.1.5.234.99.1.3.2.6.1" extension="3062778"/>
+											<code code="55607006" codeSystem="2.16.840.1.113883.6.96" displayName="Problem" codeSystemName="SNOMED CT"/>
+											<text>
+												<reference value="#ZEncounters.Diagnosis.3062778"/>
+											</text>
+											<statusCode code="completed"/>
+											<effectiveTime>
+												<low nullFlavor="UNK"/>
+											</effectiveTime>
+											<value xsi:type="CD" nullFlavor="UNK">
+												<translation xsi:type="CD" code="S2444" displayName="Hyperglycemia" codeSystem="2.1.5.234.99.1.11.1" codeSystemName="Siemens Test Locally-assigned Problem codes from CVE2"/>
+												<translation xsi:type="CD" code="10027550" displayName="Hyperglycemia" codeSystem="2.16.840.1.113883.6.97" codeSystemName="ICNP"/>
+											</value>
+											<entryRelationship typeCode="REFR" inversionInd="false">
+												<observation classCode="OBS" moodCode="EVN">
+													<templateId root="2.16.840.1.113883.10.20.22.4.6"/>
+													<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+													<text>
+														<reference value="#ZEncounters.Diagnosis.3062778"/>
+													</text>
+													<statusCode code="completed"/>
+													<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+														<translation xsi:type="CE" code="S75" displayName="Active" codeSystem="2.1.5.234.99.1.11.2" codeSystemName="Siemens Test Locally-assigned Problem status codes from CVE2"/>
+													</value>
+												</observation>
+											</entryRelationship>
+										</observation>
+									</entryRelationship>
+								</act>
+							</entryRelationship>
+						</encounter>
+					</entry>
+				</section>
+			</component>
+			<component>
+				<section>
+					<templateId root="2.16.840.1.113883.10.20.22.2.6"/>
+					<templateId root="2.16.840.1.113883.10.20.22.2.6.1"/>
+					<code code="48765-2" codeSystem="2.16.840.1.113883.6.1"/>
+					<title>Allergies, Adverse Reactions, Alerts</title>
+					<!--****  Alert Section Narrative Block  ****-->
+					<text>
+						<list listType="unordered">
+							<item>
+								<content ID="ZCCD-Allergies.CCD-Allergies.212033">Almond                     (as Food allergen)                  causes Moderate MikeAlgReact and  cold sweats. Onset childhood.</content>
+							</item>
+							<item>
+								<content ID="ZCCD-Allergies.CCD-Allergies.242033">Milk  causes  childhood.</content>
+							</item>
+							<item>
+								<content ID="ZCCD-Allergies.CCD-Allergies.242034">Milk                     (as Food allergen)                  causes  childhood.</content>
+							</item>
+							<item>
+								<content ID="ZCCD-Allergies.CCD-Allergies.237276">Latex  causes Mild Dizziness and Mild Fever.</content>
+							</item>
+							<item>
+								<content ID="ZCCD-Allergies.CCD-Allergies.237253">Bactrim  causes Mild Diarrhea and Moderate Rash.</content>
+							</item>
+							<item>
+								<content ID="ZCCD-Allergies.CCD-Allergies.237255">Percocet  causes Mild Dizziness.</content>
+							</item>
+							<item>
+								<content ID="ZCCD-Allergies.CCD-Allergies.234033">Ampicillin  causes Moderate TEST REACTION FROM VK. Onset childhood.</content>
+							</item>
+							<item>
+								<content ID="ZCCD-Allergies.CCD-Allergies.NoContrast">No IV Contrast Allergy.</content>
+							</item>
+						</list>
+					</text>
+					<!--**** Alert Section Structured Body ****-->
+					<entry typeCode="DRIV">
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.30"/>
+							<id nullFlavor="NI"/>
+							<code code="48765-2" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Allergies, adverse reactions, alerts"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low nullFlavor="UNK"/>
+							</effectiveTime>
+							<author>
+								<time value="20130702194829+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN" negationInd="true">
+									<templateId root="2.16.840.1.113883.10.20.22.4.7"/>
+									<id root="2.1.5.234.99.1.3.2.6.2" extension="NoContrast"/>
+									<code code="ASSERTION" codeSystem="2.16.840.1.113883.5.4"/>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="416098002" displayName="Drug allergy (disorder)" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT"/>
+									<participant typeCode="CSM">
+										<participantRole classCode="MANU">
+											<playingEntity classCode="MMAT">
+												<code nullFlavor="NAV">
+													<originalText>
+														<reference value="#ZCCD-Allergies.CCD-Allergies.NoContrast"/>
+													</originalText>
+													<translation code="7" displayName="IV Contrast" codeSystem="2.1.5.234.99.1.3.5.1" codeSystemName="Siemens Test Locally-assigned Allergy Product codes"/>
+													<translation code="293637006" displayName="Contrast media allergy" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT"/>
+												</code>
+											</playingEntity>
+										</participantRole>
+									</participant>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry typeCode="DRIV">
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.30"/>
+							<id nullFlavor="NI"/>
+							<code code="48765-2" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Allergies, adverse reactions, alerts"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low nullFlavor="UNK"/>
+							</effectiveTime>
+							<author>
+								<time value="20130809211053+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.7"/>
+									<id root="2.1.5.234.99.1.3.2.6.2" extension="212033"/>
+									<code code="ASSERTION" codeSystem="2.16.840.1.113883.5.4"/>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="414285001" displayName="Food Allergy (disorder)" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT"/>
+									<participant typeCode="CSM">
+										<participantRole classCode="MANU">
+											<playingEntity classCode="MMAT">
+												<code nullFlavor="NAV">
+													<originalText>
+														<reference value="#ZCCD-Allergies.CCD-Allergies.212033"/>
+													</originalText>
+													<translation code="ALMOND" displayName="Almond" codeSystem="2.1.5.234.99.1.3.5.1" codeSystemName="Siemens Test Locally-assigned Allergy Product codes"/>
+												</code>
+											</playingEntity>
+										</participantRole>
+									</participant>
+									<entryRelationship typeCode="MFST" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.9"/>
+											<id root="2.1.5.234.99.1.3.2.6.2.1" extension="70213"/>
+											<code nullFlavor="NI"/>
+											<statusCode code="completed"/>
+											<effectiveTime>
+												<low nullFlavor="UNK"/>
+											</effectiveTime>
+											<value xsi:type="CD" nullFlavor="NAV">
+												<translation xsi:type="CD" code="cold_sweats" displayName="cold sweats" codeSystem="2.1.5.234.99.1.3.5.2" codeSystemName="Siemens Test Locally-assigned Allergy Reaction codes"/>
+											</value>
+											<entryRelationship typeCode="SUBJ" inversionInd="true">
+												<observation classCode="OBS" moodCode="EVN">
+													<templateId root="2.16.840.1.113883.10.20.22.4.8"/>
+													<code code="SEV" displayName="Severity" codeSystem="2.16.840.1.113883.5.4" codeSystemName="ActCode"/>
+													<statusCode code="completed"/>
+													<value xsi:type="CD" nullFlavor="OTH" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+														<translation xsi:type="CD" code="U" codeSystem="2.1.5.234.99.1.3.1.3" codeSystemName="Siemens Test Locally-assigned Allergy Reaction Severity codes"/>
+													</value>
+												</observation>
+											</entryRelationship>
+										</observation>
+									</entryRelationship>
+									<entryRelationship typeCode="SUBJ" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.28"/>
+											<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+											<statusCode code="completed"/>
+											<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+												<translation xsi:type="CE" code="C" codeSystem="2.1.5.234.99.1.3.2.4" codeSystemName="Siemens Test Locally-assigned Allergy Status codes"/>
+											</value>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry typeCode="DRIV">
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.30"/>
+							<id nullFlavor="NI"/>
+							<code code="48765-2" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Allergies, adverse reactions, alerts"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low nullFlavor="UNK"/>
+							</effectiveTime>
+							<author>
+								<time value="20130404161113+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.7"/>
+									<id root="2.1.5.234.99.1.3.2.6.2" extension="234033"/>
+									<code code="ASSERTION" codeSystem="2.16.840.1.113883.5.4"/>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="416098002" displayName="Drug allergy (disorder)" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT"/>
+									<participant typeCode="CSM">
+										<participantRole classCode="MANU">
+											<playingEntity classCode="MMAT">
+												<code code="733" displayName="Ampicillin" codeSystem="2.16.840.1.113883.6.88" codeSystemName="RxNorm">
+													<originalText>
+														<reference value="#ZCCD-Allergies.CCD-Allergies.234033"/>
+													</originalText>
+													<translation code="2692" displayName="Ampicillin" codeSystem="2.1.5.234.99.1.3.5.1" codeSystemName="Siemens Test Locally-assigned Allergy Product codes"/>
+												</code>
+											</playingEntity>
+										</participantRole>
+									</participant>
+									<entryRelationship typeCode="SUBJ" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.28"/>
+											<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+											<statusCode code="completed"/>
+											<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+												<translation xsi:type="CE" code="C" codeSystem="2.1.5.234.99.1.3.2.4" codeSystemName="Siemens Test Locally-assigned Allergy Status codes"/>
+											</value>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry typeCode="DRIV">
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.30"/>
+							<id nullFlavor="NI"/>
+							<code code="48765-2" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Allergies, adverse reactions, alerts"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low nullFlavor="UNK"/>
+							</effectiveTime>
+							<author>
+								<time value="20130702190225+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.7"/>
+									<id root="2.1.5.234.99.1.3.2.6.2" extension="237253"/>
+									<code code="ASSERTION" codeSystem="2.16.840.1.113883.5.4"/>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="416098002" displayName="Drug allergy (disorder)" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT"/>
+									<participant typeCode="CSM">
+										<participantRole classCode="MANU">
+											<playingEntity classCode="MMAT">
+												<code code="151399" displayName="Bactrim" codeSystem="2.16.840.1.113883.6.88" codeSystemName="RxNorm">
+													<originalText>
+														<reference value="#ZCCD-Allergies.CCD-Allergies.237253"/>
+													</originalText>
+													<translation code="5086" displayName="Bactrim" codeSystem="2.1.5.234.99.1.3.5.1" codeSystemName="Siemens Test Locally-assigned Allergy Product codes"/>
+												</code>
+											</playingEntity>
+										</participantRole>
+									</participant>
+									<entryRelationship typeCode="MFST" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.9"/>
+											<id root="2.1.5.234.99.1.3.2.6.2.1" extension="65205"/>
+											<code nullFlavor="NI"/>
+											<statusCode code="completed"/>
+											<effectiveTime>
+												<low nullFlavor="UNK"/>
+											</effectiveTime>
+											<value xsi:type="CD" nullFlavor="NAV">
+												<translation xsi:type="CD" code="Diarrhea" displayName="Diarrhea" codeSystem="2.1.5.234.99.1.3.5.2" codeSystemName="Siemens Test Locally-assigned Allergy Reaction codes"/>
+											</value>
+											<entryRelationship typeCode="SUBJ" inversionInd="true">
+												<observation classCode="OBS" moodCode="EVN">
+													<templateId root="2.16.840.1.113883.10.20.22.4.8"/>
+													<code code="SEV" displayName="Severity" codeSystem="2.16.840.1.113883.5.4" codeSystemName="ActCode"/>
+													<statusCode code="completed"/>
+													<value xsi:type="CD" code="255604002" displayName="Mild" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+														<translation xsi:type="CD" code="MI" displayName="Mild" codeSystem="2.1.5.234.99.1.3.1.3" codeSystemName="Siemens Test Locally-assigned Allergy Reaction Severity codes"/>
+													</value>
+												</observation>
+											</entryRelationship>
+										</observation>
+									</entryRelationship>
+									<entryRelationship typeCode="MFST" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.9"/>
+											<id root="2.1.5.234.99.1.3.2.6.2.1" extension="65221"/>
+											<code nullFlavor="NI"/>
+											<statusCode code="completed"/>
+											<effectiveTime>
+												<low nullFlavor="UNK"/>
+											</effectiveTime>
+											<value xsi:type="CD" nullFlavor="NAV">
+												<translation xsi:type="CD" code="Rash" displayName="Rash" codeSystem="2.1.5.234.99.1.3.5.2" codeSystemName="Siemens Test Locally-assigned Allergy Reaction codes"/>
+											</value>
+											<entryRelationship typeCode="SUBJ" inversionInd="true">
+												<observation classCode="OBS" moodCode="EVN">
+													<templateId root="2.16.840.1.113883.10.20.22.4.8"/>
+													<code code="SEV" displayName="Severity" codeSystem="2.16.840.1.113883.5.4" codeSystemName="ActCode"/>
+													<statusCode code="completed"/>
+													<value xsi:type="CD" code="6736007" displayName="Moderate" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+														<translation xsi:type="CD" code="MO" displayName="Moderate" codeSystem="2.1.5.234.99.1.3.1.3" codeSystemName="Siemens Test Locally-assigned Allergy Reaction Severity codes"/>
+													</value>
+												</observation>
+											</entryRelationship>
+										</observation>
+									</entryRelationship>
+									<entryRelationship typeCode="SUBJ" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.28"/>
+											<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+											<statusCode code="completed"/>
+											<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+												<translation xsi:type="CE" code="C" codeSystem="2.1.5.234.99.1.3.2.4" codeSystemName="Siemens Test Locally-assigned Allergy Status codes"/>
+											</value>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry typeCode="DRIV">
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.30"/>
+							<id nullFlavor="NI"/>
+							<code code="48765-2" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Allergies, adverse reactions, alerts"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low nullFlavor="UNK"/>
+							</effectiveTime>
+							<author>
+								<time value="20130626181659+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.7"/>
+									<id root="2.1.5.234.99.1.3.2.6.2" extension="237255"/>
+									<code code="ASSERTION" codeSystem="2.16.840.1.113883.5.4"/>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="416098002" displayName="Drug allergy (disorder)" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT"/>
+									<participant typeCode="CSM">
+										<participantRole classCode="MANU">
+											<playingEntity classCode="MMAT">
+												<code code="42844" displayName="Percocet" codeSystem="2.16.840.1.113883.6.88" codeSystemName="RxNorm">
+													<originalText>
+														<reference value="#ZCCD-Allergies.CCD-Allergies.237255"/>
+													</originalText>
+													<translation code="6992" displayName="Percocet" codeSystem="2.1.5.234.99.1.3.5.1" codeSystemName="Siemens Test Locally-assigned Allergy Product codes"/>
+												</code>
+											</playingEntity>
+										</participantRole>
+									</participant>
+									<entryRelationship typeCode="MFST" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.9"/>
+											<id root="2.1.5.234.99.1.3.2.6.2.1" extension="65209"/>
+											<code nullFlavor="NI"/>
+											<statusCode code="completed"/>
+											<effectiveTime>
+												<low nullFlavor="UNK"/>
+											</effectiveTime>
+											<value xsi:type="CD" nullFlavor="NAV">
+												<translation xsi:type="CD" code="Dizziness" displayName="Dizziness" codeSystem="2.1.5.234.99.1.3.5.2" codeSystemName="Siemens Test Locally-assigned Allergy Reaction codes"/>
+											</value>
+											<entryRelationship typeCode="SUBJ" inversionInd="true">
+												<observation classCode="OBS" moodCode="EVN">
+													<templateId root="2.16.840.1.113883.10.20.22.4.8"/>
+													<code code="SEV" displayName="Severity" codeSystem="2.16.840.1.113883.5.4" codeSystemName="ActCode"/>
+													<statusCode code="completed"/>
+													<value xsi:type="CD" code="255604002" displayName="Mild" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+														<translation xsi:type="CD" code="MI" displayName="Mild" codeSystem="2.1.5.234.99.1.3.1.3" codeSystemName="Siemens Test Locally-assigned Allergy Reaction Severity codes"/>
+													</value>
+												</observation>
+											</entryRelationship>
+										</observation>
+									</entryRelationship>
+									<entryRelationship typeCode="SUBJ" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.28"/>
+											<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+											<statusCode code="completed"/>
+											<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+												<translation xsi:type="CE" code="C" codeSystem="2.1.5.234.99.1.3.2.4" codeSystemName="Siemens Test Locally-assigned Allergy Status codes"/>
+											</value>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry typeCode="DRIV">
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.30"/>
+							<id nullFlavor="NI"/>
+							<code code="48765-2" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Allergies, adverse reactions, alerts"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low nullFlavor="UNK"/>
+							</effectiveTime>
+							<author>
+								<time value="20130702194855+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.7"/>
+									<id root="2.1.5.234.99.1.3.2.6.2" extension="237276"/>
+									<code code="ASSERTION" codeSystem="2.16.840.1.113883.5.4"/>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="416098002" displayName="Drug allergy (disorder)" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT"/>
+									<participant typeCode="CSM">
+										<participantRole classCode="MANU">
+											<playingEntity classCode="MMAT">
+												<code code="1314891" displayName="NATURAL LATEX RUBBER" codeSystem="2.16.840.1.113883.6.88" codeSystemName="RxNorm">
+													<originalText>
+														<reference value="#ZCCD-Allergies.CCD-Allergies.237276"/>
+													</originalText>
+													<translation code="8921" displayName="Latex" codeSystem="2.1.5.234.99.1.3.5.1" codeSystemName="Siemens Test Locally-assigned Allergy Product codes"/>
+													<translation code="2LQ0UUW8IN" displayName="Natural Latex Rubber" codeSystem="2.16.840.1.113883.4.9" codeSystemName="UNII"/>
+													<translation code="300916003" displayName=" Latex allergy" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT"/>
+												</code>
+											</playingEntity>
+										</participantRole>
+									</participant>
+									<entryRelationship typeCode="MFST" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.9"/>
+											<id root="2.1.5.234.99.1.3.2.6.2.1" extension="65225"/>
+											<code nullFlavor="NI"/>
+											<statusCode code="completed"/>
+											<effectiveTime>
+												<low nullFlavor="UNK"/>
+											</effectiveTime>
+											<value xsi:type="CD" nullFlavor="NAV">
+												<translation xsi:type="CD" code="Dizziness" displayName="Dizziness" codeSystem="2.1.5.234.99.1.3.5.2" codeSystemName="Siemens Test Locally-assigned Allergy Reaction codes"/>
+											</value>
+											<entryRelationship typeCode="SUBJ" inversionInd="true">
+												<observation classCode="OBS" moodCode="EVN">
+													<templateId root="2.16.840.1.113883.10.20.22.4.8"/>
+													<code code="SEV" displayName="Severity" codeSystem="2.16.840.1.113883.5.4" codeSystemName="ActCode"/>
+													<statusCode code="completed"/>
+													<value xsi:type="CD" code="255604002" displayName="Mild" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+														<translation xsi:type="CD" code="MI" displayName="Mild" codeSystem="2.1.5.234.99.1.3.1.3" codeSystemName="Siemens Test Locally-assigned Allergy Reaction Severity codes"/>
+													</value>
+												</observation>
+											</entryRelationship>
+										</observation>
+									</entryRelationship>
+									<entryRelationship typeCode="MFST" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.9"/>
+											<id root="2.1.5.234.99.1.3.2.6.2.1" extension="65226"/>
+											<code nullFlavor="NI"/>
+											<statusCode code="completed"/>
+											<effectiveTime>
+												<low nullFlavor="UNK"/>
+											</effectiveTime>
+											<value xsi:type="CD" nullFlavor="NAV">
+												<translation xsi:type="CD" code="Fever" displayName="Fever" codeSystem="2.1.5.234.99.1.3.5.2" codeSystemName="Siemens Test Locally-assigned Allergy Reaction codes"/>
+											</value>
+											<entryRelationship typeCode="SUBJ" inversionInd="true">
+												<observation classCode="OBS" moodCode="EVN">
+													<templateId root="2.16.840.1.113883.10.20.22.4.8"/>
+													<code code="SEV" displayName="Severity" codeSystem="2.16.840.1.113883.5.4" codeSystemName="ActCode"/>
+													<statusCode code="completed"/>
+													<value xsi:type="CD" code="255604002" displayName="Mild" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+														<translation xsi:type="CD" code="MI" displayName="Mild" codeSystem="2.1.5.234.99.1.3.1.3" codeSystemName="Siemens Test Locally-assigned Allergy Reaction Severity codes"/>
+													</value>
+												</observation>
+											</entryRelationship>
+										</observation>
+									</entryRelationship>
+									<entryRelationship typeCode="SUBJ" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.28"/>
+											<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+											<statusCode code="completed"/>
+											<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+												<translation xsi:type="CE" code="C" codeSystem="2.1.5.234.99.1.3.2.4" codeSystemName="Siemens Test Locally-assigned Allergy Status codes"/>
+											</value>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry typeCode="DRIV">
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.30"/>
+							<id nullFlavor="NI"/>
+							<code code="48765-2" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Allergies, adverse reactions, alerts"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low nullFlavor="UNK"/>
+							</effectiveTime>
+							<author>
+								<time value="20130801212557+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.7"/>
+									<id root="2.1.5.234.99.1.3.2.6.2" extension="242033"/>
+									<code code="ASSERTION" codeSystem="2.16.840.1.113883.5.4"/>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="416098002" displayName="Drug allergy (disorder)" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT"/>
+									<participant typeCode="CSM">
+										<participantRole classCode="MANU">
+											<playingEntity classCode="MMAT">
+												<code nullFlavor="NAV">
+													<originalText>
+														<reference value="#ZCCD-Allergies.CCD-Allergies.242033"/>
+													</originalText>
+													<translation code="8922" displayName="Milk" codeSystem="2.1.5.234.99.1.3.5.1" codeSystemName="Siemens Test Locally-assigned Allergy Product codes"/>
+												</code>
+											</playingEntity>
+										</participantRole>
+									</participant>
+									<entryRelationship typeCode="SUBJ" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.28"/>
+											<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+											<statusCode code="completed"/>
+											<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+												<translation xsi:type="CE" code="C" codeSystem="2.1.5.234.99.1.3.2.4" codeSystemName="Siemens Test Locally-assigned Allergy Status codes"/>
+											</value>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+					<entry typeCode="DRIV">
+						<act classCode="ACT" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.30"/>
+							<id nullFlavor="NI"/>
+							<code code="48765-2" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Allergies, adverse reactions, alerts"/>
+							<statusCode code="active"/>
+							<effectiveTime>
+								<low nullFlavor="UNK"/>
+							</effectiveTime>
+							<author>
+								<time value="20130801212557+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="false">
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.7"/>
+									<id root="2.1.5.234.99.1.3.2.6.2" extension="242034"/>
+									<code code="ASSERTION" codeSystem="2.16.840.1.113883.5.4"/>
+									<statusCode code="completed"/>
+									<effectiveTime>
+										<low nullFlavor="UNK"/>
+									</effectiveTime>
+									<value xsi:type="CD" code="414285001" displayName="Food Allergy (disorder)" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT"/>
+									<participant typeCode="CSM">
+										<participantRole classCode="MANU">
+											<playingEntity classCode="MMAT">
+												<code nullFlavor="NAV">
+													<originalText>
+														<reference value="#ZCCD-Allergies.CCD-Allergies.242034"/>
+													</originalText>
+													<translation code="MILK" displayName="Milk" codeSystem="2.1.5.234.99.1.3.5.1" codeSystemName="Siemens Test Locally-assigned Allergy Product codes"/>
+												</code>
+											</playingEntity>
+										</participantRole>
+									</participant>
+									<entryRelationship typeCode="SUBJ" inversionInd="true">
+										<observation classCode="OBS" moodCode="EVN">
+											<templateId root="2.16.840.1.113883.10.20.22.4.28"/>
+											<code code="33999-4" codeSystem="2.16.840.1.113883.6.1" displayName="Status"/>
+											<statusCode code="completed"/>
+											<value xsi:type="CE" code="55561003" displayName="Active" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT">
+												<translation xsi:type="CE" code="C" codeSystem="2.1.5.234.99.1.3.2.4" codeSystemName="Siemens Test Locally-assigned Allergy Status codes"/>
+											</value>
+										</observation>
+									</entryRelationship>
+								</observation>
+							</entryRelationship>
+						</act>
+					</entry>
+				</section>
+			</component>
+			<component>
+				<section>
+					<templateId root="2.16.840.1.113883.10.20.22.2.1.1"/>
+					<code code="10160-0" codeSystem="2.16.840.1.113883.6.1" displayName="History of medication use" codeSystemName="LOINC"/>
+					<title>Medication</title>
+					<!--****  Medications Section Narrative Block  ****-->
+					<text>
+						<paragraph>It is the responsibility of the patient or patient representative to confirm the list of medications with either the patient's personal care provider or the patient's follow-up care provider to ensure the patient has an appropriate list of medications to take at home.</paragraph>
+						<br/>
+						<paragraph>Preliminary list - medication reconciliation not completed.</paragraph>
+						<paragraph>
+							<content styleCode="Bold">Discharge medications</content>
+						</paragraph>
+						<paragraph>New medications</paragraph>
+						<list listType="unordered">
+							<item>
+								<content ID="ZDischargeMeds.DischargeStoppedMedsSections.I083-p-11537-1">ibuprofen 200 mg Capsule, Ordered By: Thomas Anderson<br/>Directions: 2 capsule oral twice a day after meals</content>
+								<table>
+									<tbody>
+										<tr>
+											<td/>
+										</tr>
+									</tbody>
+								</table>
+							</item>
+							<item>
+								<content ID="ZDischargeMeds.DischargeStoppedMedsSections.I083-p-13050-0">aliskiren-amlodipine (Tekamlo) 150 mg-10 mg Tablet, Ordered By: Thomas  Anderson<br/>Directions: 1 tablet jejunostomy three times a day</content>
+								<content ID="ZDischargeMeds.DischargeStoppedMedsSections.I083-p-13050-0.357873">
+									<br/>Additional Instructions: Patient is higher fewer</content>
+								<table>
+									<tbody>
+										<tr>
+											<td/>
+										</tr>
+									</tbody>
+								</table>
+							</item>
+						</list>
+						<paragraph>
+							<content styleCode="Bold">Stopped medications</content>
+						</paragraph>
+						<list listType="unordered">
+							<item>
+								<content ID="REF_NO_STOPPED_MEDS">None</content>
+							</item>
+						</list>
+					</text>
+					<!--****  Medications Section Structured Body  ****-->
+					<entry typeCode="DRIV">
+						<substanceAdministration classCode="SBADM" moodCode="INT" negationInd="true">
+							<templateId root="2.16.840.1.113883.10.20.22.4.16"/>
+							<id root="2.1.5.234.99.1.3.2.6.4" extension="I083_p_11537_1"/>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS">
+								<low nullFlavor="UNK"/>
+								<high nullFlavor="UNK"/>
+							</effectiveTime>
+							<consumable>
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.22.4.23"/>
+									<manufacturedMaterial classCode="MMAT">
+										<code code="310964" displayName="Ibuprofen 200 MG Oral Capsule" codeSystem="2.16.840.1.113883.6.88" codeSystemName="RxNorm">
+											<originalText>
+												<reference value="#ZDischargeMeds.DischargeStoppedMedsSections.I083-p-11537-1"/>
+											</originalText>
+										</code>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<author>
+								<time value="20130711135541+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+						</substanceAdministration>
+					</entry>
+					<entry typeCode="DRIV">
+						<substanceAdministration classCode="SBADM" moodCode="INT" negationInd="true">
+							<templateId root="2.16.840.1.113883.10.20.22.4.16"/>
+							<id root="2.1.5.234.99.1.3.2.6.4" extension="I083_p_13050_0"/>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS">
+								<low nullFlavor="UNK"/>
+								<high nullFlavor="UNK"/>
+							</effectiveTime>
+							<consumable>
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.22.4.23"/>
+									<manufacturedMaterial classCode="MMAT">
+										<code code="1009247" displayName="aliskiren 150 MG / Amlodipine 10 MG Oral Tablet" codeSystem="2.16.840.1.113883.6.88" codeSystemName="RxNorm">
+											<originalText>
+												<reference value="#ZDischargeMeds.DischargeStoppedMedsSections.I083-p-13050-0"/>
+											</originalText>
+										</code>
+										<name>Tekamlo</name>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+							<author>
+								<time value="20130711135541+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<entryRelationship typeCode="SUBJ" inversionInd="true">
+								<act classCode="ACT" moodCode="INT">
+									<templateId root="2.16.840.1.113883.10.20.22.4.20"/>
+									<code code="311401005" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Patient Education"/>
+									<text>
+										<reference value="#ZDischargeMeds.DischargeStoppedMedsSections.I083-p-13050-0.357873"/>
+									</text>
+									<statusCode code="completed"/>
+								</act>
+							</entryRelationship>
+						</substanceAdministration>
+					</entry>
+				</section>
+			</component>
+			<component>
+				<section>
+					<templateId root="2.16.840.1.113883.10.20.22.2.2"/>
+					<templateId root="2.16.840.1.113883.10.20.22.2.2.1"/>
+					<code code="11369-6" codeSystem="2.16.840.1.113883.6.1" displayName="History of immunizations" codeSystemName="LOINC"/>
+					<title>Immunizations</title>
+					<!--****  Immunzations Section Narrative Block  ****-->
+					<text>
+						<paragraph>
+							<content ID="ZImmunizations.Immunizations.ORD-PHL02-NO-DATA">No immunizations administered or ordered.</content>
+						</paragraph>
+					</text>
+					<!--****  Immunzations Section Narrative Block  ****-->
+					<entry typeCode="DRIV">
+						<substanceAdministration classCode="SBADM" moodCode="INT" negationInd="true">
+							<templateId root="2.16.840.1.113883.10.20.22.4.52"/>
+							<id root="2.1.5.234.99.1.3.2.6.6" extension="ORD_PHL02_NO_DATA"/>
+							<statusCode code="completed"/>
+							<effectiveTime xsi:type="IVL_TS">
+								<low nullFlavor="NA"/>
+							</effectiveTime>
+							<consumable>
+								<manufacturedProduct classCode="MANU">
+									<templateId root="2.16.840.1.113883.10.20.22.4.54"/>
+									<manufacturedMaterial>
+										<code nullFlavor="UNK">
+											<originalText>
+												<reference value="#ZImmunizations.Immunizations.ORD-PHL02-NO-DATA"/>
+											</originalText>
+											<translation code="410942007" displayName="drug or medication" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT"/>
+										</code>
+									</manufacturedMaterial>
+								</manufacturedProduct>
+							</consumable>
+						</substanceAdministration>
+					</entry>
+				</section>
+			</component>
+		
+			<component>
+				<section>
+					<templateId root="2.16.840.1.113883.10.20.22.2.17"/>
+					<code code="29762-2" codeSystemName="LOINC" codeSystem="2.16.840.1.113883.6.1" displayName="Social History"/>
+					<title>Social History</title>
+					<text>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">Social History from 8/29/2013 1:50 PM:</content>
+						</paragraph>
+						<content styleCode="Bold">Personal Habits</content>
+						<br/>
+						<list listType="unordered" ID="ZSocial-History.SC-CLX-Social-Hx.820830.22000029241">
+							<item>SNOMED Smoking Status : Current Some Day Smoker</item>
+						</list>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">Social History from 4/3/2013 7:30 AM:</content>
+						</paragraph>
+						<content styleCode="Bold">Personal Habits</content>
+						<br/>
+						<list listType="unordered" ID="ZSocial-History.SC-CLX-Social-Hx.807812.22000017043">
+							<item>Tobacco Use? : Yes</item>
+						</list>
+						<br/>
+					</text>
+					<entry typeCode="DRIV">
+						<observation classCode="OBS" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.78"/>
+							<id extension="22000029241" root="2.1.5.234.99.1.3.6.9"/>
+							<code code="ASSERTION" codeSystem="2.16.840.1.113883.5.4"/>
+							<statusCode code="completed"/>
+							<effectiveTime nullFlavor="UNK">
+
+							</effectiveTime>
+							<value xsi:type="CD" code="428041000124106" displayName="Current some day smoker" codeSystem="2.16.840.1.113883.6.96"/>
+							<author>
+								<time value="20130829180201+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+						</observation>
+					</entry>
+				</section>
+			</component>
+			<component>
+				<section>
+					<templateId root="2.16.840.1.113883.10.20.22.2.41"/>
+					<code code="8653-8" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Hospital Discharge Instructions"/>
+					<title>Hospital Discharge Instructions</title>
+					<text>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">Discharge Instructions - All from 10/15/2012 12:06 PM:</content>
+						</paragraph>
+						<content styleCode="Bold">Notify Physician If:</content>
+						<br/>
+						<list listType="unordered" ID="ZDetailedInstructions.CLX-DischInstruc.804942.51425345">
+							<item>Notify Physician For : Fever or chills; Nausea and/or vomiting greater than 3 time or for longer than 24 hours, not relieved with anti-nausea medication; Diarrhea in large quantity or more than 3-4 bowel movements in 24 hours; Constipation, no bowel movement in 3 days or longer; Shortness of breath; Chest pain; Redness, swelling, warmth, pain at IV access site; Redness, swelling, warmth around incision, bleeding or drainage from incision; Severe weakness or tiredness; Severe pain that pain medication does not control</item>
+						</list>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">Discharge Instructions - All from 8/24/2012 4:29 PM:</content>
+						</paragraph>
+						<content styleCode="Bold">Activity and Other Restrictions</content>
+						<br/>
+						<list listType="unordered" ID="ZDetailedInstructions.CLX-DischInstruc.804325.51418167">
+							<item>Activity : Bed Rest,OOB to Chair,Up ad lib</item>
+						</list>
+						<list listType="unordered" ID="ZDetailedInstructions.CLX-DischInstruc.804325.51418168">
+							<item>Stairs : As tolerated,1 Flight</item>
+						</list>
+						<list listType="unordered" ID="ZDetailedInstructions.CLX-DischInstruc.804325.51418169">
+							<item>Bathing : Keep Sutures Dry</item>
+						</list>
+						<content styleCode="Bold">Equiipment</content>
+						<br/>
+						<list listType="unordered" ID="ZDetailedInstructions.CLX-DischInstruc.804325.51418170">
+							<item>Cane : Yes</item>
+						</list>
+						<list listType="unordered" ID="ZDetailedInstructions.CLX-DischInstruc.804325.51418171">
+							<item>Cane Provider Phone # : test</item>
+						</list>
+						<content styleCode="Bold">Notify Physician If:</content>
+						<br/>
+						<list listType="unordered" ID="ZDetailedInstructions.CLX-DischInstruc.804325.51418166">
+							<item>Notify Physician For : Fever or chills; Nausea and/or vomiting greater than 3 time or for longer than 24 hours, not relieved with anti-nausea medication; Diarrhea in large quantity or more than 3-4 bowel movements in 24 hours; Constipation, no bowel movement in 3 days or longer; Shortness of breath; Chest pain; Redness, swelling, warmth, pain at IV access site; Redness, swelling, warmth around incision, bleeding or drainage from incision; Severe weakness or tiredness; Severe pain that pain medication does not control</item>
+						</list>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">Discharge Instructions - All from 7/31/2012 5:03 PM:</content>
+						</paragraph>
+						<content styleCode="Bold">Activity and Other Restrictions</content>
+						<br/>
+						<list listType="unordered" ID="ZDetailedInstructions.CLX-DischInstruc.803825.51413414">
+							<item>Activity : Bed Rest,OOB to Chair,OOB with Assist</item>
+						</list>
+						<list listType="unordered" ID="ZDetailedInstructions.CLX-DischInstruc.803825.51413415">
+							<item>Stairs : As tolerated,2 Flights</item>
+						</list>
+						<list listType="unordered" ID="ZDetailedInstructions.CLX-DischInstruc.803825.51413416">
+							<item>Driving : Day Only</item>
+						</list>
+						<content styleCode="Bold">Notify Physician If:</content>
+						<br/>
+						<list listType="unordered" ID="ZDetailedInstructions.CLX-DischInstruc.803825.51413413">
+							<item>Notify Physician For : Fever or chills Nausea and /or vomiting greater than 3 times or for longer than 24 hours, not relieved with anti-nausea medication Diarrhea in large quantity or more than 3-4 bowel movements in 24 hours Constipation, no bowel movement in 3 days or longer Shortness of breath Chest pain Redness, swelling, warmth, pain at IV access site Redness, swelling, warmth around incision Bleeding or drainage from incision Severe weakness or tiredness                             Severe pain that pain medication does not control</item>
+						</list>
+						<br/>
+					</text>
+				</section>
+			</component>
+			<component>
+				<section>
+					<templateId root="2.16.840.1.113883.10.20.22.2.10"/>
+					<code code="18776-5" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Treatment plan"/>
+					<title>Plan of Care</title>
+					<text>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">Discharge Instructions from 10/15/2012 12:06 PM:</content>
+						</paragraph>
+						<content styleCode="Bold">Notify Physician For</content>
+						<br/>
+						<list listType="unordered" ID="ZTreatmentPlan.SC-CLX-DC-Instr.804942.51425345">
+							<item>Notify Physician For : Fever or chills; Nausea and/or vomiting greater than 3 time or for longer than 24 hours, not relieved with anti-nausea medication; Diarrhea in large quantity or more than 3-4 bowel movements in 24 hours; Constipation, no bowel movement in 3 days or longer; Shortness of breath; Chest pain; Redness, swelling, warmth, pain at IV access site; Redness, swelling, warmth around incision, bleeding or drainage from incision; Severe weakness or tiredness; Severe pain that pain medication does not control</item>
+						</list>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">Discharge Instructions from 8/24/2012 4:29 PM:</content>
+						</paragraph>
+						<content styleCode="Bold">Notify Physician For</content>
+						<br/>
+						<list listType="unordered" ID="ZTreatmentPlan.SC-CLX-DC-Instr.804325.51418166">
+							<item>Notify Physician For : Fever or chills; Nausea and/or vomiting greater than 3 time or for longer than 24 hours, not relieved with anti-nausea medication; Diarrhea in large quantity or more than 3-4 bowel movements in 24 hours; Constipation, no bowel movement in 3 days or longer; Shortness of breath; Chest pain; Redness, swelling, warmth, pain at IV access site; Redness, swelling, warmth around incision, bleeding or drainage from incision; Severe weakness or tiredness; Severe pain that pain medication does not control</item>
+						</list>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">Discharge Instructions from 7/31/2012 5:03 PM:</content>
+						</paragraph>
+						<content styleCode="Bold">Notify Physician For</content>
+						<br/>
+						<list listType="unordered" ID="ZTreatmentPlan.SC-CLX-DC-Instr.803825.51413413">
+							<item>Notify Physician For : Fever or chills Nausea and /or vomiting greater than 3 times or for longer than 24 hours, not relieved with anti-nausea medication Diarrhea in large quantity or more than 3-4 bowel movements in 24 hours Constipation, no bowel movement in 3 days or longer Shortness of breath Chest pain Redness, swelling, warmth, pain at IV access site Redness, swelling, warmth around incision Bleeding or drainage from incision Severe weakness or tiredness                             Severe pain that pain medication does not control</item>
+						</list>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">Discharge Instructions - All from 10/15/2012 12:06 PM:</content>
+						</paragraph>
+						<content styleCode="Bold">Notify Physician If:</content>
+						<br/>
+						<list listType="unordered" ID="ZTreatmentPlan.CLX-DischInstruc.804942.51425345">
+							<item>Notify Physician For : Fever or chills; Nausea and/or vomiting greater than 3 time or for longer than 24 hours, not relieved with anti-nausea medication; Diarrhea in large quantity or more than 3-4 bowel movements in 24 hours; Constipation, no bowel movement in 3 days or longer; Shortness of breath; Chest pain; Redness, swelling, warmth, pain at IV access site; Redness, swelling, warmth around incision, bleeding or drainage from incision; Severe weakness or tiredness; Severe pain that pain medication does not control</item>
+						</list>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">Discharge Instructions - All from 8/24/2012 4:29 PM:</content>
+						</paragraph>
+						<content styleCode="Bold">Activity and Other Restrictions</content>
+						<br/>
+						<list listType="unordered" ID="ZTreatmentPlan.CLX-DischInstruc.804325.51418167">
+							<item>Activity : Bed Rest,OOB to Chair,Up ad lib</item>
+						</list>
+						<list listType="unordered" ID="ZTreatmentPlan.CLX-DischInstruc.804325.51418168">
+							<item>Stairs : As tolerated,1 Flight</item>
+						</list>
+						<list listType="unordered" ID="ZTreatmentPlan.CLX-DischInstruc.804325.51418169">
+							<item>Bathing : Keep Sutures Dry</item>
+						</list>
+						<content styleCode="Bold">Equiipment</content>
+						<br/>
+						<list listType="unordered" ID="ZTreatmentPlan.CLX-DischInstruc.804325.51418170">
+							<item>Cane : Yes</item>
+						</list>
+						<list listType="unordered" ID="ZTreatmentPlan.CLX-DischInstruc.804325.51418171">
+							<item>Cane Provider Phone # : test</item>
+						</list>
+						<content styleCode="Bold">Notify Physician If:</content>
+						<br/>
+						<list listType="unordered" ID="ZTreatmentPlan.CLX-DischInstruc.804325.51418166">
+							<item>Notify Physician For : Fever or chills; Nausea and/or vomiting greater than 3 time or for longer than 24 hours, not relieved with anti-nausea medication; Diarrhea in large quantity or more than 3-4 bowel movements in 24 hours; Constipation, no bowel movement in 3 days or longer; Shortness of breath; Chest pain; Redness, swelling, warmth, pain at IV access site; Redness, swelling, warmth around incision, bleeding or drainage from incision; Severe weakness or tiredness; Severe pain that pain medication does not control</item>
+						</list>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">Discharge Instructions - All from 7/31/2012 5:03 PM:</content>
+						</paragraph>
+						<content styleCode="Bold">Activity and Other Restrictions</content>
+						<br/>
+						<list listType="unordered" ID="ZTreatmentPlan.CLX-DischInstruc.803825.51413414">
+							<item>Activity : Bed Rest,OOB to Chair,OOB with Assist</item>
+						</list>
+						<list listType="unordered" ID="ZTreatmentPlan.CLX-DischInstruc.803825.51413415">
+							<item>Stairs : As tolerated,2 Flights</item>
+						</list>
+						<list listType="unordered" ID="ZTreatmentPlan.CLX-DischInstruc.803825.51413416">
+							<item>Driving : Day Only</item>
+						</list>
+						<content styleCode="Bold">Notify Physician If:</content>
+						<br/>
+						<list listType="unordered" ID="ZTreatmentPlan.CLX-DischInstruc.803825.51413413">
+							<item>Notify Physician For : Fever or chills Nausea and /or vomiting greater than 3 times or for longer than 24 hours, not relieved with anti-nausea medication Diarrhea in large quantity or more than 3-4 bowel movements in 24 hours Constipation, no bowel movement in 3 days or longer Shortness of breath Chest pain Redness, swelling, warmth, pain at IV access site Redness, swelling, warmth around incision Bleeding or drainage from incision Severe weakness or tiredness                             Severe pain that pain medication does not control</item>
+						</list>
+						<br/>
+					</text>
+				</section>
+			</component>
+			<component>
+				<section>
+					<templateId root="2.16.840.1.113883.10.20.22.2.14"/>
+					<code code="47420-5" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Functional Status"/>
+					<title>Functional Status</title>
+					<text>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">CLX Admission 3.4 Flowsheet from 8/29/2013 1:50 PM:</content>
+						</paragraph>
+						<content styleCode="Bold">CLX 3.4 Admission</content>
+						<br/>
+						<list listType="unordered" ID="ZFunctionalStatus.CLX-Admission.820830.22000029242">
+							<item>Clothing : Yes</item>
+						</list>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">CLX Admission 3.4 Flowsheet from 11/27/2012 11:59 AM:</content>
+						</paragraph>
+						<content styleCode="Bold">CLX 3.4 Admission</content>
+						<br/>
+						<list listType="unordered" ID="ZFunctionalStatus.CLX-Admission.805511.22000005023">
+							<item>Source of Info : Self</item>
+						</list>
+						<list listType="unordered" ID="ZFunctionalStatus.CLX-Admission.805511.22000005029">
+							<item>Accompanied By : Spouse</item>
+						</list>
+						<list listType="unordered" ID="ZFunctionalStatus.CLX-Admission.805511.22000005024">
+							<item>Mode/Arrival : Ambulatory/Carry</item>
+						</list>
+						<list listType="unordered" ID="ZFunctionalStatus.CLX-Admission.805511.22000005028">
+							<item>Source Reliable? : Yes</item>
+						</list>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">CLX Admission 3.4 Flowsheet from 11/19/2012 8:17 AM:</content>
+						</paragraph>
+						<content styleCode="Bold">CLX 3.4 Admission</content>
+						<br/>
+						<list listType="unordered" ID="ZFunctionalStatus.CLX-Admission.803926.22000004201">
+							<item>Legal Guardian : VK</item>
+						</list>
+						<list listType="unordered" ID="ZFunctionalStatus.CLX-Admission.803926.51414356">
+							<item>Source of Info : Spouse</item>
+						</list>
+						<list listType="unordered" ID="ZFunctionalStatus.CLX-Admission.803926.51414360">
+							<item>Accompanied By : Spouse,Significant Other</item>
+						</list>
+						<list listType="unordered" ID="ZFunctionalStatus.CLX-Admission.803926.51414357">
+							<item>Mode/Arrival : Cart/Crib</item>
+						</list>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">CLX Admission 3.4 Flowsheet from 8/5/2012 4:45 PM:</content>
+						</paragraph>
+						<content styleCode="Bold">CLX 3.4 Admission</content>
+						<br/>
+						<list listType="unordered" ID="ZFunctionalStatus.CLX-Admission.803912.51414140">
+							<item>Accompanied By : Spouse,Parent</item>
+						</list>
+						<br/>
+					</text>
+				</section>
+			</component>
+			<component>
+				<section>
+					<templateId root="2.16.840.1.113883.10.20.22.2.12"/>
+					<code code="29299-5" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Reason For Visit"/>
+					<title>Reason For Visit</title>
+					<text>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">Reason for Visit from 11/27/2012 1:35 PM:</content>
+						</paragraph>
+						<content styleCode="Bold">Reason for Visit</content>
+						<br/>
+						<list listType="unordered" ID="ZReasonForVisit.CLX-ReasonVisit.805516.22000005221">
+							<item>Pt Stated Reason for Adm : because I am sick</item>
+						</list>
+						<paragraph>
+							<content styleCode="Bold Underline CAPTION">Reason for Visit from 11/27/2012 11:59 AM:</content>
+						</paragraph>
+						<content styleCode="Bold">Reason for Visit</content>
+						<br/>
+						<list listType="unordered" ID="ZReasonForVisit.CLX-ReasonVisit.805511.22000005000">
+							<item>Pt Stated Reason for Adm : Rockin' pneumonia</item>
+						</list>
+					</text>
+				</section>
+			</component>
+			<component>
+				<section>
+					<templateId root="1.3.6.1.4.1.19376.1.5.3.1.1.13.2.1"/>
+					<code code="10154-3" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Chief Complaint"/>
+					<title>Chief Complaint</title>
+					<text>Line 1<br/>
+						<br/>Line 2<br/>
+						<br/>Line 3<br/>Line 4<br/>
+						<br/>Line 5<br/>
+						<br/>Line 6</text>
+				</section>
+			</component>
+			<component>
+				<section>
+					<templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.5"/>
+					<code code="8648-8" displayName="Hospital Course" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+					<title>Hospital Course</title>
+					<text/>
+				</section>
+			</component>
+			<component>
+				<section>
+					<templateId root="2.16.840.1.113883.10.20.22.2.7"/>
+					<templateId root="2.16.840.1.113883.10.20.22.2.7.1"/>
+					<code code="47519-4" displayName="History of procedures" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+					<title>Procedures</title>
+					<!--****  Procedures Section Narrative Block  ****-->
+					<text>
+						<paragraph>
+							<content ID="ZCCDProcedureList.CCDProcedureList.ORD-PHL04-NO-DATA">No relevant procedures performed.</content>
+						</paragraph>
+					</text>
+					<!--**** Procedures Section Structured Body ****-->
+					<entry typeCode="DRIV">
+						<procedure classCode="PROC" moodCode="EVN" negationInd="true">
+							<templateId root="2.16.840.1.113883.10.20.22.4.14"/>
+							<id root="2.1.5.234.99.1.3.2.6.5" extension="ORD_PHL04_NO_DATA"/>
+							<code code="71388002" codeSystem="2.16.840.1.113883.6.96" displayName="Procedure" codeSystemName="SNOMED CT">
+								<originalText>
+									<reference value="#ZCCDProcedureList.CCDProcedureList.ORD-PHL04-NO-DATA"/>
+								</originalText>
+							</code>
+							<text>
+								<reference value="#ZCCDProcedureList.CCDProcedureList.ORD-PHL04-NO-DATA"/>
+							</text>
+							<statusCode code="completed"/>
+							<author>
+								<time value="20130904161227+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+						</procedure>
+					</entry>
+				</section>
+			</component>
+			<component>
+				<section>
+					<templateId root="2.16.840.1.113883.10.20.22.2.3"/>
+					<templateId root="2.16.840.1.113883.10.20.22.2.3.1"/>
+					<code code="30954-2" codeSystem="2.16.840.1.113883.6.1"/>
+					<title>Results</title>
+					<text>
+						<paragraph>
+							<content styleCode="Bold Underline">HEMATOLOGY from 6/12/2013 1:58 PM</content>
+						</paragraph>
+						<content ID="ZCCD-Results.HEMATOLOGY.22000006001">
+							<content styleCode="Bold">WHITE BLOOD COUNT </content>5 %</content>
+						<paragraph>
+							<content styleCode="Bold Underline">HEMATOLOGY from 12/10/2012 10:35 AM</content>
+						</paragraph>
+						<content ID="ZCCD-Results.HEMATOLOGY.22000002001">
+							<content styleCode="Bold">WHITE BLOOD COUNT </content>6009  (Preliminary Result)</content>
+						<paragraph>
+							<content styleCode="Bold Underline">HEMATOLOGY from 10/26/2012 3:53 PM</content>
+						</paragraph>
+						<content ID="ZCCD-Results.HEMATOLOGY.22000001001">
+							<content styleCode="Bold">HEMATOCRIT </content>55 %</content>
+						<paragraph>
+							<content styleCode="Bold Underline">HEMATOLOGY from 10/8/2012 3:01 PM</content>
+						</paragraph>
+						<content ID="ZCCD-Results.HEMATOLOGY.65044">
+							<content styleCode="Bold">HEMATOCRIT </content>55 %</content>
+						<paragraph>
+							<content styleCode="Bold Underline">CHEMISTRY from 12/10/2012 10:36 AM</content>
+						</paragraph>
+						<content ID="ZCCD-Results.CHEMISTRY.22000002002">
+							<content styleCode="Bold">GLUCOSE </content>Noraml  (Preliminary Result)</content>
+						<paragraph>
+							<content styleCode="Bold Underline">CHEMISTRY from 12/5/2012 2:44 PM</content>
+						</paragraph>
+						<content ID="ZCCD-Results.CHEMISTRY.22000002000">
+							<content styleCode="Bold">GLUCOSE </content>50 </content>
+						<paragraph>
+							<content styleCode="Bold Underline">CHEMISTRY from 9/28/2012 10:30 AM</content>
+						</paragraph>
+						<content ID="ZCCD-Results.CHEMISTRY.64047">
+							<content styleCode="Bold">SODIUM LEVEL </content>10 % A</content>
+						<br/>
+						<content ID="ZCCD-Results.CHEMISTRY.64046">
+							<content styleCode="Bold">GLUCOSE </content>5 %</content>
+						<paragraph>
+							<content styleCode="Bold Underline">CHEMISTRY from 9/20/2012 10:00 AM</content>
+						</paragraph>
+						<content ID="ZCCD-Results.CHEMISTRY.64050">
+							<content styleCode="Bold">SODIUM LEVEL </content>Normal : 120 </content>
+						<br/>
+						<content ID="ZCCD-Results.CHEMISTRY.63045">
+							<content styleCode="Bold">POTASSIUM LEVEL </content>22 </content>
+						<br/>
+						<content ID="ZCCD-Results.CHEMISTRY.64049">
+							<content styleCode="Bold">GLUCOSE </content>96 </content>
+					</text>
+					<entry typeCode="DRIV">
+						<organizer classCode="BATTERY" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.1"/>
+							<id root="2.1.5.234.99.1.3.2.6.3" extension="HEMATOLOGY"/>
+							<code nullFlavor="NA"/>
+							<statusCode nullFlavor="NA"/>
+							<author>
+								<time value="20130612175848+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.2"/>
+									<id root="2.1.5.234.99.1.3.2.6.3.1" extension="22000006001"/>
+									<code nullFlavor="UNK" code="UNK">
+										<translation code="WBC" codeSystem="2.1.5.234.99.1.3.6.8" codeSystemName="Siemens Test Locally-assigned Results codes"/>
+									</code>
+									<text>
+										<reference value="#ZCCD-Results.HEMATOLOGY.22000006001"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime value="20130612135800-0400"/>
+									<value xsi:type="ED" mediaType="text/xml">
+										<reference value="#ZCCD-Results.HEMATOLOGY.22000006001"/>
+									</value>
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+								</observation>
+							</component>
+						</organizer>
+					</entry>
+					<entry typeCode="DRIV">
+						<organizer classCode="BATTERY" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.1"/>
+							<id root="2.1.5.234.99.1.3.2.6.3" extension="HEMATOLOGY"/>
+							<code nullFlavor="NA"/>
+							<statusCode nullFlavor="NA"/>
+							<author>
+								<time value="20130204221406+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.2"/>
+									<id root="2.1.5.234.99.1.3.2.6.3.1" extension="22000001001"/>
+									<code nullFlavor="UNK" code="UNK">
+										<translation code="HCT" codeSystem="2.1.5.234.99.1.3.6.8" codeSystemName="Siemens Test Locally-assigned Results codes"/>
+									</code>
+									<text>
+										<reference value="#ZCCD-Results.HEMATOLOGY.22000001001"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime value="20121026155300-0400"/>
+									<value xsi:type="ED" mediaType="text/xml">
+										<reference value="#ZCCD-Results.HEMATOLOGY.22000001001"/>
+									</value>
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+								</observation>
+							</component>
+						</organizer>
+					</entry>
+					<entry typeCode="DRIV">
+						<organizer classCode="BATTERY" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.1"/>
+							<id root="2.1.5.234.99.1.3.2.6.3" extension="HEMATOLOGY"/>
+							<code nullFlavor="NA"/>
+							<statusCode nullFlavor="NA"/>
+							<author>
+								<time value="20130204221406+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.2"/>
+									<id root="2.1.5.234.99.1.3.2.6.3.1" extension="65044"/>
+									<code nullFlavor="UNK" code="UNK">
+										<translation code="HCT" codeSystem="2.1.5.234.99.1.3.6.8" codeSystemName="Siemens Test Locally-assigned Results codes"/>
+									</code>
+									<text>
+										<reference value="#ZCCD-Results.HEMATOLOGY.65044"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime value="20121008150100-0400"/>
+									<value xsi:type="ED" mediaType="text/xml">
+										<reference value="#ZCCD-Results.HEMATOLOGY.65044"/>
+									</value>
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+								</observation>
+							</component>
+						</organizer>
+					</entry>
+					<entry typeCode="DRIV">
+						<organizer classCode="BATTERY" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.1"/>
+							<id root="2.1.5.234.99.1.3.2.6.3" extension="CHEMISTRY"/>
+							<code nullFlavor="NA"/>
+							<statusCode nullFlavor="NA"/>
+							<author>
+								<time value="20130204221406+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.2"/>
+									<id root="2.1.5.234.99.1.3.2.6.3.1" extension="22000002000"/>
+									<code nullFlavor="UNK" code="UNK">
+										<translation code="GLU_&amp;_Blood" codeSystem="2.1.5.234.99.1.3.6.8" codeSystemName="Siemens Test Locally-assigned Results codes"/>
+									</code>
+									<text>
+										<reference value="#ZCCD-Results.CHEMISTRY.22000002000"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime value="20121205144400-0500"/>
+									<value xsi:type="ED" mediaType="text/xml">
+										<reference value="#ZCCD-Results.CHEMISTRY.22000002000"/>
+									</value>
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+								</observation>
+							</component>
+						</organizer>
+					</entry>
+					<entry typeCode="DRIV">
+						<organizer classCode="BATTERY" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.1"/>
+							<id root="2.1.5.234.99.1.3.2.6.3" extension="CHEMISTRY"/>
+							<code nullFlavor="NA"/>
+							<statusCode nullFlavor="NA"/>
+							<author>
+								<time value="20130204221406+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.2"/>
+									<id root="2.1.5.234.99.1.3.2.6.3.1" extension="64047"/>
+									<code nullFlavor="UNK" code="UNK">
+										<translation code="NA" codeSystem="2.1.5.234.99.1.3.6.8" codeSystemName="Siemens Test Locally-assigned Results codes"/>
+									</code>
+									<text>
+										<reference value="#ZCCD-Results.CHEMISTRY.64047"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime value="20120928103000-0400"/>
+									<value xsi:type="ED" mediaType="text/xml">
+										<reference value="#ZCCD-Results.CHEMISTRY.64047"/>
+									</value>
+									<interpretationCode code="A" codeSystem="2.16.840.1.113883.5.83"/>
+								</observation>
+							</component>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.2"/>
+									<id root="2.1.5.234.99.1.3.2.6.3.1" extension="64046"/>
+									<code nullFlavor="UNK" code="UNK">
+										<translation code="GLU_&amp;_Blood" codeSystem="2.1.5.234.99.1.3.6.8" codeSystemName="Siemens Test Locally-assigned Results codes"/>
+									</code>
+									<text>
+										<reference value="#ZCCD-Results.CHEMISTRY.64046"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime value="20120928103000-0400"/>
+									<value xsi:type="ED" mediaType="text/xml">
+										<reference value="#ZCCD-Results.CHEMISTRY.64046"/>
+									</value>
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+								</observation>
+							</component>
+						</organizer>
+					</entry>
+					<entry typeCode="DRIV">
+						<organizer classCode="BATTERY" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.22.4.1"/>
+							<id root="2.1.5.234.99.1.3.2.6.3" extension="CHEMISTRY"/>
+							<code nullFlavor="NA"/>
+							<statusCode nullFlavor="NA"/>
+							<author>
+								<time value="20130204221406+0000"/>
+								<assignedAuthor>
+									<id nullFlavor="NI"/>
+									<addr nullFlavor="NI"/>
+									<telecom nullFlavor="NI"/>
+								</assignedAuthor>
+							</author>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.2"/>
+									<id root="2.1.5.234.99.1.3.2.6.3.1" extension="64050"/>
+									<code nullFlavor="UNK" code="UNK">
+										<translation code="NA" codeSystem="2.1.5.234.99.1.3.6.8" codeSystemName="Siemens Test Locally-assigned Results codes"/>
+									</code>
+									<text>
+										<reference value="#ZCCD-Results.CHEMISTRY.64050"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime value="20120920100000-0400"/>
+									<value xsi:type="ED" mediaType="text/xml">
+										<reference value="#ZCCD-Results.CHEMISTRY.64050"/>
+									</value>
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+								</observation>
+							</component>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.2"/>
+									<id root="2.1.5.234.99.1.3.2.6.3.1" extension="63045"/>
+									<code nullFlavor="UNK" code="UNK">
+										<translation code="K" codeSystem="2.1.5.234.99.1.3.6.8" codeSystemName="Siemens Test Locally-assigned Results codes"/>
+									</code>
+									<text>
+										<reference value="#ZCCD-Results.CHEMISTRY.63045"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime value="20120920100000-0400"/>
+									<value xsi:type="ED" mediaType="text/xml">
+										<reference value="#ZCCD-Results.CHEMISTRY.63045"/>
+									</value>
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+								</observation>
+							</component>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<templateId root="2.16.840.1.113883.10.20.22.4.2"/>
+									<id root="2.1.5.234.99.1.3.2.6.3.1" extension="64049"/>
+									<code nullFlavor="UNK" code="UNK">
+										<translation code="GLU_&amp;_Blood" codeSystem="2.1.5.234.99.1.3.6.8" codeSystemName="Siemens Test Locally-assigned Results codes"/>
+									</code>
+									<text>
+										<reference value="#ZCCD-Results.CHEMISTRY.64049"/>
+									</text>
+									<statusCode code="completed"/>
+									<effectiveTime value="20120920100000-0400"/>
+									<value xsi:type="ED" mediaType="text/xml">
+										<reference value="#ZCCD-Results.CHEMISTRY.64049"/>
+									</value>
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+								</observation>
+							</component>
+						</organizer>
+					</entry>
+					<entry typeCode="DRIV">
+						<procedure classCode="PROC" moodCode="EVN">
+							<templateId root="2.16.840.1.113883.10.20.1.29"/>
+							<templateId root="2.16.840.1.113883.3.88.11.83.17"/>
+							<templateId root="1.3.6.1.4.1.19376.1.5.3.1.4.19"/>
+							<id root="2.1.5.234.99.1.3.2.6.3.1.1"/>
+							<code nullFlavor="NI">
+								<originalText>
+									<reference value=""/>
+								</originalText>
+							</code>
+							<text>
+								<reference value=""/>
+							</text>
+							<statusCode code="completed"/>
+						</procedure>
+					</entry>
+				</section>
+			</component>
+			<component>
+				<section>
+					<!-- ** Vital Signs Section (entries required) (V3) ** -->
+					<templateId root="2.16.840.1.113883.10.20.22.2.4.1" extension="2015-08-01"/>
+					<templateId root="2.16.840.1.113883.10.20.22.2.4.1"/>
+					<code code="8716-3" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="VITAL SIGNS"/>
+					<title>VITAL SIGNS</title>
+					<text>
+						<table border="1" width="100%">
+							<thead>
+								<tr>
+									<th align="right">Date / Time: </th>
+									<th>Sept 10, 2012</th>
+									<th>Sept 1, 2011</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th align="left">Height</th>
+									<td ID="vit1">177 cm</td>
+									<td ID="vit2">177 cm</td>
+								</tr>
+								<tr>
+									<th align="left">Weight</th>
+									<td ID="vit3">86 kg</td>
+									<td ID="vit4">88 kg</td>
+								</tr>
+								<tr>
+									<th align="left">Blood Pressure</th>
+									<td ID="vit5">132/88</td>
+									<td ID="vit6">128/80</td>
+								</tr>
+							</tbody>
+						</table>
+					</text>
+					<entry typeCode="DRIV">
+						<organizer classCode="CLUSTER" moodCode="EVN">
+							<!-- ** Vital signs organizer (V3) ** -->
+							<templateId root="2.16.840.1.113883.10.20.22.4.26" extension="2015-08-01"/>
+							<templateId root="2.16.840.1.113883.10.20.22.4.26"/>
+							<id root="31b73bd0-cffc-4599-902e-dbe54bc56cb4"/>
+							<code code="46680005" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vital signs">
+								<!-- A vitals organizer conformant to both C-CDA 1.1 and C-CDA 2.1 would contain the SNOMED code (46680005) from R1.1 in the root code and a LOINC code in the translation -->
+								<translation code="74728-7" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Vital signs"/>
+							</code>
+							<statusCode code="completed"/>
+							<effectiveTime>
+								<low value="20120910"/>
+								<high value="20120910"/>
+							</effectiveTime>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<!-- ** Vital sign observation (V2) ** -->
+									<templateId root="2.16.840.1.113883.10.20.22.4.27" extension="2014-06-09"/>
+									<templateId root="2.16.840.1.113883.10.20.22.4.27"/>
+									<id root="ed9589fd-fda0-41f7-a3d0-dc537554f5c2"/>
+									<code code="8302-2" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Height"/>
+									<statusCode code="completed"/>
+									<effectiveTime value="20120910"/>
+									<value xsi:type="PQ" value="177" unit="cm"/>
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+									<author typeCode="AUT">
+										<templateId root="2.16.840.1.113883.10.20.22.4.119"/>
+										<time value="201209101145-0800"/>
+										<assignedAuthor>
+											<id extension="555555555" root="2.16.840.1.113883.4.6"/>
+											<code code="207QA0505X" displayName="Adult Medicine" codeSystem="2.16.840.1.113883.6.101" codeSystemName="Healthcare Provider Taxonomy (HIPAA)"/>
+										</assignedAuthor>
+									</author>
+								</observation>
+							</component>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<!-- ** Vital sign observation ** -->
+									<templateId root="2.16.840.1.113883.10.20.22.4.27" extension="2014-06-09"/>
+									<templateId root="2.16.840.1.113883.10.20.22.4.27"/>
+									<id root="f4e729e2-a97f-4a7e-8e23-c92f9b6b55cf"/>
+									<code code="3141-9" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Patient Body Weight - Measured"/>
+									<statusCode code="completed"/>
+									<effectiveTime value="20120910"/>
+									<value xsi:type="PQ" value="86" unit="kg"/>
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+									<author typeCode="AUT">
+										<templateId root="2.16.840.1.113883.10.20.22.4.119"/>
+										<time value="201209101145-0800"/>
+										<assignedAuthor>
+											<id extension="555555555" root="2.16.840.1.113883.4.6"/>
+											<code code="207QA0505X" displayName="Adult Medicine" codeSystem="2.16.840.1.113883.6.101" codeSystemName="Healthcare Provider Taxonomy (HIPAA)"/>
+										</assignedAuthor>
+									</author>
+								</observation>
+							</component>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<!-- ** Vital sign observation ** -->
+									<templateId root="2.16.840.1.113883.10.20.22.4.27" extension="2014-06-09"/>
+									<templateId root="2.16.840.1.113883.10.20.22.4.27"/>
+									<id root="a0e39c70-9674-4b2a-9837-cdf74200d8d5"/>
+									<code code="8480-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Intravascular Systolic"/>
+									<statusCode code="completed"/>
+									<effectiveTime value="20120910"/>
+									<value xsi:type="PQ" value="132" unit="mm[Hg]"/>
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+									<author typeCode="AUT">
+										<templateId root="2.16.840.1.113883.10.20.22.4.119"/>
+										<time value="201209101145-0800"/>
+										<assignedAuthor>
+											<id extension="555555555" root="2.16.840.1.113883.4.6"/>
+											<code code="207QA0505X" displayName="Adult Medicine" codeSystem="2.16.840.1.113883.6.101" codeSystemName="Healthcare Provider Taxonomy (HIPAA)"/>
+										</assignedAuthor>
+									</author>
+								</observation>
+							</component>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<!-- ** Vital sign observation ** -->
+									<templateId root="2.16.840.1.113883.10.20.22.4.27" extension="2014-06-09"/>
+									<templateId root="2.16.840.1.113883.10.20.22.4.27"/>
+									<id root="1c2748b7-e440-41ba-bc01-dde97d84a036"/>
+									<code code="8462-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="BP Diastolic"/>
+									<statusCode code="completed"/>
+									<effectiveTime value="20120910"/>
+									<value xsi:type="PQ" value="88" unit="mm[Hg]"/>
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+									<author typeCode="AUT">
+										<templateId root="2.16.840.1.113883.10.20.22.4.119"/>
+										<time value="201109010915-0800"/>
+										<assignedAuthor>
+											<id extension="555555555" root="2.16.840.1.113883.4.6"/>
+											<code code="207QA0505X" displayName="Adult Medicine" codeSystem="2.16.840.1.113883.6.101" codeSystemName="Healthcare Provider Taxonomy (HIPAA)"/>
+										</assignedAuthor>
+									</author>
+								</observation>
+							</component>
+						</organizer>
+					</entry>
+					<entry typeCode="DRIV">
+						<organizer classCode="CLUSTER" moodCode="EVN">
+							<!-- ** Vital signs organizer ** -->
+							<templateId root="2.16.840.1.113883.10.20.22.4.26" extension="2015-08-01"/>
+							<templateId root="2.16.840.1.113883.10.20.22.4.26"/>
+							<id root="24f6ad18-c512-40fc-82bd-1e131aa9e52b"/>
+							<code code="46680005" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Vital signs">
+								<!-- A vitals organizer conformant to both C-CDA 1.1 and C-CDA 2.1 would contain the SNOMED code (46680005) from R1.1 in the root code and a LOINC code in the translation -->
+								<translation code="74728-7" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Vital signs"/>
+							</code>
+							<statusCode code="completed"/>
+							<effectiveTime>
+								<low value="20110901"/>
+								<high value="20110901"/>
+							</effectiveTime>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<!-- ** Vital sign observation ** -->
+									<templateId root="2.16.840.1.113883.10.20.22.4.27" extension="2014-06-09"/>
+									<templateId root="2.16.840.1.113883.10.20.22.4.27"/>
+									<id root="05c047cd-28c3-41cd-be6c-56f8cc0c3f2f"/>
+									<code code="8302-2" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Height"/>
+									<statusCode code="completed"/>
+									<effectiveTime value="20110901"/>
+									<value xsi:type="PQ" value="177" unit="cm"/>
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+									<author typeCode="AUT">
+										<templateId root="2.16.840.1.113883.10.20.22.4.119"/>
+										<time value="201109010915-0800"/>
+										<assignedAuthor>
+											<id extension="555555555" root="2.16.840.1.113883.4.6"/>
+											<code code="207QA0505X" displayName="Adult Medicine" codeSystem="2.16.840.1.113883.6.101" codeSystemName="Healthcare Provider Taxonomy (HIPAA)"/>
+										</assignedAuthor>
+									</author>
+								</observation>
+							</component>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<!-- ** Vital sign observation ** -->
+									<templateId root="2.16.840.1.113883.10.20.22.4.27" extension="2014-06-09"/>
+									<templateId root="2.16.840.1.113883.10.20.22.4.27"/>
+									<id root="21b0f3d5-7d07-4f4f-ad7e-c33dc2ca3835"/>
+									<code code="3141-9" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Patient Body Weight - Measured"/>
+									<statusCode code="completed"/>
+									<effectiveTime value="20110901"/>
+									<value xsi:type="PQ" value="88" unit="kg"/>
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+									<author typeCode="AUT">
+										<templateId root="2.16.840.1.113883.10.20.22.4.119"/>
+										<time value="201109010915-0800"/>
+										<assignedAuthor>
+											<id extension="555555555" root="2.16.840.1.113883.4.6"/>
+											<code code="207QA0505X" displayName="Adult Medicine" codeSystem="2.16.840.1.113883.6.101" codeSystemName="Healthcare Provider Taxonomy (HIPAA)"/>
+										</assignedAuthor>
+									</author>
+								</observation>
+							</component>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<!-- ** Vital sign observation ** -->
+									<templateId root="2.16.840.1.113883.10.20.22.4.27" extension="2014-06-09"/>
+									<templateId root="2.16.840.1.113883.10.20.22.4.27"/>
+									<id root="b046c35a-59c7-4215-ae09-9a8409a30b21"/>
+									<code code="8480-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="BP Systolic"/>
+									<statusCode code="completed"/>
+									<effectiveTime value="20110901"/>
+									<value xsi:type="PQ" value="128" unit="mm[Hg]" />
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+									<author typeCode="AUT">
+										<templateId root="2.16.840.1.113883.10.20.22.4.119"/>
+										<time value="201109010915-0800"/>
+										<assignedAuthor>
+											<id extension="555555555" root="2.16.840.1.113883.4.6"/>
+											<code code="207QA0505X" displayName="Adult Medicine" codeSystem="2.16.840.1.113883.6.101" codeSystemName="Healthcare Provider Taxonomy (HIPAA)"/>
+										</assignedAuthor>
+									</author>
+								</observation>
+							</component>
+							<component>
+								<observation classCode="OBS" moodCode="EVN">
+									<!-- ** Vital sign observation ** -->
+									<templateId root="2.16.840.1.113883.10.20.22.4.27" extension="2014-06-09"/>
+									<templateId root="2.16.840.1.113883.10.20.22.4.27"/>
+									<id root="44f54e66-fb4b-4ee5-9ced-9574ef307a23"/>
+									<code code="8462-4" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="BP Diastolic"/>
+									<statusCode code="completed"/>
+									<effectiveTime value="20110901"/>
+									<value xsi:type="PQ" value="80" unit="mm[Hg]"/>
+									<interpretationCode code="N" codeSystem="2.16.840.1.113883.5.83"/>
+									<author typeCode="AUT">
+										<templateId root="2.16.840.1.113883.10.20.22.4.119"/>
+										<time value="201109010915-0800"/>
+										<assignedAuthor>
+											<id extension="555555555" root="2.16.840.1.113883.4.6"/>
+											<code code="207QA0505X" displayName="Adult Medicine" codeSystem="2.16.840.1.113883.6.101" codeSystemName="Healthcare Provider Taxonomy (HIPAA)"/>
+										</assignedAuthor>
+									</author>
+								</observation>
+							</component>
+						</organizer>
+					</entry>
+				</section>
+			</component>
+		</structuredBody>
+	</component>
+</ClinicalDocument>

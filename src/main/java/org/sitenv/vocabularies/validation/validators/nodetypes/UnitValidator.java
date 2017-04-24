@@ -1,67 +1,74 @@
 package org.sitenv.vocabularies.validation.validators.nodetypes;
 
-import org.apache.log4j.Logger;
-import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
-import org.sitenv.vocabularies.configuration.ConfiguredValidator;
-import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
-import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
-import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
-import org.sitenv.vocabularies.validation.repositories.VsacValuesSetRepository;
-import org.sitenv.vocabularies.validation.utils.XpathUtils;
-import org.sitenv.vocabularies.validation.validators.NodeValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.w3c.dom.Node;
-
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.xml.xpath.XPath;
+
+import org.apache.log4j.Logger;
+import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
+import org.sitenv.vocabularies.configuration.ConfiguredValidator;
+import org.sitenv.vocabularies.validation.dao.ValueSetDAO;
+import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
+import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
+import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
+import org.sitenv.vocabularies.validation.utils.ConfiguredExpressionFilter;
+import org.sitenv.vocabularies.validation.utils.XpathUtils;
+import org.sitenv.vocabularies.validation.validators.NodeValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.ximpleware.VTDNav;
+
 @Component(value = "UnitValidator")
 public class UnitValidator extends NodeValidator {
 	private static final Logger logger = Logger.getLogger(UnitValidator.class);
-	private VsacValuesSetRepository vsacValuesSetRepository;
+//	private VsacValuesSetRepository vsacValuesSetRepository;
 
-	@Autowired
-	public UnitValidator(VsacValuesSetRepository vsacValuesSetRepository) {
-		this.vsacValuesSetRepository = vsacValuesSetRepository;
-	}
-
+    @Autowired
+    ValueSetDAO vsacValuesSetRepository;
+	
+//	@Autowired
+//	public UnitValidator(VsacValuesSetRepository vsacValuesSetRepository) {
+//		this.vsacValuesSetRepository = vsacValuesSetRepository;
+//	}
+	
 	@Override
-	public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath, Node node, int nodeIndex) {
+	public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath,
+			VTDNav vn, int nodeIndex, ConfiguredExpressionFilter filter, String xpathExpression) {
 		String nodeUnit;
 		try{
-			XPathExpression exp = xpath.compile("@unit");
-			nodeUnit = ((String) exp.evaluate(node, XPathConstants.STRING)).toUpperCase();
-		} catch (XPathExpressionException e) {
+			nodeUnit = vn.getAttrVal("unit")!=-1 ? vn.toString(vn.getAttrVal("unit")).toUpperCase() : "";
+		} catch (Exception e) {
 			throw new RuntimeException("ERROR getting node values " + e.getMessage());
 		}
 
 		List<String> allowedConfiguredCodeSystemOids = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedValuesetOids().split(",")));
 
 		NodeValidationResult nodeValidationResult = new NodeValidationResult();
-        nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
+        nodeValidationResult.setErrorOffset(vn.getTokenOffset(vn.getCurrentIndex()));
+        nodeValidationResult.setValidatedDocumentXpathExpression(xpathExpression);
         nodeValidationResult.setRequestedUnit(nodeUnit);
         nodeValidationResult.setConfiguredAllowableValuesetOidsForNode(configuredValidator.getAllowedValuesetOids());
+        nodeValidationResult.setRuleID(configuredValidator.getId());
+
 		if(vsacValuesSetRepository.valuesetOidsExists(allowedConfiguredCodeSystemOids)){
             nodeValidationResult.setNodeValuesetsFound(true);
 			if (vsacValuesSetRepository.codeExistsInValueset(nodeUnit, allowedConfiguredCodeSystemOids)) {
                 nodeValidationResult.setValid(true);
 			}
 		}
-		return buildVocabularyValidationResults(nodeValidationResult, configuredValidator.getConfiguredValidationResultSeverityLevel());
+		return buildVocabularyValidationResults(nodeValidationResult, configuredValidator.getConfiguredValidationResultSeverityLevel(), filter, vn);
 	}
 
 	@Override
-	protected List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult, ConfiguredValidationResultSeverityLevel configuredNodeAttributeSeverityLevel) {
+	protected List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult, ConfiguredValidationResultSeverityLevel configuredNodeAttributeSeverityLevel, ConfiguredExpressionFilter filter, VTDNav nav) {
         List<VocabularyValidationResult> vocabularyValidationResults = new ArrayList<>();
         if(!nodeValidationResult.isValid()) {
             if (nodeValidationResult.isNodeValuesetsFound()) {
                 VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
+				nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.getVTDXPath(nav));
                 vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
 				if(nodeValidationResult.getRequestedUnit().indexOf('{') > -1){
 					vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHOULD);
@@ -72,6 +79,7 @@ public class UnitValidator extends NodeValidator {
                 vocabularyValidationResult.setMessage(validationMessage);
                 vocabularyValidationResults.add(vocabularyValidationResult);
             }else{
+				nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.getVTDXPath(nav));
                 vocabularyValidationResults.add(valuesetNotLoadedResult(nodeValidationResult));
             }
         }
