@@ -60,20 +60,19 @@ public class VsacLoader extends BaseCodeLoader implements VocabularyLoader {
                             }
 
                             if(row.getRowNum() > 10){
-                                if(row.getCell(0) != null) {
-                                    preparedStatement.setString(1, row.getCell(0).getStringCellValue().toUpperCase().trim());
-                                    preparedStatement.setString(2, row.getCell(1).getStringCellValue().toUpperCase().trim());
-                                    preparedStatement.setString(3, row.getCell(2).getStringCellValue().toUpperCase().trim());
-                                    preparedStatement.setString(4, row.getCell(3).getStringCellValue().trim());
-                                    preparedStatement.setString(5, row.getCell(4).getStringCellValue().toUpperCase().trim());
-                                    preparedStatement.setString(6, row.getCell(5).getStringCellValue().toUpperCase().trim());
-                                    preparedStatement.setString(7, valueSetName);
-                                    preparedStatement.setString(8, valueSetOid);
-                                    preparedStatement.setString(9, valueSetType);
-                                    preparedStatement.setString(10, valueSetVersion);
-                                    preparedStatement.setString(11, valueSetSteward);
-                                    preparedStatement.addBatch();
-                                }
+                                preparedStatement.setString(1, hasCellData(row, 0) ? row.getCell(0).getStringCellValue().toUpperCase().trim() : "");
+                                preparedStatement.setString(2, hasCellData(row, 1) ? row.getCell(1).getStringCellValue().toUpperCase().trim() : "");
+                                preparedStatement.setString(3, hasCellData(row, 2) ? row.getCell(2).getStringCellValue().toUpperCase().trim() : "");
+                                preparedStatement.setString(4, hasCellData(row, 3) ? row.getCell(3).getStringCellValue().trim() : "");
+                                preparedStatement.setString(5, hasCellData(row, 4) ? row.getCell(4).getStringCellValue().toUpperCase().trim() : "");
+                                preparedStatement.setString(6, hasCellData(row, 5) ? row.getCell(5).getStringCellValue().toUpperCase().trim() : "");
+                                preparedStatement.setString(7, valueSetName);
+                                preparedStatement.setString(8, valueSetOid);
+                                preparedStatement.setString(9, valueSetType);
+                                preparedStatement.setString(10, valueSetVersion);
+                                preparedStatement.setString(11, valueSetSteward);
+                                preparedStatement.addBatch();
+
                                 if(row.getRowNum() % 1000 == 0){
                                     preparedStatement.executeBatch();
                                     connection.commit();
@@ -91,5 +90,9 @@ public class VsacLoader extends BaseCodeLoader implements VocabularyLoader {
                 }
             }
         }
+    }
+
+    private boolean hasCellData(Row row, int cellNum) {
+        return row.getCell(cellNum) != null && !row.getCell(cellNum).getStringCellValue().isEmpty();
     }
 }
