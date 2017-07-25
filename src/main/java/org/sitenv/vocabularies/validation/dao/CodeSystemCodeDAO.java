@@ -13,7 +13,6 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.RowCountCallbackHandler;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,6 +27,7 @@ public class CodeSystemCodeDAO {
 	private static Map<String, Set<String>> CodeSystemOIDToCodeSystems = new HashMap<String, Set<String>>();
 
 	private static boolean done = false;
+	private static boolean hasDBCleanupDone = false;
 
 	private void addRow(String code, String codeSystem, String displayName, String codeSystemOID) {
 		CodeSystems.add(codeSystem);
@@ -35,6 +35,7 @@ public class CodeSystemCodeDAO {
 		if (CodeToCodeSystems.get(code) == null) {
 			CodeToCodeSystems.put(code, new HashSet<String>());
 		}
+		
 		CodeToCodeSystems.get(code).add(codeSystem);
 
 		if (DisplayNameToCodeSystems.get(displayName) == null) {
@@ -77,6 +78,17 @@ public class CodeSystemCodeDAO {
 	
 		done = true;
 		logger.info("Code Maps initialized. Total rows:" + handler.n);
+	}
+	
+	public synchronized void cleanupDBAfterLoadingToHashSets(DataSource ds) {
+		if (hasDBCleanupDone) {
+			return;
+		}
+		String deleteCodesQry = "Delete FROM Codes";
+		JdbcTemplate tmpl = new JdbcTemplate(ds);
+		tmpl.update(deleteCodesQry);
+		hasDBCleanupDone = true;
+		logger.info("*********** All Codes deleted from DB *************");
 	}
 
 	public class CodeSetRowHandler implements RowCallbackHandler {
@@ -199,4 +211,5 @@ public class CodeSystemCodeDAO {
 		}
 		return false;
 	}
+	
 }

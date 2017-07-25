@@ -17,10 +17,13 @@ import org.sitenv.vocabularies.validation.dao.ValueSetDAO;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 
 /**
  * Created by Brian on 2/6/2016.
  */
+@PropertySource("classpath:CodeValidator.properties")
 public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
     private VocabularyLoaderFactory vocabularyLoaderFactory;
     private static Logger logger = Logger.getLogger(VocabularyLoadRunner.class);
@@ -29,6 +32,9 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
     private boolean recursive = true;
     private DataSource dataSource;
 
+    @Value("${cleanUpDatabaseAfterLoadingHashSets}")
+    private boolean cleanUpDatabaseAfterLoadingHashSets;
+    
     @Autowired
     ValueSetDAO vsdao;
 
@@ -171,6 +177,34 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
             logger.error("Failed to load configured vocabulary directory.", e);
         }finally {
             try {
+				logger.info("!!!!*********** cleanUpDatabaseAfterLoadingHashSets falg set as  : "
+						+ cleanUpDatabaseAfterLoadingHashSets);
+				/*
+				 * If the 'cleanUpDatabaseAfterLoadingHashSets' defined in
+				 * CodeValidator.properties is set to true, then all the records
+				 * from (Codes and ValueSets tables) the DB are deleted.
+				 * 
+				 * Note: If there are any methods that are defined in the
+				 * Repository classes (CodeRepository, VsacValuesSetRepository
+				 * etc.,) are not implemented in the DAO classes (ValueSetDAO,
+				 * CodeSystemDAO) and the same methods are being used by the
+				 * consumer/caller then the flag
+				 * cleanUpDatabaseAfterLoadingHashSets should be set to false.
+				 * Otherwise if this flag was set to true and when these methods
+				 * are invoked, no records will be returned. Ex., In the current
+				 * versionm, these three methods findByCodeAndCodeSystemIn;
+				 * findByValuesetOidIn, findByCodeAndValuesetOidIn defined in
+				 * CodeRepository and ValueSetRepository are not implemented in
+				 * ValueSetDAO & CodeSystemDAO classes. Hence, if any
+				 * client/consumer wants to leverage these helper methods,
+				 * should set the flag to false.
+				 * 
+				 */
+            	
+            	if(cleanUpDatabaseAfterLoadingHashSets) {
+            		perfromDBCleanup(connection);
+            		logger.info("!!!!*********** DB Cleanup completed **************!!!!");
+            	}
                 if(connection != null && !(connection.isClosed())) {
                     connection.close();
                 }
@@ -179,6 +213,14 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
             }
         }
     }
+
+	private void perfromDBCleanup(Connection connection) throws SQLException {
+		csdao.cleanupDBAfterLoadingToHashSets(dataSource);
+		connection.commit();
+		
+		vsdao.cleanupDBAfterLoadingToHashSets(dataSource);
+		connection.commit();
+	}
 
     @Override
     public void destroy() throws Exception {
