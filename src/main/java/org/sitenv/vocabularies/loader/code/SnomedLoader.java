@@ -30,7 +30,6 @@ public class SnomedLoader extends BaseCodeLoader implements VocabularyLoader {
         FileReader fileReader = null;
         try {
             StrBuilder insertQueryBuilder = new StrBuilder(codeTableInsertSQLPrefix);
-            int totalCount = 0, pendingCount = 0;
 
             for (File file : filesToLoad) {
                 if (file.isFile() && !file.isHidden()) {
@@ -47,49 +46,17 @@ public class SnomedLoader extends BaseCodeLoader implements VocabularyLoader {
                             String[] line = StringUtils.splitPreserveAllTokens(available, "\t", 9);
                             String code = line[4];
                             String displayName = line[7];
-//                            if (pendingCount++ > 0) {
-//                                insertQueryBuilder.append(",");
-//                            }
-//                            insertQueryBuilder.append("(");
-//                            insertQueryBuilder.append("DEFAULT");
-//                            insertQueryBuilder.append(",'");
-//                            insertQueryBuilder.append(line[4].toUpperCase());
-//                            insertQueryBuilder.append("','");
-//                            insertQueryBuilder.append(line[7].toUpperCase().replaceAll("'", "''"));
-//                            insertQueryBuilder.append("','");
-//                            insertQueryBuilder.append(file.getParentFile().getName());
-//                            insertQueryBuilder.append("','");
-//                            insertQueryBuilder.append(CodeSystemOIDs.SNOMEDCT.codesystemOID());
-//                            insertQueryBuilder.append("')");
-
                             n++;
-
-                            
                             buildCodeInsertQueryString(insertQueryBuilder, code.toUpperCase(), displayName.toUpperCase(), codeSystem, CodeSystemOIDs.SNOMEDCT.codesystemOID());
                             t.update(insertQueryBuilder.toString());
                             insertQueryBuilder.clear();
                             insertQueryBuilder.append(codeTableInsertSQLPrefix);
-                            		
-                            
-//                            t.update(codeTableInsertSQLPrefix,code.toUpperCase(),displayName.toUpperCase(),codeSystem,CodeSystemOIDs.SNOMEDCT.codesystemOID());
-//                            t.update(insertQueryPrefix,line[4].toUpperCase(),line[7].toUpperCase(),file.getParentFile().getName(),CodeSystemOIDs.SNOMEDCT.codesystemOID());
-//                            if ((++totalCount % 5000) == 0) {
-//                                doInsert(insertQueryBuilder.toString(), connection);
-//                                insertQueryBuilder.clear();
-//                                insertQueryBuilder.append(insertQueryPrefix);
-//                                pendingCount = 0;
-//                            }
                         }
                     }
                 }
             }
-//            if (pendingCount > 0) {
-//                doInsert(insertQueryBuilder.toString(), connection);
-//            }
         } catch (IOException e) {
             logger.error(e);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
         } finally {
             if (br != null) {
                 try {

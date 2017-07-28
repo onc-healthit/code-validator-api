@@ -36,10 +36,8 @@ import com.ximpleware.VTDNav;
 @Component
 public class ValidateWorker {
 
-	private XPathFactory xPathFactory;
-
 	public ValidateWorker() {
-		this.xPathFactory = XPathFactory.newInstance();
+		XPathFactory.newInstance();
 	}
 
 	@Resource(name = "vocabularyValidationConfigurations")

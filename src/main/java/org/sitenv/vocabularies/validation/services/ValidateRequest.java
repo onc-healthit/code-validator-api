@@ -3,7 +3,6 @@ package org.sitenv.vocabularies.validation.services;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.configuration.ConfiguredExpression;
 import org.sitenv.vocabularies.validation.utils.ConfiguredExpressionFilter;
-import org.w3c.dom.Document;
 
 import com.ximpleware.VTDNav;
 

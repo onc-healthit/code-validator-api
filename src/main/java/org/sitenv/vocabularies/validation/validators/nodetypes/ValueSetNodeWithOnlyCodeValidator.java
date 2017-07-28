@@ -24,15 +24,9 @@ import com.ximpleware.VTDNav;
 @Component(value = "ValueSetNodeWithOnlyCodeValidator")
 public class ValueSetNodeWithOnlyCodeValidator extends NodeValidator {
 	private static final Logger logger = Logger.getLogger(ValueSetNodeWithOnlyCodeValidator.class);
-//	private VsacValuesSetRepository vsacValuesSetRepository;
 
 	@Autowired
 	ValueSetDAO vsacValuesSetRepository;
-	
-//	@Autowired
-//	public ValueSetNodeWithOnlyCodeValidator(VsacValuesSetRepository vsacValuesSetRepository) {
-//		this.vsacValuesSetRepository = vsacValuesSetRepository;
-//	}
 
     @Override
 	public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath,

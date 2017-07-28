@@ -42,26 +42,8 @@ public abstract class Icd10BaseLoader extends IcdLoader {
                         String code = buildDelimitedIcdCode(available.substring(6, 13));
                         String shortDisplayName = available.substring(16, 77);
                         String longDisplayName = available.substring(77);
-//                        if (pendingCount++ > 0) {
-//                            insertQueryBuilder.append(",");
-//                        }
-//                        insertQueryBuilder.append("(");
-//                        insertQueryBuilder.append("DEFAULT");
-//                        insertQueryBuilder.append(",'");
-//                        insertQueryBuilder.append(buildDelimitedIcdCode(available.substring(6, 13).trim()).toUpperCase());
-//                        insertQueryBuilder.append("','");
-//                        insertQueryBuilder.append(available.substring(77).trim().toUpperCase().replaceAll("'", "''"));
-//                        insertQueryBuilder.append("','");
-//                        insertQueryBuilder.append(file.getParentFile().getName());
-//                        insertQueryBuilder.append("','");
-//                        insertQueryBuilder.append(oid);
-//                        insertQueryBuilder.append("')");
 
                         n++;
-
-                        //@TODO Merge to update statements into single update statement ?????
-                        //@TODO Merge to update statements into single update statement ?????
-                        
                         
                         buildCodeInsertQueryString(insertQueryBuilder, code, shortDisplayName, codeSystem, oid);
                         t.update(insertQueryBuilder.toString());
@@ -73,28 +55,12 @@ public abstract class Icd10BaseLoader extends IcdLoader {
                         insertQueryBuilder.clear();
                         insertQueryBuilder.append(codeTableInsertSQLPrefix);
                         
-//                        t.update(codeTableInsertSQLPrefix,buildDelimitedIcdCode(code.trim()).toUpperCase(),longDisplayName.trim().toUpperCase(),file.getParentFile().getName(),oid);
-//                        t.update(codeTableInsertSQLPrefix,buildDelimitedIcdCode(code.trim()).toUpperCase(),shortDisplayName.trim().toUpperCase(),file.getParentFile().getName(),oid);
-
-//                        t.update(insertQueryPrefix,buildDelimitedIcdCode(available.substring(6, 13).trim()).toUpperCase(),available.substring(77).trim().toUpperCase(),file.getParentFile().getName(),oid);
-
-//                        if ((++totalCount % 2500) == 0) {
-//                            doInsert(insertQueryBuilder.toString(), connection);
-//                            insertQueryBuilder.clear();
-//                            insertQueryBuilder.append(insertQueryPrefix);
-//                            pendingCount = 0;
-//                        }
                     }
 
                 }
             }
-//            if (pendingCount > 0) {
-//                doInsert(insertQueryBuilder.toString(), connection);
-//            }
         } catch (IOException e) {
             logger.error(e);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
         } finally {
             if (br != null) {
                 try {

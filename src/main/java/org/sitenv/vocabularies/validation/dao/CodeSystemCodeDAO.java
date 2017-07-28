@@ -65,11 +65,6 @@ public class CodeSystemCodeDAO {
 		if (done) {
 			return;
 		}
-		// String sql = "SELECT codeSystem FROM Codes";
-		// NamedParameterJdbcTemplate t = new
-		// NamedParameterJdbcTemplate(datasource);
-		// Map<String, Object> paramMap = new HashMap<String, Object>();
-		// codes = t.queryForList(sql, paramMap, String.class);
 		
 		String sql = "SELECT code, displayName,codeSystem, codeSystemOID FROM Codes";
 		JdbcTemplate tmpl = new JdbcTemplate(ds);

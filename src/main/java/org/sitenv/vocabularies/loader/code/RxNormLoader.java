@@ -30,7 +30,6 @@ public class RxNormLoader extends BaseCodeLoader implements VocabularyLoader {
         BufferedReader br = null;
         try {
             StrBuilder insertQueryBuilder = new StrBuilder(codeTableInsertSQLPrefix);
-            int totalCount = 0, pendingCount = 0;
 
             for (File file : filesToLoad) {
                 if (file.isFile() && !file.isHidden()) {
@@ -43,20 +42,6 @@ public class RxNormLoader extends BaseCodeLoader implements VocabularyLoader {
                         String[] line = StringUtils.splitPreserveAllTokens(available, "|", 16);
                         String code = line[0];
                         String displayName = line[14];
-//                        if (pendingCount++ > 0) {
-//                            insertQueryBuilder.append(",");
-//                        }
-//                        insertQueryBuilder.append("(");
-//                        insertQueryBuilder.append("DEFAULT");
-//                        insertQueryBuilder.append(",'");
-//                        insertQueryBuilder.append(line[0]);
-//                        insertQueryBuilder.append("','");
-//                        insertQueryBuilder.append(line[14].toUpperCase().replaceAll("'", "''"));
-//                        insertQueryBuilder.append("','");
-//                        insertQueryBuilder.append(file.getParentFile().getName());
-//                        insertQueryBuilder.append("','");
-//                        insertQueryBuilder.append(CodeSystemOIDs.RXNORM.codesystemOID());
-//                        insertQueryBuilder.append("')");
 
                         n++;
                         buildCodeInsertQueryString(insertQueryBuilder, code, displayName.toUpperCase(), codeSystem, CodeSystemOIDs.RXNORM.codesystemOID());
@@ -64,24 +49,11 @@ public class RxNormLoader extends BaseCodeLoader implements VocabularyLoader {
                         insertQueryBuilder.clear();
                         insertQueryBuilder.append(codeTableInsertSQLPrefix);
                         
-//                        t.update(codeTableInsertSQLPrefix,code,displayName.toUpperCase(),codeSystem,CodeSystemOIDs.RXNORM.codesystemOID());
-
-//                        if ((++totalCount % 5000) == 0) {
-//                            doInsert(insertQueryBuilder.toString(), connection);
-//                            insertQueryBuilder.clear();
-//                            insertQueryBuilder.append(insertQueryPrefix);
-//                            pendingCount = 0;
-//                        }
                     }
                 }
             }
-//            if (pendingCount > 0) {
-//                doInsert(insertQueryBuilder.toString(), connection);
-//            }
         } catch (IOException e) {
             logger.error(e);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
         } finally {
             if (br != null) {
                 try {

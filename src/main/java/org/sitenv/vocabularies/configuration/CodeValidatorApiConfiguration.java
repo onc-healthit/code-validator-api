@@ -113,10 +113,7 @@ public class CodeValidatorApiConfiguration implements AsyncConfigurer {
 		factory.setPackagesToScan("org.sitenv.vocabularies.validation.entities");
 		Properties jpaProperties = new Properties();
 		jpaProperties.put("hibernate.hbm2ddl.auto", "none");
-		// jpaProperties.put("hibernate.dialect",
-		// "org.hibernate.dialect.HSQLDialect");
 		jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-//		jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.SQLServer2008Dialect");
 		jpaProperties.put("hibernate.format_sql", "true");
 		jpaProperties.put("hibernate.show_sql", "false");
 		jpaProperties.put("hibernate.connection.pool_size", "80");
@@ -171,9 +168,7 @@ public class CodeValidatorApiConfiguration implements AsyncConfigurer {
 		ds.setInitialSize(initialSize);
 		ds.setMinIdle(minIdle);
 		ds.setMaxTotal(maxActive); // DBCP2 maxTotal: The maximum number of active connections that can be allocated from this pool at the same time, or negative for no limit.
-		// ds.setDriverClassName("org.hsqldb.jdbcDriver");
 		ds.setDriverClassName("org.h2.Driver");
-		//ds.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		return ds;
 	}
 
@@ -195,20 +190,6 @@ public class CodeValidatorApiConfiguration implements AsyncConfigurer {
 	public VocabularyLoaderFactory vocabularyLoaderFactory() {
 		return (VocabularyLoaderFactory) vocabularyLoaderFactoryServiceLocatorFactoryBean().getObject();
 	}
-
-	// @Bean
-	// public ServiceLocatorFactoryBean
-	// vocabularyValidatorFactoryServiceLocatorFactoryBean() {
-	// ServiceLocatorFactoryBean bean = new ServiceLocatorFactoryBean();
-	// bean.setServiceLocatorInterface(VocabularyValidatorFactory.class);
-	// return bean;
-	// }
-
-	// @Bean
-	// public VocabularyValidatorFactory vocabularyValidatorFactory() {
-	// return (VocabularyValidatorFactory)
-	// vocabularyValidatorFactoryServiceLocatorFactoryBean().getObject();
-	// }
 
 	@Autowired
 	@Bean
@@ -240,19 +221,16 @@ public class CodeValidatorApiConfiguration implements AsyncConfigurer {
 	 * MU2 document validation.
 	 */
 
-	// ------------------------- INTERNAL CODE CHANGE START
-	// --------------------------
+	// ------------------------- INTERNAL CODE CHANGE START --------------------------
 	/*
 	 * @Bean public List<ConfiguredExpression>
 	 * vocabularyValidationConfigurations(ValidationConfigurationLoader
 	 * configurationLoader){ return
 	 * configurationLoader.getConfigurations().getExpressions(); }
 	 */
-	// ------------------------- INTERNAL CODE CHANGE END
-	// --------------------------
+	// ------------------------- INTERNAL CODE CHANGE END --------------------------
 
-	// ------------------------- INTERNAL CODE CHANGE START
-	// --------------------------
+	// ------------------------- INTERNAL CODE CHANGE START --------------------------
 	// @Bean
 	// public DocumentBuilder documentBuilder() throws
 	// ParserConfigurationException {
@@ -268,8 +246,7 @@ public class CodeValidatorApiConfiguration implements AsyncConfigurer {
 		return domFactory;
 	}
 
-	// ------------------------- INTERNAL CODE CHANGE END
-	// --------------------------
+	// ------------------------- INTERNAL CODE CHANGE END  ------------------
 
 	@Bean
 	public XPathFactory xPathFactory() {
@@ -300,8 +277,7 @@ public class CodeValidatorApiConfiguration implements AsyncConfigurer {
 	 * Following set of code is added for enhancing open source code base to
 	 * support MU2 document validation.
 	 */
-	// ------------------------- INTERNAL CODE CHANGE START
-	// --------------------------
+	// ------------------------- INTERNAL CODE CHANGE START --------------------------
 
 	@Bean
 	public List<ConfiguredExpression> vocabularyValidationConfigurations(
@@ -341,6 +317,5 @@ public class CodeValidatorApiConfiguration implements AsyncConfigurer {
 		return mu2Expressions;
 	}
 
-	// ------------------------- INTERNAL CODE CHANGE END
-	// --------------------------
+	// ------------------------- INTERNAL CODE CHANGE END --------------------------
 }

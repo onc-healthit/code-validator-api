@@ -44,6 +44,4 @@ public abstract class IcdLoader extends BaseCodeLoader {
 		return builder.build();
 
 	}
-	
-//	 protected abstract void setOID(String oid);
 }

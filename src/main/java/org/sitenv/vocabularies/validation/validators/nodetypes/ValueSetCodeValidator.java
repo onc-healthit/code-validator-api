@@ -24,15 +24,10 @@ import com.ximpleware.VTDNav;
 @Component(value = "ValueSetCodeValidator")
 public class ValueSetCodeValidator extends NodeValidator {
     private static final Logger logger = Logger.getLogger(ValueSetCodeValidator.class);
-//    private VsacValuesSetRepository vsacValuesSetRepository;
 
 	@Autowired
 	ValueSetDAO vsacValuesSetRepository;
 
-//    @Autowired
-//    public ValueSetCodeValidator(VsacValuesSetRepository vsacValuesSetRepository) {
-//        this.vsacValuesSetRepository = vsacValuesSetRepository;
-//    }
 
     @Override
 	public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath,

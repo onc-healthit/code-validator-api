@@ -1,6 +1,5 @@
 package org.sitenv.vocabularies.validation.services;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -15,11 +14,6 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -28,18 +22,13 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.configuration.ConfiguredExpression;
-import org.sitenv.vocabularies.configuration.ConfiguredValidator;
-import org.sitenv.vocabularies.validation.NodeValidation;
 import org.sitenv.vocabularies.validation.NodeValidatorFactory;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
-import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.utils.CCDADocumentNamespaces;
 import org.sitenv.vocabularies.validation.utils.ConfiguredExpressionLevelFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.ximpleware.VTDGen;
@@ -90,9 +79,6 @@ public class VocabularyValidationService {
 
 	@Resource(name = "xPathFactory")
 	XPathFactory xPathFactory;
-
-	// @Autowired
-	// VocabularyValidatorFactory vocabularyValidatorFactory;
 
 	// ------------------------- INTERNAL CODE CHANGE START
 	// --------------------------

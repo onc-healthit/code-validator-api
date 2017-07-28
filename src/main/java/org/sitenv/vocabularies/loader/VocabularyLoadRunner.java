@@ -41,8 +41,6 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
     @Autowired
     CodeSystemCodeDAO csdao;
     
-//    @Autowired
-//	EntityManagerFactory entityManagerFactory;
     
     public void loadDirectory(String directory, DataSource datasource) throws IOException {
         File dir = new File(directory);
@@ -56,17 +54,6 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
         }
     }
     
-//    public void loadDirectory(String directory, Connection connection) throws IOException {
-//        File dir = new File(directory);
-//        if (dir.isFile()) {
-//            throw new IOException("Directory to Load is a file and not a directory");
-//        } else {
-//            File[] list = dir.listFiles();
-//            for (File file : list) {
-//                load(file, connection);
-//            }
-//        }
-//    }
 
     private void load(File directory, DataSource datasource) throws IOException {
         if (directory.isDirectory() && !directory.isHidden()) {
@@ -84,21 +71,6 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
         }
     }
     
-//    private void load(File directory, Connection connection) throws IOException {
-//        if (directory.isDirectory() && !directory.isHidden()) {
-//            File[] filesToLoad = directory.listFiles();
-//            logger.debug("Building Loader for directory: " + directory.getName() + "...");
-//            VocabularyLoader loader = vocabularyLoaderFactory.getVocabularyLoader(directory.getName());
-//            if (loader != null && filesToLoad != null) {
-//                logger.debug("Loader built...");
-//                logger.info("Loading files in : " + directory.getName() + "...");
-//                loader.load(Arrays.asList(filesToLoad), connection);
-//                logger.debug("File loaded...");
-//            } else {
-//                logger.debug("Building of Loader Failed.");
-//            }
-//        }
-//    }
 
     public String getCodeDirectory() {
         return codeDirectory;
@@ -140,7 +112,6 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
             connection.setAutoCommit(false);
             if (codeDirectory != null && !codeDirectory.trim().equals("")) {
                 logger.info("Loading vocabularies at: " + codeDirectory + "...");
-//              loadDirectory(codeDirectory, connection);
               loadDirectory(codeDirectory, dataSource);
                 logger.info("Vocabularies loaded...");
             }
@@ -148,7 +119,6 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
 
             if (valueSetDirectory != null && !valueSetDirectory.trim().equals("")) {
                 logger.info("Loading value sets at: " + valueSetDirectory + "...");
-//              loadDirectory(valueSetDirectory, connection);
                 loadDirectory(valueSetDirectory, dataSource);
                 logger.info("Value Sets loaded...");
             }
@@ -162,16 +132,6 @@ public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
             connection.commit();
             
             logger.info("!!!!*********** INITIALIZED HASH SETS. ***********!!!!");
-            
-//            entityManagerFactory.getCache().evictAll();
-//            EntityManager em = entityManagerFactory.createEntityManager();
-//            EntityTransaction tx = em.getTransaction();
-//            tx.begin();
-//            em.flush();
-//            em.clear();
-//            tx.commit();
-//
-//            logger.info("!!!!*********** EM Evicted All. ***********!!!!");
 
         } catch (Exception e) {
             logger.error("Failed to load configured vocabulary directory.", e);

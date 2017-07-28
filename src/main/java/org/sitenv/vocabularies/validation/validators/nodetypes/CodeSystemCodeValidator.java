@@ -25,15 +25,9 @@ import com.ximpleware.VTDNav;
 @Component(value = "CodeSystemCodeValidator")
 public class CodeSystemCodeValidator extends NodeValidator {
     private static final Logger logger = Logger.getLogger(CodeSystemCodeValidator.class);
-//    private CodeRepository codeRepository;
 
     @Autowired
     CodeSystemCodeDAO codeRepository;
-
-//    @Autowired
-//    public CodeSystemCodeValidator(CodeRepository codeRepository) {
-//        this.codeRepository = codeRepository;
-//    }
 
     @Override
 	public List<VocabularyValidationResult> validateNode(ConfiguredValidator configuredValidator, XPath xpath,

@@ -27,7 +27,6 @@ public class VsacLoader extends BaseCodeLoader implements VocabularyLoader {
     private static Logger logger = Logger.getLogger(VsacLoader.class);
     private static final int MIN_EXPECTED_NUMBER_OF_CELLS_IN_ROW = 6;
     private static final int CODE_CELL_INDEX_IN_ROW = 0;
-    private static final int BATCH_SIZE = 1000;
     private static final String HEADER_ROW_FINDER_KEY = "CODE";
 
     public long load(List<File> filesToLoad, DataSource datasource) {
@@ -38,9 +37,7 @@ public class VsacLoader extends BaseCodeLoader implements VocabularyLoader {
             if (file.isFile() && !file.isHidden()) {
                 try {
                     logger.info("Loading Value Set File: " + file.getName());
-//                    PreparedStatement preparedStatement = connection.prepareStatement(insertQueryPrefix);
                     InputStream inputStream = new FileInputStream(file);
-//                    Workbook workBook = StreamingReader.builder().open(inputStream);
                     Workbook workBook = WorkbookFactory.create(inputStream);
                     for (int i = 1; i < workBook.getNumberOfSheets(); i++) {
                         boolean headerRowFound = false;
@@ -50,7 +47,6 @@ public class VsacLoader extends BaseCodeLoader implements VocabularyLoader {
                         String valueSetType = "";
                         String valueSetVersion = "";
                         String valueSetSteward = "";
-                        int valuesetDataRowCount = 0;
 
                         for(Row row : sheet){
                             if(row.getRowNum() < 6) {
@@ -79,20 +75,7 @@ public class VsacLoader extends BaseCodeLoader implements VocabularyLoader {
                             if(row.getRowNum() > 10){
                                 if(row.getCell(0) != null) {
                                     row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
-//                                	if (!StringUtils.isEmpty(row.getCell(0).getStringCellValue())) {
                                     if(headerRowFound && canProcessRow(row)){
-//                                    preparedStatement.setString(1, row.getCell(0).getStringCellValue().replaceAll("'", "''").toUpperCase().trim());
-//                                    preparedStatement.setString(2, row.getCell(1).getStringCellValue().replaceAll("'", "''").toUpperCase().trim());
-//                                    preparedStatement.setString(3, row.getCell(2).getStringCellValue().toUpperCase().trim());
-//                                    preparedStatement.setString(4, row.getCell(3).getStringCellValue().trim());
-//                                    preparedStatement.setString(5, row.getCell(4).getStringCellValue().toUpperCase().trim());
-//                                    preparedStatement.setString(6, row.getCell(5).getStringCellValue().toUpperCase().trim());
-//                                    preparedStatement.setString(7, valueSetName);
-//                                    preparedStatement.setString(8, valueSetOid);
-//                                    preparedStatement.setString(9, valueSetType);
-//                                    preparedStatement.setString(10, valueSetVersion);
-//                                    preparedStatement.setString(11, valueSetSteward);
-//                                    preparedStatement.addBatch();
                                         n++;
                                         row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
                                         row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
@@ -112,28 +95,13 @@ public class VsacLoader extends BaseCodeLoader implements VocabularyLoader {
                                                 valueSetSteward);
                                     }
                                 }
-//                                if(row.getRowNum() % 1000 == 0){
-//                                    preparedStatement.executeBatch();
-//                                    connection.commit();
-//                                    preparedStatement.clearBatch();
-//                                	  valuesetDataRowCount++;
-
-//		                                if(valuesetDataRowCount % BATCH_SIZE == 0){
-//		                                	preparedStatement.executeBatch();
-//		                                	connection.commit();
-//		                                	preparedStatement.clearBatch();
-//		                                }
-//                                }
                             }
 
                             if(!headerRowFound){
                                 if(hasValueInCell(row, 0) && row.getCell(0).getStringCellValue().toUpperCase().trim().equals(HEADER_ROW_FINDER_KEY)){
                                     headerRowFound = true;
                                 }
-//                        preparedStatement.executeBatch();
-//                        connection.commit();
                             }
-
                         }
                     }
                     workBook.close();
