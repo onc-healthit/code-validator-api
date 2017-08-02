@@ -5,15 +5,16 @@ import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.loader.BaseCodeLoader;
 import org.sitenv.vocabularies.loader.VocabularyLoader;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 /**
  * Created by Brian on 2/7/2016.
@@ -22,13 +23,13 @@ import java.util.List;
 public class SnomedLoader extends BaseCodeLoader implements VocabularyLoader {
     private static Logger logger = Logger.getLogger(SnomedLoader.class);
 
-    @Override
-    public void load(List<File> filesToLoad, Connection connection) {
+    public long load(List<File> filesToLoad, DataSource datasource) {
+        long n = 0;
+        JdbcTemplate t = new JdbcTemplate(datasource);
         BufferedReader br = null;
         FileReader fileReader = null;
         try {
             StrBuilder insertQueryBuilder = new StrBuilder(codeTableInsertSQLPrefix);
-            int totalCount = 0, pendingCount = 0;
 
             for (File file : filesToLoad) {
                 if (file.isFile() && !file.isHidden()) {
@@ -45,26 +46,17 @@ public class SnomedLoader extends BaseCodeLoader implements VocabularyLoader {
                             String[] line = StringUtils.splitPreserveAllTokens(available, "\t", 9);
                             String code = line[4];
                             String displayName = line[7];
-
-                            buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, CodeSystemOIDs.SNOMEDCT.codesystemOID());
-
-                            if ((++totalCount % BATCH_SIZE) == 0) {
-                                insertCode(insertQueryBuilder.toString(), connection);
-                                insertQueryBuilder.clear();
-                                insertQueryBuilder.append(codeTableInsertSQLPrefix);
-                                pendingCount = 0;
-                            }
+                            n++;
+                            buildCodeInsertQueryString(insertQueryBuilder, code.toUpperCase(), displayName.toUpperCase(), codeSystem, CodeSystemOIDs.SNOMEDCT.codesystemOID());
+                            t.update(insertQueryBuilder.toString());
+                            insertQueryBuilder.clear();
+                            insertQueryBuilder.append(codeTableInsertSQLPrefix);
                         }
                     }
                 }
             }
-            if (pendingCount > 0) {
-                insertCode(insertQueryBuilder.toString(), connection);
-            }
         } catch (IOException e) {
             logger.error(e);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             if (br != null) {
                 try {
@@ -75,5 +67,7 @@ public class SnomedLoader extends BaseCodeLoader implements VocabularyLoader {
                 }
             }
         }
+        return n;
     }
+
 }

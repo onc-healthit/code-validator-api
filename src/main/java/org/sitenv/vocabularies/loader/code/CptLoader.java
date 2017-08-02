@@ -1,17 +1,18 @@
 package org.sitenv.vocabularies.loader.code;
 
-import org.apache.commons.lang3.text.StrBuilder;
-import org.apache.log4j.Logger;
-import org.sitenv.vocabularies.loader.BaseCodeLoader;
-import org.springframework.stereotype.Component;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.apache.commons.lang3.text.StrBuilder;
+import org.apache.log4j.Logger;
+import org.sitenv.vocabularies.loader.BaseCodeLoader;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by Brian on 2/7/2016.
@@ -26,13 +27,13 @@ public class CptLoader extends BaseCodeLoader {
     }
 
     @Override
-    public void load(List<File> filesToLoad, Connection connection) {
+    public long load(List<File> filesToLoad, DataSource ds) {
+        long n = 0;
         BufferedReader br = null;
         FileReader fileReader = null;
         try {
             StrBuilder insertQueryBuilder = new StrBuilder(codeTableInsertSQLPrefix);
-            int totalCount = 0, pendingCount = 0;
-
+            JdbcTemplate t  = new JdbcTemplate(ds);
             for (File file : filesToLoad) {
                 if (file.isFile() && !file.isHidden()) {
                     logger.debug("Loading CPT File: " + file.getName());
@@ -46,24 +47,17 @@ public class CptLoader extends BaseCodeLoader {
                             String displayName = line.substring(line.indexOf(" "));
                             buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, oid);
 
-                            if ((++totalCount % BATCH_SIZE) == 0) {
-                                insertCode(insertQueryBuilder.toString(), connection);
-                                insertQueryBuilder.clear();
-                                insertQueryBuilder.append(codeTableInsertSQLPrefix);
-                                pendingCount = 0;
-                            }
+                            n++;
+                            t.update(codeTableInsertSQLPrefix,code.toUpperCase().trim(),displayName.toUpperCase().trim(),codeSystem,CodeSystemOIDs.CDT.codesystemOID());
+
                         }
                     }
                 }
             }
-            if (pendingCount > 0) {
-                insertCode(insertQueryBuilder.toString(), connection);
-            }
         } catch (IOException e) {
             logger.error(e);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
+        }
+        finally {
             if (br != null) {
                 try {
                     fileReader.close();
@@ -73,5 +67,7 @@ public class CptLoader extends BaseCodeLoader {
                 }
             }
         }
+
+        return n;
     }
 }

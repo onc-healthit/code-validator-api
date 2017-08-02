@@ -1,19 +1,20 @@
 package org.sitenv.vocabularies.loader.code;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
+
+import javax.sql.DataSource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.loader.BaseCodeLoader;
 import org.sitenv.vocabularies.loader.VocabularyLoader;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Created by Brian on 2/7/2016.
@@ -22,13 +23,13 @@ import java.util.List;
 public class LoincLoader extends BaseCodeLoader implements VocabularyLoader {
     private static Logger logger = Logger.getLogger(LoincLoader.class);
 
-    @Override
-    public void load(List<File> filesToLoad, Connection connection) {
+    public long load(List<File> filesToLoad, DataSource datasource) {
+        long n = 0;
+        JdbcTemplate t = new JdbcTemplate(datasource);
         BufferedReader br = null;
         FileReader fileReader = null;
         try {
             StrBuilder insertQueryBuilder = new StrBuilder(codeTableInsertSQLPrefix);
-            int totalCount = 0, pendingCount = 0;
 
             for (File file : filesToLoad) {
                 if (file.isFile() && !file.isHidden()) {
@@ -49,28 +50,29 @@ public class LoincLoader extends BaseCodeLoader implements VocabularyLoader {
                             String longCommonName = StringUtils.strip(line[29], "\"");
                             String componentName = StringUtils.strip(line[1], "\"");
                             String shortName = StringUtils.strip(line[23], "\"");
+                            n++;
+                            
+                            buildCodeInsertQueryString(insertQueryBuilder, code, longCommonName.toUpperCase(), codeSystem, oid);
+                            t.update(insertQueryBuilder.toString());
+                            insertQueryBuilder.clear();
+                            insertQueryBuilder.append(codeTableInsertSQLPrefix);
+                            
+                            buildCodeInsertQueryString(insertQueryBuilder, code, componentName.toUpperCase(), codeSystem, oid);
+                            t.update(insertQueryBuilder.toString());
+                            insertQueryBuilder.clear();
+                            insertQueryBuilder.append(codeTableInsertSQLPrefix);
 
-                            buildCodeInsertQueryString(insertQueryBuilder, code, longCommonName, codeSystem, oid);
-                            buildCodeInsertQueryString(insertQueryBuilder, code, componentName, codeSystem, oid);
-                            buildCodeInsertQueryString(insertQueryBuilder, code, shortName, codeSystem, oid);
-
-                            if ((++totalCount % BATCH_SIZE) == 0) {
-                                insertCode(insertQueryBuilder.toString(), connection);
-                                insertQueryBuilder.clear();
-                                insertQueryBuilder.append(codeTableInsertSQLPrefix);
-                                pendingCount = 0;
-                            }
+                            
+                            buildCodeInsertQueryString(insertQueryBuilder, code, shortName.toUpperCase(), codeSystem, oid);
+                            t.update(insertQueryBuilder.toString());
+                            insertQueryBuilder.clear();
+                            insertQueryBuilder.append(codeTableInsertSQLPrefix);
                         }
                     }
                 }
             }
-            if (pendingCount > 0) {
-                insertCode(insertQueryBuilder.toString(), connection);
-            }
         } catch (IOException e) {
             logger.error(e);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             if (br != null) {
                 try {
@@ -81,6 +83,6 @@ public class LoincLoader extends BaseCodeLoader implements VocabularyLoader {
                 }
             }
         }
+        return n;
     }
-
 }

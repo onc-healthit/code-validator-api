@@ -4,9 +4,9 @@ package org.sitenv.vocabularies.loader.code;
  * Created by Brian on 8/9/2016.
  */
 public enum CodeSystemOIDs {
-    SNOMEDCT("2.16.840.1.113883.6.96"),
-    RXNORM("2.16.840.1.113883.6.88"),
-    LOINC("2.16.840.1.113883.6.1"),
+	SNOMEDCT("2.16.840.1.113883.6.96"), 
+	RXNORM("2.16.840.1.113883.6.88"),    
+	LOINC("2.16.840.1.113883.6.1"),
     ICD10CM("2.16.840.1.113883.6.90"),
     ICD10PCS("2.16.840.1.113883.6.4"),
     CPT4("2.16.840.1.113883.6.12"),

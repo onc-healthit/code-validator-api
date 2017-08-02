@@ -6,7 +6,16 @@ public class NodeValidationResult {
 	private int baseNodeIndex;
 	private String configuredXpathExpression;
 	private int nodeIndex;
+	public long getErrorOffset() {
+		return errorOffset;
+	}
 
+	public void setErrorOffset(long errorOffset) {
+		this.errorOffset = errorOffset;
+	}
+
+	private long errorOffset = 0;
+	
 	private String requestedCode;
 	private String requestedCodeSystem;
 	private String requestedCodeSystemName;
@@ -16,6 +25,7 @@ public class NodeValidationResult {
 	private String requestedText;
 	private String configuredAllowableValuesetOidsForNode;
 	private String configuredAllowableCodesystemNamesForNode;
+	private String ruleID;
 
 	private boolean nodeCodeSystemOIDFound;
 	private boolean nodeValuesetsFound;
@@ -182,5 +192,13 @@ public class NodeValidationResult {
 
 	public void setNodeCodeSystemOIDFound(boolean nodeCodeSystemOIDFound) {
 		this.nodeCodeSystemOIDFound = nodeCodeSystemOIDFound;
+	}
+	
+	public String getRuleID() {
+		return this.ruleID;
+	}
+	
+	public void setRuleID(String id) {
+		this.ruleID = id;
 	}
 }

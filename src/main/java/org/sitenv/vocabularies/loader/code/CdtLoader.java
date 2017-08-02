@@ -1,5 +1,13 @@
 package org.sitenv.vocabularies.loader.code;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import javax.sql.DataSource;
+
 import org.apache.commons.lang3.text.StrBuilder;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -8,24 +16,18 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.sitenv.vocabularies.loader.BaseCodeLoader;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-
 @Component(value = "CDT")
-    public class CdtLoader extends BaseCodeLoader {
+public class CdtLoader extends BaseCodeLoader {
     private static Logger logger = Logger.getLogger(CdtLoader.class);
 
-    @Override
-    public void load(List<File> filesToLoad, Connection connection) {
+    public long load(List<File> filesToLoad, DataSource ds) {
+        long n = 0;
         StrBuilder insertQueryBuilder = null;
         String insertQueryPrefix = codeTableInsertSQLPrefix;
+        JdbcTemplate t  = new JdbcTemplate(ds);
         for (File file : filesToLoad) {
             if (file.isFile() && !file.isHidden()) {
                 String codeSystem = file.getParentFile().getName();
@@ -54,15 +56,17 @@ import java.util.List;
                                 code = codeCell.getStringCellValue();
                                 displayName = descriptionCell.getStringCellValue();
 
-                                buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, CodeSystemOIDs.CDT.codesystemOID());
+                                n++;
+                                buildCodeInsertQueryString(insertQueryBuilder, code.toUpperCase(), displayName.toUpperCase(), codeSystem, CodeSystemOIDs.CDT.codesystemOID());
+                                t.update(insertQueryPrefix.toString());
+                                insertQueryBuilder.clear();
+                                insertQueryBuilder.append(codeTableInsertSQLPrefix);
+
                             }
                         }
-                        insertCode(insertQueryBuilder.toString(), connection);
                     }
                 } catch (IOException e) {
                     logger.error(e);
-                } catch (SQLException e) {
-                    e.printStackTrace();
                 } finally {
                     try {
                         if(workBook != null) {
@@ -77,6 +81,7 @@ import java.util.List;
                 }
             }
         }
+        return n;
     }
 
     public static boolean isRowEmpty(Row row) {

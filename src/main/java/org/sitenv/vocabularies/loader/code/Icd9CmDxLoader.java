@@ -11,5 +11,4 @@ public class Icd9CmDxLoader extends Icd9BaseLoader {
     public Icd9CmDxLoader() {
         this.oid = CodeSystemOIDs.ICD9CMDX.codesystemOID();
     }
-
 }

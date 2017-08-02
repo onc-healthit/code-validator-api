@@ -1,12 +1,15 @@
 package org.sitenv.vocabularies.validation.validators;
 
+import java.util.List;
+
 import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.validation.NodeValidation;
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
+import org.sitenv.vocabularies.validation.utils.ConfiguredExpressionFilter;
 
-import java.util.List;
+import com.ximpleware.VTDNav;
 
 /**
  * Created by Brian on 2/15/2016.
@@ -17,9 +20,9 @@ public abstract class NodeValidator implements NodeValidation {
         VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
         vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
         vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.MAY);
-        vocabularyValidationResult.setMessage("Value set code validation attempt for value set(s) ('" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + ") that do not exist in service for code system " + nodeValidationResult.getRequestedCodeSystemName() + " (" + nodeValidationResult.getRequestedCodeSystem() + ")");
+        vocabularyValidationResult.setMessage("Value set code validation attempt for value set(s) ('" + nodeValidationResult.getConfiguredAllowableValuesetOidsForNode() + "') that do not exist in service for code system " + nodeValidationResult.getRequestedCodeSystemName() + " (" + nodeValidationResult.getRequestedCodeSystem() + ")");
         return vocabularyValidationResult;
     }
 
-    protected abstract List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult, ConfiguredValidationResultSeverityLevel configuredValidationResultSeverityLevel);
+    protected abstract List<VocabularyValidationResult> buildVocabularyValidationResults(NodeValidationResult nodeValidationResult, ConfiguredValidationResultSeverityLevel configuredValidationResultSeverityLevel, ConfiguredExpressionFilter filter, VTDNav nav);
 }

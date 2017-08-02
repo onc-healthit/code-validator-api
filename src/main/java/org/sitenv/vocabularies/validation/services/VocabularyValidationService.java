@@ -1,150 +1,251 @@
 package org.sitenv.vocabularies.validation.services;
 
-import org.sitenv.vocabularies.configuration.ConfiguredExpression;
-import org.sitenv.vocabularies.configuration.ConfiguredValidator;
-import org.sitenv.vocabularies.validation.NodeValidation;
-import org.sitenv.vocabularies.validation.NodeValidatorFactory;
-import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
-import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
-import org.sitenv.vocabularies.validation.utils.CCDADocumentNamespaces;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+import org.sitenv.vocabularies.configuration.ConfiguredExpression;
+import org.sitenv.vocabularies.validation.NodeValidatorFactory;
+import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
+import org.sitenv.vocabularies.validation.utils.CCDADocumentNamespaces;
+import org.sitenv.vocabularies.validation.utils.ConfiguredExpressionLevelFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import com.ximpleware.VTDGen;
+import com.ximpleware.VTDNav;
 
 /**
  * Created by Brian on 2/10/2016.
  */
 @Service
 public class VocabularyValidationService {
-    @Resource(name="vocabularyValidationConfigurations")
-    List<ConfiguredExpression> vocabularyValidationConfigurations;
-    @Resource(name="documentBuilder")
-    DocumentBuilder documentBuilder;
-    @Resource(name="xPathFactory")
-    XPathFactory xPathFactory;
-    @Autowired
-    NodeValidatorFactory vocabularyValidatorFactory;
 
-    public List<VocabularyValidationResult> validate(String uri) throws IOException, SAXException {
-        Document doc = documentBuilder.parse(uri);
-        return this.validate(doc);
-    }
+	private static final Logger logger = Logger.getLogger(VocabularyValidationService.class);
 
-    public List<VocabularyValidationResult> validate(InputStream stream) throws IOException, SAXException {
-        Document doc = documentBuilder.parse(stream);
-        return this.validate(doc);
-    }
+	@Resource(name = "vocabularyValidationConfigurations")
+	List<ConfiguredExpression> vocabularyValidationConfigurations;
 
-    public List<VocabularyValidationResult> validate(Document doc) {
-        Map<String, ArrayList<VocabularyValidationResult>> vocabularyValidationResultMap = getInitializedResultMap();
-        if (doc != null) {
-            String configuredXpathExpression = "";
-            try {
-                XPath xpath = getNewXpath(doc);
-                for (ConfiguredExpression configuredExpression : vocabularyValidationConfigurations) {
-                    configuredXpathExpression = configuredExpression.getConfiguredXpathExpression();
-                    NodeList nodes = findAllDocumentNodesByXpathExpression(xpath, configuredXpathExpression, doc);
-                    for (int i = 0; i < nodes.getLength(); i++) {
-                        Node node = nodes.item(i);
-                        List<VocabularyValidationResult> vocabularyValidationResults = new ArrayList<>();
-                        boolean validNode = false;
-                        Iterator configIterator = configuredExpression.getConfiguredValidators().iterator();
-                        while(configIterator.hasNext() && !validNode){
-                            ConfiguredValidator configuredValidator = (ConfiguredValidator) configIterator.next();
-                            NodeValidation vocabularyValidator = vocabularyValidatorFactory.getVocabularyValidator(configuredValidator.getName());
-                            List<VocabularyValidationResult> tempResults = vocabularyValidator.validateNode(configuredValidator, xpath, node, i);
-                            if(foundValidationError(tempResults)) {
-                                vocabularyValidationResults.addAll(tempResults);
-                            }else {
-                                vocabularyValidationResults.clear();
-                                vocabularyValidationResults.addAll(tempResults);
-                                validNode = true;
-                            }
-                        }
+	/*
+	 * Following resource is defined to handle MU2 document validation to
+	 * support CCDA R1.1 document templates This variable holds only MU2
+	 * specific validation expressions
+	 */
+	// ------------------------- INTERNAL CODE CHANGE START
+	// --------------------------
+	@Resource(name = "vocabularyValidationConfigurationsForMu2")
+	List<ConfiguredExpression> vocabularyValidationConfigurationsForMu2;
+	// ------------------------- INTERNAL CODE CHANGE END
+	// --------------------------
 
-                        for (VocabularyValidationResult vocabularyValidationResult : vocabularyValidationResults) {
-                            vocabularyValidationResult.getNodeValidationResult().setConfiguredXpathExpression(configuredXpathExpression);
-                            vocabularyValidationResultMap.get(vocabularyValidationResult.getVocabularyValidationResultLevel().getResultType()).add(vocabularyValidationResult);
-                        }
+	// ------------------------- INTERNAL CODE CHANGE START
+	// --------------------------
+	// @Resource(name="documentBuilder")
+	// DocumentBuilder documentBuilder;
+	@Resource(name = "documentBuilderFactory")
+	DocumentBuilderFactory documentBuilderFactory;
 
-                    }
+	private DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
+		return documentBuilderFactory.newDocumentBuilder();
+	}
 
-                }
-            } catch (XPathExpressionException e) {
-                System.err.println("ERROR VALIDATING DOCUMENT FOR THE FOLLOWING CONFIGURED EXPRESSION: " + configuredXpathExpression);
-            }
-        }
-        return convertMapToList(vocabularyValidationResultMap);
-    }
+	@Autowired
+	NodeValidatorFactory vocabularyValidatorFactory;
 
-    private Map<String, ArrayList<VocabularyValidationResult>> getInitializedResultMap() {
-        Map<String, ArrayList<VocabularyValidationResult>> resultMap = new HashMap<>();
-        resultMap.put("errors", new ArrayList<VocabularyValidationResult>());
-        resultMap.put("warnings", new ArrayList<VocabularyValidationResult>());
-        resultMap.put("info", new ArrayList<VocabularyValidationResult>());
-        return resultMap;
-    }
+	@Autowired
+	ValidateWorker worker;
 
-    private XPath getNewXpath(final Document doc){
-        XPath xpath = xPathFactory.newXPath();
-        xpath.setNamespaceContext(new NamespaceContext() {
-            @Override
-            public String getNamespaceURI(String prefix) {
-                String nameSpace;
-                if(CCDADocumentNamespaces.sdtc.name().equals(prefix)){
-                    nameSpace = CCDADocumentNamespaces.sdtc.getNamespace();
-                }else {
-                    nameSpace = CCDADocumentNamespaces.defaultNameSpaceForCcda.getNamespace();
-                }
-                return nameSpace;
-            }
+	// ------------------------- INTERNAL CODE CHANGE END
+	// --------------------------
 
-            @Override
-            public String getPrefix(String namespaceURI) {
-                return null;
-            }
+	@Resource(name = "xPathFactory")
+	XPathFactory xPathFactory;
 
-            @Override
-            public Iterator getPrefixes(String namespaceURI) {
-                return null;
-            }
-        });
-        return xpath;
-    }
+	// ------------------------- INTERNAL CODE CHANGE START
+	// --------------------------
+	public List<VocabularyValidationResult> validate(String uri, String severityLevel)
+			throws IOException, SAXException, ParserConfigurationException {
+		// Document doc = documentBuilder.parse(uri);
+		Document doc = getDocumentBuilder().parse(uri);
+		return this.validate(doc, uri, severityLevel);
+	}
+	// ------------------------- INTERNAL CODE CHANGE END
+	// --------------------------
 
-    private static NodeList findAllDocumentNodesByXpathExpression(XPath xpath, String configuredXpath, Document doc) throws XPathExpressionException {
-        NodeList result = (NodeList) xpath.compile(configuredXpath).evaluate(doc, XPathConstants.NODESET);
-        return result;
-    }
+	// ------------------------- INTERNAL CODE CHANGE START
+	// --------------------------
+	public List<VocabularyValidationResult> validate(InputStream stream, String severityLevel)
+			throws IOException, SAXException, ParserConfigurationException {
+		// Document doc = documentBuilder.parse(stream);
+		String xml = IOUtils.toString(stream);
+		stream.reset();
+		Document doc = getDocumentBuilder().parse(stream);
+		return this.validate(doc, xml, severityLevel);
+	}
+	// ------------------------- INTERNAL CODE CHANGE END
+	// --------------------------
 
-    private boolean foundValidationError(List<VocabularyValidationResult> results){
-        for(VocabularyValidationResult result : results){
-            if(result.getVocabularyValidationResultLevel().equals(VocabularyValidationResultLevel.SHALL)){
-                return true;
-            }
-        }
-        return false;
-    }
+	public List<VocabularyValidationResult> validate(Document doc, String xmlDoc, String severityLevel) {
+		Map<String, ArrayList<VocabularyValidationResult>> vocabularyValidationResultMap = getInitializedResultMap();
+		if (doc != null) {
+			String configuredXpathExpression = "";
+			try {
+				XPath xpath = getNewXpath(doc);
 
-    private  List<VocabularyValidationResult> convertMapToList(Map<String, ArrayList<VocabularyValidationResult>> resultMap) {
-        List<VocabularyValidationResult> results = new ArrayList<>();
-        for(ArrayList<VocabularyValidationResult> resultList : resultMap.values()){
-            results.addAll(resultList);
-        }
-        return results;
-    }
+				/*
+				 * Updated for loop to call getVocabValidationConfigurations
+				 * method to validate respective document template specific
+				 * expressions. getVocabValidationConfigurations() method
+				 * returns the expression list based on the document templates
+				 * (CCDA R1.1, CCDA R2.1)
+				 * 
+				 */
+				// ------------------------- INTERNAL CODE CHANGE START --------------------------
+				// for (ConfiguredExpression configuredExpression :
+				// vocabularyValidationConfigurations) {
+								
+				List<ConfiguredExpression> docValidations = getVocabValidationConfigurations(doc, xpath);
+				List<ConfiguredExpression> filteredList = new ArrayList<ConfiguredExpression>(docValidations.size());
+				ConfiguredExpressionLevelFilter filter = new ConfiguredExpressionLevelFilter(severityLevel);
+				for (ConfiguredExpression configuredExpression : docValidations) {
+					ConfiguredExpression e = filter.accept(configuredExpression);
+					if (e != null) {
+						filteredList.add(e);
+					}
+				}
+
+				logger.info("Document qualifying expressions:" + docValidations.size() + " filtered to level(" + severityLevel + ") leaves:" + filteredList.size());
+
+				try {	
+					VTDGen vg = new VTDGen();
+					vg.setDoc(xmlDoc.getBytes("UTF-8"));
+					vg.parse(true);
+					VTDNav nav = vg.getNav();
+																	
+					List<Future<Map<String, List<VocabularyValidationResult>>>> futures = new ArrayList<Future<Map<String, List<VocabularyValidationResult>>>>();
+					for (ConfiguredExpression configuredExpression : filteredList) {
+						ValidateRequest r = new ValidateRequest(configuredExpression, filter, logger, nav);
+						futures.add(worker.doWork(r));
+					}
+					for (Future<Map<String, List<VocabularyValidationResult>>> future : futures) {
+						try {
+							Map<String, List<VocabularyValidationResult>> r = future.get();
+							for (String key : r.keySet()) {
+								vocabularyValidationResultMap.get(key).addAll(r.get(key));
+							}
+						} catch (Exception e) {
+							logger.error("Error gettting future result.",e);
+							e.printStackTrace();
+						}
+					}
+				} catch (Exception e) {
+					logger.error("Error submitting futures.",e);
+					e.printStackTrace();
+				}
+			} catch (Exception e) {
+				logger.error("Error validating document for the following configured expression:" + configuredXpathExpression,e);
+				System.err.println("ERROR VALIDATING DOCUMENT FOR THE FOLLOWING CONFIGURED EXPRESSION: "
+						+ configuredXpathExpression);
+				e.printStackTrace();
+			}
+
+		}
+		return convertMapToList(vocabularyValidationResultMap);
+	}
+
+	private Map<String, ArrayList<VocabularyValidationResult>> getInitializedResultMap() {
+		Map<String, ArrayList<VocabularyValidationResult>> resultMap = new HashMap<>();
+		resultMap.put("errors", new ArrayList<VocabularyValidationResult>());
+		resultMap.put("warnings", new ArrayList<VocabularyValidationResult>());
+		resultMap.put("info", new ArrayList<VocabularyValidationResult>());
+		return resultMap;
+	}
+
+	private XPath getNewXpath(final Document doc) {
+		XPath xpath = xPathFactory.newXPath();
+		xpath.setNamespaceContext(new NamespaceContext() {
+			@Override
+			public String getNamespaceURI(String prefix) {
+				String nameSpace;
+				if (CCDADocumentNamespaces.sdtc.name().equals(prefix)) {
+					nameSpace = CCDADocumentNamespaces.sdtc.getNamespace();
+				} else {
+					nameSpace = CCDADocumentNamespaces.defaultNameSpaceForCcda.getNamespace();
+				}
+				return nameSpace;
+			}
+
+			@Override
+			public String getPrefix(String namespaceURI) {
+				return null;
+			}
+
+			@Override
+			public Iterator getPrefixes(String namespaceURI) {
+				return null;
+			}
+		});
+		return xpath;
+	}
+
+
+	private List<VocabularyValidationResult> convertMapToList(
+			Map<String, ArrayList<VocabularyValidationResult>> resultMap) {
+		List<VocabularyValidationResult> results = new ArrayList<>();
+		for (ArrayList<VocabularyValidationResult> resultList : resultMap.values()) {
+			results.addAll(resultList);
+		}
+		return results;
+	}
+
+	/*
+	 * Following method is added to differentiate weather CCDA document template
+	 * is R 1.1 or R2.1 Load the xpath configuration list based on the document
+	 * version (MU2 , MU3)
+	 */
+	// ------------------------- INTERNAL CODE CHANGE START --------------------------
+
+	private List<ConfiguredExpression> getVocabValidationConfigurations(Document doc, XPath xpath)
+			throws XPathExpressionException {
+
+		Number num = (Number) xpath
+				.compile("count(/v3:ClinicalDocument/v3:templateId[@root='2.16.840.1.113883.10.20.22.1.1']/@extension)")
+				.evaluate(doc, XPathConstants.NUMBER);
+
+		List<ConfiguredExpression> ret = null;
+		if (num.intValue() == 0) {// MU2 CCDA R1.1 document
+			ret = vocabularyValidationConfigurationsForMu2;
+			if (ret.size() == 0) {
+				logger.warn("Validating an MU2 CCDA R1.1 document, but found no configured vocabularyValidations!!!");
+			}
+		} else { // MU3 CCDA R2.1 document
+			ret = vocabularyValidationConfigurations;
+			if (ret.size() == 0) {
+				logger.warn("Validating an MU3 CCDA R2.1 document, but found no configured vocabularyValidations!!!");
+			}
+		}
+		return ret;
+	}
+
+	// ------------------------- INTERNAL CODE CHANGE END --------------------------
+
 }
