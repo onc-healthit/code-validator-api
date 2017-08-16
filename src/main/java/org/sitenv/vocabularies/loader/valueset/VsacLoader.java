@@ -24,7 +24,7 @@ public class VsacLoader extends BaseCodeLoader implements VocabularyLoader {
     private static final int MIN_EXPECTED_NUMBER_OF_CELLS_IN_ROW = 6;
     private static final int CODE_CELL_INDEX_IN_ROW = 0;
     private static final int BATCH_SIZE = 1000;
-    private static final String HEADER_ROW_FINDER_KEY = "CODE";
+    private static final String HEADER_ROW_FINDER_KEY = "CODE"; 
 
     public void load(List<File> filesToLoad, Connection connection) {
         String insertQueryPrefix = "insert into VALUESETS (ID, CODE, DISPLAYNAME, CODESYSTEMNAME, CODESYSTEMVERSION, CODESYSTEM, TTY, VALUESETNAME, VALUESETOID, VALUESETTYPE, VALUESETDEFINITIONVERSION, VALUESETSTEWARD) values (DEFAULT ,?,?,?,?,?,?,?,?,?,?,?)";
@@ -44,22 +44,25 @@ public class VsacLoader extends BaseCodeLoader implements VocabularyLoader {
                         String valueSetVersion = "";
                         String valueSetSteward = "";
                         int valuesetDataRowCount = 0;
+                        String rowlabel = "";
 
                         for(Row row : sheet){
-                            if(row.getRowNum() < 6) {
-                                if (row.getRowNum() == 1) {
+                            if ((!headerRowFound) && hasValueInCell(row, 0) && (row.getRowNum()<10)) {
+                            	rowlabel = row.getCell(0).getStringCellValue().trim();
+								// Switching to use labels in the first column to look for meta info 
+                                if (rowlabel.equalsIgnoreCase("VALUE SET NAME")) {
                                     valueSetName = row.getCell(1).getStringCellValue().toUpperCase().trim();
                                 }
-                                if (row.getRowNum() == 2) {
+                                if (rowlabel.equalsIgnoreCase("OID")) {
                                     valueSetOid = row.getCell(1).getStringCellValue().toUpperCase().trim();
                                 }
-                                if (row.getRowNum() == 3) {
+                                if (rowlabel.equalsIgnoreCase("TYPE")) {
                                     valueSetType = row.getCell(1).getStringCellValue().toUpperCase().trim();
                                 }
-                                if (row.getRowNum() == 4) {
+                                if (rowlabel.equalsIgnoreCase("DEFINITION VERSION")) {
                                     valueSetVersion = row.getCell(1).getStringCellValue().toUpperCase().trim();
                                 }
-                                if (row.getRowNum() == 5) {
+                                if (rowlabel.equalsIgnoreCase("STEWARD")) {
                                     valueSetSteward = row.getCell(1).getStringCellValue().toUpperCase().trim();
                                 }
                             }
