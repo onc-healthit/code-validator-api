@@ -42,7 +42,7 @@ public class RxNormLoader extends BaseCodeLoader implements VocabularyLoader {
                         String code = line[0];
                         String displayName = line[14];
 
-                        buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, CodeSystemOIDs.RXNORM.codesystemOID());
+                        buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, CodeSystemOIDs.RXNORM.codesystemOID(), CODES_IN_THIS_SYSTEM_ARE_ALWAYS_ACTIVE);
 
                         if ((++totalCount % BATCH_SIZE) == 0) {
                             insertCode(insertQueryBuilder.toString(), connection);

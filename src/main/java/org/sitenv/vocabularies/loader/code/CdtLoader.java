@@ -21,6 +21,7 @@ import java.util.List;
 @Component(value = "CDT")
     public class CdtLoader extends BaseCodeLoader {
     private static Logger logger = Logger.getLogger(CdtLoader.class);
+    private final String INVALID_CODE_ENTRY = "99";
 
     @Override
     public void load(List<File> filesToLoad, Connection connection) {
@@ -44,17 +45,23 @@ import java.util.List;
                             if (!isRowEmpty(sheet.getRow(count))) {
                                 String code;
                                 String displayName;
+                                String activeCode;
 
                                 XSSFCell codeCell = sheet.getRow(count).getCell(0);
+                                XSSFCell activeCodeCell = sheet.getRow(count).getCell(1);
                                 XSSFCell descriptionCell = sheet.getRow(count).getCell(2);
 
                                 codeCell.setCellType(Cell.CELL_TYPE_STRING);
+                                activeCodeCell.setCellType(Cell.CELL_TYPE_STRING);
                                 descriptionCell.setCellType(Cell.CELL_TYPE_STRING);
 
                                 code = codeCell.getStringCellValue();
+                                activeCode = activeCodeCell.getStringCellValue();
                                 displayName = descriptionCell.getStringCellValue();
 
-                                buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, CodeSystemOIDs.CDT.codesystemOID());
+                                boolean isCodeInactive = activeCode.equals(INVALID_CODE_ENTRY);
+
+                                buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, CodeSystemOIDs.CDT.codesystemOID(), isCodeInactive);
                             }
                         }
                         insertCode(insertQueryBuilder.toString(), connection);

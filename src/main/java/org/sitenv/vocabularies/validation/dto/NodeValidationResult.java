@@ -23,6 +23,7 @@ public class NodeValidationResult {
 	private boolean nodeCodeFound;
 	private boolean nodeCodeSystemNameFound;
 	private boolean nodeDisplayNameFound;
+	private boolean nodeCodeIsActive = true;
 
 	public boolean isValid() {
 		return isValid;
@@ -182,5 +183,13 @@ public class NodeValidationResult {
 
 	public void setNodeCodeSystemOIDFound(boolean nodeCodeSystemOIDFound) {
 		this.nodeCodeSystemOIDFound = nodeCodeSystemOIDFound;
+	}
+
+	public boolean isNodeCodeIsActive() {
+		return nodeCodeIsActive;
+	}
+
+	public void setNodeCodeIsActive(boolean nodeCodeIsActive) {
+		this.nodeCodeIsActive = nodeCodeIsActive;
 	}
 }

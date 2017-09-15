@@ -40,7 +40,7 @@ public abstract class Icd9BaseLoader extends BaseCodeLoader {
                         if (!line.isEmpty()) {
                             String code = buildDelimitedIcdCode(line.substring(0, 5));
                             String displayName = line.substring(6);
-                            buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, oid);
+                            buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, oid, CODES_IN_THIS_SYSTEM_ARE_ALWAYS_ACTIVE);
 
                             if ((++totalCount % BATCH_SIZE) == 0) {
                                 insertCode(insertQueryBuilder.toString(), connection);
