@@ -30,11 +30,12 @@ public class VsacLoader extends BaseCodeLoader implements VocabularyLoader {
         String insertQueryPrefix = "insert into VALUESETS (ID, CODE, DISPLAYNAME, CODESYSTEMNAME, CODESYSTEMVERSION, CODESYSTEM, TTY, VALUESETNAME, VALUESETOID, VALUESETTYPE, VALUESETDEFINITIONVERSION, VALUESETSTEWARD) values (DEFAULT ,?,?,?,?,?,?,?,?,?,?,?)";
         for (File file : filesToLoad) {
             if (file.isFile() && !file.isHidden()) {
+            	Workbook workBook = null;
                 try {
                     logger.info("Loading Value Set File: " + file.getName());
                     PreparedStatement preparedStatement = connection.prepareStatement(insertQueryPrefix);
                     InputStream inputStream = new FileInputStream(file);
-                    Workbook workBook = StreamingReader.builder().open(inputStream);
+                    workBook = StreamingReader.builder().open(inputStream);
                     for (int i = 1; i < workBook.getNumberOfSheets(); i++) {
                         boolean headerRowFound = false;
                         Sheet sheet = workBook.getSheetAt(i);
@@ -99,10 +100,18 @@ public class VsacLoader extends BaseCodeLoader implements VocabularyLoader {
                         preparedStatement.executeBatch();
                         connection.commit();
                     }
-                    workBook.close();
                 } catch (IOException | SQLException e) {
                     logger.error("ERROR loading valueset. " + e.getLocalizedMessage());
                     e.printStackTrace();
+                } finally {
+                	if(workBook != null) {
+	                	try {
+							workBook.close();
+						} catch (IOException e) {
+							logger.error("ERROR closing workBook. " + e.getLocalizedMessage());
+							e.printStackTrace();
+						}
+                	}
                 }
             }
         }
