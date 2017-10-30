@@ -12,12 +12,14 @@ import java.sql.SQLException;
  */
 public abstract class BaseCodeLoader implements VocabularyLoader{
 
-    public final String codeTableInsertSQLPrefix = "insert into CODES (ID, CODE, DISPLAYNAME, CODESYSTEM, CODESYSTEMOID) values ";
+    public final String codeTableInsertSQLPrefix = "insert into CODES (ID, CODE, DISPLAYNAME, CODESYSTEM, CODESYSTEMOID, ACTIVE) values ";
     protected static final int BATCH_SIZE = 100;
 
+    protected final boolean CODES_IN_THIS_SYSTEM_ARE_ALWAYS_ACTIVE = true;
     protected String code;
     protected String codeSystem;
     protected String oid;
+    protected boolean active;
 
     public boolean insertCode(String sql, Connection connection) throws SQLException {
         PreparedStatement preparedStatement = null;
@@ -37,7 +39,7 @@ public abstract class BaseCodeLoader implements VocabularyLoader{
        return inserted;
     }
 
-    protected void buildCodeInsertQueryString(StrBuilder insertQueryBuilder, String code, String displayName, String codeSystem, String oid) {
+    protected void buildCodeInsertQueryString(StrBuilder insertQueryBuilder, String code, String displayName, String codeSystem, String oid, boolean active) {
         insertQueryBuilder.append("(");
         insertQueryBuilder.append("DEFAULT");
         insertQueryBuilder.append(",'");
@@ -48,6 +50,8 @@ public abstract class BaseCodeLoader implements VocabularyLoader{
         insertQueryBuilder.append(codeSystem);
         insertQueryBuilder.append("','");
         insertQueryBuilder.append(oid);
-        insertQueryBuilder.append("'),");
+        insertQueryBuilder.append("',");
+        insertQueryBuilder.append(active);
+        insertQueryBuilder.append("),");
     }
 }

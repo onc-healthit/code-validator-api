@@ -21,6 +21,7 @@ import java.util.List;
 @Component(value = "LOINC")
 public class LoincLoader extends BaseCodeLoader implements VocabularyLoader {
     private static Logger logger = Logger.getLogger(LoincLoader.class);
+    private static final String ACTIVE_CODE = "ACTIVE";
 
     @Override
     public void load(List<File> filesToLoad, Connection connection) {
@@ -48,11 +49,13 @@ public class LoincLoader extends BaseCodeLoader implements VocabularyLoader {
                             String oid = CodeSystemOIDs.LOINC.codesystemOID();
                             String longCommonName = StringUtils.strip(line[29], "\"");
                             String componentName = StringUtils.strip(line[1], "\"");
+                            String status = StringUtils.strip(line[12], "\"");
                             String shortName = StringUtils.strip(line[23], "\"");
+                            boolean isCodeActive = status.equals(ACTIVE_CODE);
 
-                            buildCodeInsertQueryString(insertQueryBuilder, code, longCommonName, codeSystem, oid);
-                            buildCodeInsertQueryString(insertQueryBuilder, code, componentName, codeSystem, oid);
-                            buildCodeInsertQueryString(insertQueryBuilder, code, shortName, codeSystem, oid);
+                            buildCodeInsertQueryString(insertQueryBuilder, code, longCommonName, codeSystem, oid, isCodeActive);
+                            buildCodeInsertQueryString(insertQueryBuilder, code, componentName, codeSystem, oid, isCodeActive);
+                            buildCodeInsertQueryString(insertQueryBuilder, code, shortName, codeSystem, oid, isCodeActive);
 
                             if ((++totalCount % BATCH_SIZE) == 0) {
                                 insertCode(insertQueryBuilder.toString(), connection);
