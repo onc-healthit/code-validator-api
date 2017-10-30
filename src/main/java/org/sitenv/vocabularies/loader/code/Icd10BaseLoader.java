@@ -38,8 +38,8 @@ public abstract class Icd10BaseLoader extends IcdLoader {
                         String shortDisplayName = available.substring(16, 77);
                         String longDisplayName = available.substring(77);
 
-                        buildCodeInsertQueryString(insertQueryBuilder, code, shortDisplayName, codeSystem, oid);
-                        buildCodeInsertQueryString(insertQueryBuilder, code, longDisplayName, codeSystem, oid);
+                        buildCodeInsertQueryString(insertQueryBuilder, code, shortDisplayName, codeSystem, oid, CODES_IN_THIS_SYSTEM_ARE_ALWAYS_ACTIVE);
+                        buildCodeInsertQueryString(insertQueryBuilder, code, longDisplayName, codeSystem, oid, CODES_IN_THIS_SYSTEM_ARE_ALWAYS_ACTIVE);
 
                         if ((++totalCount % BATCH_SIZE) == 0) {
                             insertCode(insertQueryBuilder.toString(), connection);

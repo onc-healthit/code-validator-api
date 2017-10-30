@@ -61,7 +61,7 @@ public class CodeSystemCodeValidator extends NodeValidator {
         nodeValidationResult.setRequestedDisplayName(nodeDisplayName);
         nodeValidationResult.setConfiguredAllowableCodesystemNamesForNode(configuredValidator.getAllowedCodesystemNames());
 
-        if(codeRepository.foundCodeAndDisplayNameAndCodeSystemOIDInCodesystem(nodeCode, nodeDisplayName, nodeCodeSystem, allowedConfiguredCodeSystemNames)){
+        if(codeRepository.foundActiveCodeAndDisplayNameAndCodeSystemOIDInCodesystem(nodeCode, nodeDisplayName, nodeCodeSystem, allowedConfiguredCodeSystemNames)){
             nodeValidationResult.setValid(true);
         }else{
             if(codeRepository.foundCodesystems(allowedConfiguredCodeSystemNames)){
@@ -74,6 +74,9 @@ public class CodeSystemCodeValidator extends NodeValidator {
                 }
                 if(codeRepository.foundCodeSystemOIDInCodesystems(nodeCodeSystem, allowedConfiguredCodeSystemNames)){
                     nodeValidationResult.setNodeCodeSystemOIDFound(true);
+                }
+                if(!codeRepository.codeIsActive(nodeCode, allowedConfiguredCodeSystemNames)){
+                    nodeValidationResult.setNodeCodeIsActive(false);
                 }
             }
         }
@@ -105,6 +108,14 @@ public class CodeSystemCodeValidator extends NodeValidator {
                     vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
                     vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.MAY);
                     String validationMessage = "Code system OID " + nodeValidationResult.getRequestedCodeSystem() + " does not exist in the configured code system name(s) " + nodeValidationResult.getConfiguredAllowableCodesystemNamesForNode();
+                    vocabularyValidationResult.setMessage(validationMessage);
+                    vocabularyValidationResults.add(vocabularyValidationResult);
+                }
+                if(!nodeValidationResult.isNodeCodeIsActive()){
+                    VocabularyValidationResult vocabularyValidationResult = new VocabularyValidationResult();
+                    vocabularyValidationResult.setNodeValidationResult(nodeValidationResult);
+                    vocabularyValidationResult.setVocabularyValidationResultLevel(VocabularyValidationResultLevel.SHOULD);
+                    String validationMessage = "Code: " + nodeValidationResult.getRequestedCode() + " , is not an active code in Code System: " + nodeValidationResult.getRequestedCodeSystem();
                     vocabularyValidationResult.setMessage(validationMessage);
                     vocabularyValidationResults.add(vocabularyValidationResult);
                 }

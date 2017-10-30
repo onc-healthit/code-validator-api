@@ -21,6 +21,7 @@ import java.util.List;
 @Component(value = "SNOMED-CT")
 public class SnomedLoader extends BaseCodeLoader implements VocabularyLoader {
     private static Logger logger = Logger.getLogger(SnomedLoader.class);
+    private static final String ACTIVE_CODE = "1";
 
     @Override
     public void load(List<File> filesToLoad, Connection connection) {
@@ -44,9 +45,11 @@ public class SnomedLoader extends BaseCodeLoader implements VocabularyLoader {
                         } else {
                             String[] line = StringUtils.splitPreserveAllTokens(available, "\t", 9);
                             String code = line[4];
+                            String active = line[2];
                             String displayName = line[7];
+                            boolean isCodeActive = active.equals(ACTIVE_CODE);
 
-                            buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, CodeSystemOIDs.SNOMEDCT.codesystemOID());
+                            buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, CodeSystemOIDs.SNOMEDCT.codesystemOID(), isCodeActive);
 
                             if ((++totalCount % BATCH_SIZE) == 0) {
                                 insertCode(insertQueryBuilder.toString(), connection);

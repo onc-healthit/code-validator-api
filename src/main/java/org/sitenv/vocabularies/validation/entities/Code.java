@@ -27,6 +27,9 @@ public class Code {
     @Column(name = "CODESYSTEMOID")
     private String codeSystemOID;
 
+    @Column(name = "ACTIVE")
+    private boolean active;
+
     public String getCodeSystemOID() {
         return codeSystemOID;
     }
@@ -65,5 +68,13 @@ public class Code {
 
     public void setCodeSystem(String codeSystem) {
         this.codeSystem = codeSystem;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
