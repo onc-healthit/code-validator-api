@@ -68,15 +68,15 @@ public class CodeSystemCodeValidator extends NodeValidator {
                 nodeValidationResult.setCodeSystemFound(true);
                 if(codeRepository.foundCodeInCodesystems(nodeCode, allowedConfiguredCodeSystemNames)){
                     nodeValidationResult.setNodeCodeFound(true);
+                    if(!codeRepository.codeIsActive(nodeCode, allowedConfiguredCodeSystemNames)){
+                        nodeValidationResult.setNodeCodeIsActive(false);
+                    }
                 }
                 if(codeRepository.foundDisplayNameInCodesystems(nodeDisplayName, allowedConfiguredCodeSystemNames)){
                     nodeValidationResult.setNodeDisplayNameFound(true);
                 }
                 if(codeRepository.foundCodeSystemOIDInCodesystems(nodeCodeSystem, allowedConfiguredCodeSystemNames)){
                     nodeValidationResult.setNodeCodeSystemOIDFound(true);
-                }
-                if(!codeRepository.codeIsActive(nodeCode, allowedConfiguredCodeSystemNames)){
-                    nodeValidationResult.setNodeCodeIsActive(false);
                 }
             }
         }
