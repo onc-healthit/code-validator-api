@@ -1,13 +1,14 @@
 package org.sitenv.vocabularies.validation.services;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.sitenv.vocabularies.validation.entities.Code;
 import org.sitenv.vocabularies.validation.repositories.CodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Brian on 2/23/2016.
@@ -34,7 +35,7 @@ public class VocabularyCodeService {
 
     public boolean isFoundByCodeInCodeSystems(String code, Set<String> codeSystems){
         String cleanedCode = code.trim().toUpperCase();
-        ArrayList<String> cleanedCodeSystems = new ArrayList<>();
+        Set<String> cleanedCodeSystems = new HashSet<>();
         for(String codeSystem : codeSystems){
             cleanedCodeSystems.add(codeSystem.trim().toUpperCase());
         }

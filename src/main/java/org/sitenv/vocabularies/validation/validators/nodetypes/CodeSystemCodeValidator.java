@@ -1,5 +1,16 @@
 package org.sitenv.vocabularies.validation.validators.nodetypes;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
@@ -12,14 +23,6 @@ import org.sitenv.vocabularies.validation.validators.NodeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
-
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Component(value = "CodeSystemCodeValidator")
 public class CodeSystemCodeValidator extends NodeValidator {
@@ -51,7 +54,7 @@ public class CodeSystemCodeValidator extends NodeValidator {
             throw new RuntimeException("ERROR getting node values " + e.getMessage());
         }
 
-        List<String> allowedConfiguredCodeSystemNames = new ArrayList<>(Arrays.asList(configuredValidator.getAllowedCodesystemNames().split(",")));
+        Set<String> allowedConfiguredCodeSystemNames = new HashSet<>(Arrays.asList(configuredValidator.getAllowedCodesystemNames().split(",")));
 
         NodeValidationResult nodeValidationResult = new NodeValidationResult();
         nodeValidationResult.setValidatedDocumentXpathExpression(XpathUtils.buildXpathFromNode(node));
