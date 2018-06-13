@@ -125,7 +125,7 @@ public class CodeValidatorApiConfiguration {
     }
 
     @Bean
-    public List<ConfiguredExpression> vocabularyValidationConfigurations(ValidationConfigurationLoader configurationLoader){
+    public static List<ConfiguredExpression> vocabularyValidationConfigurations(ValidationConfigurationLoader configurationLoader){
         return configurationLoader.getConfigurations().getExpressions();
     }
 
@@ -151,7 +151,7 @@ public class CodeValidatorApiConfiguration {
     }
 
     @Bean
-    public Jaxb2Marshaller castorMarshaller() {
+    public static Jaxb2Marshaller castorMarshaller() {
         Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
         jaxb2Marshaller.setPackagesToScan("org.sitenv.vocabularies.configuration");
         Map<String,Object> map = new HashMap<>();

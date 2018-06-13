@@ -29,4 +29,15 @@ public class ConfiguredExpression {
     public void setConfiguredValidators(List<ConfiguredValidator> configuredValidators) {
         this.configuredValidators = configuredValidators;
     }
+    
+    @Override
+    public String toString() {
+    	StringBuffer sb = new StringBuffer();
+    	sb.append("configuredValidators: " + System.lineSeparator());
+    	for (ConfiguredValidator validator : configuredValidators) {
+    		sb.append(validator.getName() + System.lineSeparator());
+    	}
+    	sb.append("configuredXpathExpression: " + configuredXpathExpression + System.lineSeparator());
+    	return sb.toString();
+    }
 }

@@ -1,9 +1,12 @@
 package org.sitenv.vocabularies.configuration;
 
+import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.oxm.Unmarshaller;
 
 import javax.xml.transform.stream.StreamSource;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -17,6 +20,17 @@ public class ValidationConfigurationLoader implements InitializingBean {
 
     public void setValidationConfigurationFilePath(String validationConfigurationFilePath) {
         this.validationConfigurationFilePath = validationConfigurationFilePath;
+    }   
+    
+    public static String createFullFilePath(String validationConfigurationFolderPath, String vocabularyConfig) {
+    	if (validationConfigurationFolderPath != null) {
+    		return validationConfigurationFolderPath + File.separator + vocabularyConfig + VocabularyConstants.Config.XML_EXT;
+    	}
+    	return vocabularyConfig + VocabularyConstants.Config.XML_EXT;
+    }
+    
+    public String getValidationConfigurationFilePath() {
+    	return validationConfigurationFilePath;
     }
 
     public void setUnmarshaller(Unmarshaller unmarshaller) {

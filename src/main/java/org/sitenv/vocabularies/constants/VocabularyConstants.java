@@ -1,6 +1,9 @@
 package org.sitenv.vocabularies.constants;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 public class VocabularyConstants {
@@ -37,5 +40,20 @@ public class VocabularyConstants {
 		CODE_SYSTEM_MAP.put(ICD10CM_CODE_NAME, ICD10CM_CODE_SYSTEM);
 		CODE_SYSTEM_MAP.put(ICD10PCS_CODE_NAME, ICD10PCS_CODE_SYSTEM);
 		CODE_SYSTEM_MAP.put(RXNORM_CODE_NAME, RXNORM_CODE_SYSTEM);
+	}
+	
+	public static class Config {
+		public static final String DEFAULT = "ccdaReferenceValidatorConfig";
+		public static final String SCORECARD = "ccdaScorecardConfig";
+		public static final String XML_EXT = ".xml";
+
+		public static final Set<String> validConfigs = new HashSet<String>();
+		static {
+			validConfigs.addAll(Arrays.asList(DEFAULT, SCORECARD));
+		}
+	}
+	
+	public enum LogSeverity {
+		ERROR, WARN, INFO
 	}
 }
