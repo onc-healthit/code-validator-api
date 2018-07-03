@@ -22,6 +22,15 @@ import java.util.List;
 public class LoincLoader extends BaseCodeLoader implements VocabularyLoader {
     private static Logger logger = Logger.getLogger(LoincLoader.class);
     private static final String ACTIVE_CODE = "ACTIVE";
+    private static final String STATUS_ROW_HEADER_VALUE = "STATUS";
+    private static final int CODE_INDEX = 0;
+    private static final int COMPONENT_INDEX = 1;
+    private static final int LATEST_LOINC_CSV_STATUS_INDEX = 11;
+    private static final int LATEST_LOINC_CSV_SHORT_NAME_INDEX = 22;
+    private static final int LATEST_LOINC_CSV_LONG_COMMON_NAME_INDEX = 28;
+    private static final int FORMER_LOINC_CSV_STATUS_INDEX = LATEST_LOINC_CSV_STATUS_INDEX + 1;
+    private static final int FORMER_LOINC_CSV_SHORT_NAME_INDEX = LATEST_LOINC_CSV_SHORT_NAME_INDEX + 1;
+    private static final int FORMER_LOINC_CSV_LONG_COMMON_NAME_INDEX = LATEST_LOINC_CSV_LONG_COMMON_NAME_INDEX + 1;    
 
     @Override
     public void load(List<File> filesToLoad, Connection connection) {
@@ -38,21 +47,37 @@ public class LoincLoader extends BaseCodeLoader implements VocabularyLoader {
                     fileReader = new FileReader(file);
                     br = new BufferedReader(fileReader);
                     String available;
+                    // Default to legacy LOINC CSV indexes
+                    int statusIndex = FORMER_LOINC_CSV_STATUS_INDEX;
+                    int shortNameIndex = FORMER_LOINC_CSV_SHORT_NAME_INDEX;
+                    int longCommonNameIndex = FORMER_LOINC_CSV_LONG_COMMON_NAME_INDEX;
                     while ((available = br.readLine()) != null) {
+                        String[] line = available.replaceAll("^\"", "").split("\"?(,|$)(?=(([^\"]*\"){2})*[^\"]*$) *\"?");
+                    	String status = StringUtils.strip(line[LATEST_LOINC_CSV_STATUS_INDEX], "\"");                     	
                         if ((count++ == 0)) {
-                            continue; // skip header row
+                        	// Analyze relevant data from header row to determine LOINC CSV version and update indexes if latest
+                            if (status.equalsIgnoreCase(STATUS_ROW_HEADER_VALUE)) {
+                                logger.info("Loading latest LOINC CSV / updating indexes");
+                                statusIndex = LATEST_LOINC_CSV_STATUS_INDEX;
+                                shortNameIndex = LATEST_LOINC_CSV_SHORT_NAME_INDEX;
+                                longCommonNameIndex = LATEST_LOINC_CSV_LONG_COMMON_NAME_INDEX;
+                            } else {
+                            	logger.info("Loading Legacy LOINC CSV / using default indexes");
+                            }
                         } else {
-                            String[] line = available.replaceAll("^\"", "").split("\"?(,|$)(?=(([^\"]*\"){2})*[^\"]*$) *\"?");
-
-                            String code = StringUtils.strip(line[0], "\"");
                             String codeSystem = file.getParentFile().getName();
                             String oid = CodeSystemOIDs.LOINC.codesystemOID();
-                            String longCommonName = StringUtils.strip(line[29], "\"");
-                            String componentName = StringUtils.strip(line[1], "\"");
-                            String status = StringUtils.strip(line[12], "\"");
-                            String shortName = StringUtils.strip(line[23], "\"");
+                            
+                            // Indexes OK for both versions
+                            String code = StringUtils.strip(line[CODE_INDEX], "\"");
+                            String componentName = StringUtils.strip(line[COMPONENT_INDEX], "\"");                                                     
+                            // Indexes depend on version
+                            status = StringUtils.strip(line[statusIndex], "\"");
+                            String shortName = StringUtils.strip(line[shortNameIndex], "\"");
+                            String longCommonName = StringUtils.strip(line[longCommonNameIndex], "\"");
+                            
                             boolean isCodeActive = status.equals(ACTIVE_CODE);
-
+                            
                             buildCodeInsertQueryString(insertQueryBuilder, code, longCommonName, codeSystem, oid, isCodeActive);
                             buildCodeInsertQueryString(insertQueryBuilder, code, componentName, codeSystem, oid, isCodeActive);
                             buildCodeInsertQueryString(insertQueryBuilder, code, shortName, codeSystem, oid, isCodeActive);
