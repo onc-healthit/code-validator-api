@@ -51,7 +51,7 @@ public class VocabularyValidationService {
     private ServletContext context;
     
     private static Logger logger = Logger.getLogger(VocabularyValidationService.class);
-    private static final boolean FULL_LOG = true;
+    private static final boolean FULL_LOG = false;
 
     public List<VocabularyValidationResult> validate(String uri) throws IOException, SAXException {
         Document doc = documentBuilder.parse(uri);
