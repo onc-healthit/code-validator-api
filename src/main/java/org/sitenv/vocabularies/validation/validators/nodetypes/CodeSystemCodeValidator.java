@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.NonUniqueResultException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -71,9 +72,19 @@ public class CodeSystemCodeValidator extends NodeValidator {
                 nodeValidationResult.setCodeSystemFound(true);
                 if(codeRepository.foundCodeInCodesystems(nodeCode, allowedConfiguredCodeSystemNames)){
                     nodeValidationResult.setNodeCodeFound(true);
-                    if(!codeRepository.codeIsActive(nodeCode, allowedConfiguredCodeSystemNames)){
-                        nodeValidationResult.setNodeCodeIsActive(false);
-                    }
+					try {
+						if (!codeRepository.codeIsActive(nodeCode, allowedConfiguredCodeSystemNames)) {
+							nodeValidationResult.setNodeCodeIsActive(false);
+						}
+					} catch (NonUniqueResultException nonUniqueResultException) {
+						nodeValidationResult.setNodeCodeIsActive(false);
+						logger.error(
+								"The following error was encountered when trying to check codeRepository.codeIsActive(...). "
+										+ "It will be handled internally and considered inactive as the source is likely corrupt "
+										+ "since it is returning multiple values.",
+								nonUniqueResultException);
+
+					}
                 }
                 if(codeRepository.foundDisplayNameInCodesystems(nodeDisplayName, allowedConfiguredCodeSystemNames)){
                     nodeValidationResult.setNodeDisplayNameFound(true);
