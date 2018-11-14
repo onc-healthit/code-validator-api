@@ -56,15 +56,18 @@ public class VocabularyValidationService {
     
     private static Logger logger = Logger.getLogger(VocabularyValidationService.class);
     private static final boolean FULL_LOG = false;
-
+    
     public List<VocabularyValidationResult> validate(String uri) throws IOException, SAXException {
+    	return this.validate(uri, VocabularyConstants.Config.DEFAULT);
+    } 
+
+    public List<VocabularyValidationResult> validate(String uri, String vocabularyConfig) throws IOException, SAXException {
         Document doc = documentBuilder.parse(uri);
-        return this.validate(doc);
+        return this.validate(doc, vocabularyConfig);
     }
 
     public List<VocabularyValidationResult> validate(InputStream stream) throws IOException, SAXException {
-        Document doc = documentBuilder.parse(stream);
-        return this.validate(doc);
+    	return this.validate(stream, VocabularyConstants.Config.DEFAULT);
     }
     
 	public List<VocabularyValidationResult> validate(InputStream stream, String vocabularyConfig)
