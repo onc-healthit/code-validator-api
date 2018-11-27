@@ -33,4 +33,13 @@ public class VocabularyValidationResult {
     public void setVocabularyValidationResultLevel(VocabularyValidationResultLevel vocabularyValidationResultLevel) {
         this.vocabularyValidationResultLevel = vocabularyValidationResultLevel;
     }
+    
+    @Override
+    public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(System.lineSeparator() + "-VocabularyValidationResult-" + System.lineSeparator());
+		sb.append("VocabularyValidationResultLevel: " + getVocabularyValidationResultLevel() + System.lineSeparator());
+		sb.append("Message: " + getMessage());
+		return sb.toString();
+    }
 }

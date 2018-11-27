@@ -1,5 +1,23 @@
 package org.sitenv.vocabularies.validation.services;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletContext;
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.apache.log4j.Logger;
 import org.sitenv.vocabularies.configuration.CodeValidatorApiConfiguration;
 import org.sitenv.vocabularies.configuration.Configurations;
@@ -20,20 +38,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.annotation.Resource;
-import javax.servlet.ServletContext;
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-
 /**
  * Created by Brian on 2/10/2016.
  */
@@ -52,15 +56,18 @@ public class VocabularyValidationService {
     
     private static Logger logger = Logger.getLogger(VocabularyValidationService.class);
     private static final boolean FULL_LOG = false;
-
+    
     public List<VocabularyValidationResult> validate(String uri) throws IOException, SAXException {
+    	return this.validate(uri, VocabularyConstants.Config.DEFAULT);
+    } 
+
+    public List<VocabularyValidationResult> validate(String uri, String vocabularyConfig) throws IOException, SAXException {
         Document doc = documentBuilder.parse(uri);
-        return this.validate(doc);
+        return this.validate(doc, vocabularyConfig);
     }
 
     public List<VocabularyValidationResult> validate(InputStream stream) throws IOException, SAXException {
-        Document doc = documentBuilder.parse(stream);
-        return this.validate(doc);
+    	return this.validate(stream, VocabularyConstants.Config.DEFAULT);
     }
     
 	public List<VocabularyValidationResult> validate(InputStream stream, String vocabularyConfig)
@@ -93,35 +100,7 @@ public class VocabularyValidationService {
                 }
                 
                 if (vocabularyValidationConfigurations != null) {
-	                for (ConfiguredExpression configuredExpression : vocabularyValidationConfigurations) {
-	                    configuredXpathExpression = configuredExpression.getConfiguredXpathExpression();
-	                    NodeList nodes = findAllDocumentNodesByXpathExpression(xpath, configuredXpathExpression, doc);
-	                    for (int i = 0; i < nodes.getLength(); i++) {
-	                        Node node = nodes.item(i);
-	                        List<VocabularyValidationResult> vocabularyValidationResults = new ArrayList<>();
-	                        boolean validNode = false;
-	                        Iterator configIterator = configuredExpression.getConfiguredValidators().iterator();
-	                        while(configIterator.hasNext() && !validNode){
-	                            ConfiguredValidator configuredValidator = (ConfiguredValidator) configIterator.next();
-	                            NodeValidation vocabularyValidator = vocabularyValidatorFactory.getVocabularyValidator(configuredValidator.getName());
-	                            List<VocabularyValidationResult> tempResults = vocabularyValidator.validateNode(configuredValidator, xpath, node, i);
-	                            if(foundValidationError(tempResults)) {
-	                                vocabularyValidationResults.addAll(tempResults);
-	                            }else {
-	                                vocabularyValidationResults.clear();
-	                                vocabularyValidationResults.addAll(tempResults);
-	                                validNode = true;
-	                            }
-	                        }
-	
-	                        for (VocabularyValidationResult vocabularyValidationResult : vocabularyValidationResults) {
-	                            vocabularyValidationResult.getNodeValidationResult().setConfiguredXpathExpression(configuredXpathExpression);
-	                            vocabularyValidationResultMap.get(vocabularyValidationResult.getVocabularyValidationResultLevel().getResultType()).add(vocabularyValidationResult);
-	                        }
-	
-	                    }
-	
-	                }
+                	validate(vocabularyValidationResultMap, configuredXpathExpression, xpath, doc);
                 } else {
                 	logger.error("Vocabulary validation was not run as vocabularyValidationConfigurations is null");
                 }
@@ -131,6 +110,43 @@ public class VocabularyValidationService {
         }
         return convertMapToList(vocabularyValidationResultMap);
     }
+    
+	private void validate(Map<String, ArrayList<VocabularyValidationResult>> vocabularyValidationResultMap,
+			String configuredXpathExpression, XPath xpath, Document doc) throws XPathExpressionException {
+        for (ConfiguredExpression configuredExpression : vocabularyValidationConfigurations) {
+            configuredXpathExpression = configuredExpression.getConfiguredXpathExpression();
+            NodeList nodes = findAllDocumentNodesByXpathExpression(xpath, configuredXpathExpression, doc);
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Node node = nodes.item(i);
+                List<VocabularyValidationResult> vocabularyValidationResults = new ArrayList<>();
+                boolean validNode = false;
+                Iterator configIterator = configuredExpression.getConfiguredValidators().iterator();
+                while(configIterator.hasNext() && !validNode){
+                    ConfiguredValidator configuredValidator = (ConfiguredValidator) configIterator.next();
+                    NodeValidation vocabularyValidator = selectVocabularyValidator(configuredValidator);
+                    List<VocabularyValidationResult> tempResults = vocabularyValidator.validateNode(configuredValidator, xpath, node, i);
+                    if(foundValidationError(tempResults)) {
+                        vocabularyValidationResults.addAll(tempResults);
+                    }else {
+                        vocabularyValidationResults.clear();
+                        vocabularyValidationResults.addAll(tempResults);
+                        validNode = true;
+                    }
+                }
+
+                for (VocabularyValidationResult vocabularyValidationResult : vocabularyValidationResults) {
+                    vocabularyValidationResult.getNodeValidationResult().setConfiguredXpathExpression(configuredXpathExpression);
+                    vocabularyValidationResultMap.get(vocabularyValidationResult.getVocabularyValidationResultLevel().getResultType()).add(vocabularyValidationResult);
+                }
+
+            }
+
+        }
+    }
+	
+	protected NodeValidation selectVocabularyValidator(ConfiguredValidator configuredValidator) {
+		return vocabularyValidatorFactory.getVocabularyValidator(configuredValidator.getName());
+	}
     
     private boolean useDynamicVocab(String vocabularyConfig) {
     	logger.info("Attempting to overwrite pre-loaded vocabulary configuration dynamically "
@@ -257,9 +273,11 @@ public class VocabularyValidationService {
             @Override
             public String getNamespaceURI(String prefix) {
                 String nameSpace;
-                if(CCDADocumentNamespaces.sdtc.name().equals(prefix)){
+                if(CCDADocumentNamespaces.sdtc.name().equals(prefix)) {
                     nameSpace = CCDADocumentNamespaces.sdtc.getNamespace();
-                }else {
+                } else if(CCDADocumentNamespaces.xsi.name().equals(prefix)) {
+                	nameSpace = CCDADocumentNamespaces.xsi.getNamespace();
+                } else {
                     nameSpace = CCDADocumentNamespaces.defaultNameSpaceForCcda.getNamespace();
                 }
                 return nameSpace;

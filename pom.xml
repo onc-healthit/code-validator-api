@@ -3,7 +3,7 @@
 
 	<groupId>org.sitenv.vocabulary</groupId>
 	<artifactId>codevalidator-api</artifactId>
-	<version>1.0.17</version>
+	<version>1.0.18</version>
 	<name>Code Validator API</name>
 	<url>http://www.sitenv.org</url>
 
@@ -48,8 +48,13 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-oxm</artifactId>
-			<version>4.2.4.RELEASE</version>
+			<version>4.2.4.RELEASE</version>      
 		</dependency>
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-test</artifactId>
+          <version>4.2.4.RELEASE</version>
+        </dependency>    
 		<!--spring -->
 
 		<!-- database -->
@@ -74,7 +79,8 @@
 			<version>2.1.1</version>
 		</dependency>
 		<!-- database -->
-
+    
+        <!-- other -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -105,13 +111,25 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
 		</dependency>
-
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>apache-log4j-extras</artifactId>
 			<version>1.2.17</version>
 		</dependency>
-
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.2</version>
+            <scope>test</scope>
+        </dependency>    
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>            
+            <scope>test</scope>          
+        </dependency>
+        <!-- other -->
+        
 	</dependencies>
 
 	<build>

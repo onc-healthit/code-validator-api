@@ -1,0 +1,27 @@
+<configurations>
+
+    <!-- START requiredNodeValidatorMissingElementFileBasedConfigTest() -->    
+    <expression xpathExpression="//v3:informant/v3:relatedEntity/v3:relatedPerson/v3:name">
+		<validator>
+			<name>RequiredNodeValidator</name>
+			<validationResultSeverityLevels>
+				<codeSeverityLevel>SHOULD</codeSeverityLevel>
+			</validationResultSeverityLevels>
+            <requiredNodeName>v3:prefix</requiredNodeName>
+			<validationMessage>informant/relatedEntity/relatedPerson/name SHOULD contain a prefix element (not a real rule - just a test)</validationMessage>
+		</validator>
+	</expression>
+  
+    <expression xpathExpression="//v3:informationRecipient/v3:intendedRecipient/v3:informationRecipient/v3:name">
+        <validator>
+            <name>RequiredNodeValidator</name>
+            <validationResultSeverityLevels>
+                <codeSeverityLevel>SHOULD</codeSeverityLevel>
+            </validationResultSeverityLevels>
+            <requiredNodeName>v3:prefix</requiredNodeName>
+            <validationMessage>informationRecipient/intendedRecipient/informationRecipient/name SHOULD contain a prefix element (not a real rule - just a test)</validationMessage>
+        </validator>
+    </expression>
+    <!-- END requiredNodeValidatorMissingElementFileBasedConfigTest() -->    
+  
+</configurations>

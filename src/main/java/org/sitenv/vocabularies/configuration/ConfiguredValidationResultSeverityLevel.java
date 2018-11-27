@@ -14,6 +14,12 @@ public class ConfiguredValidationResultSeverityLevel {
     @XmlElement(name = "codeSeverityLevel")
     String codeSeverityLevel;
 
+	public ConfiguredValidationResultSeverityLevel() { }
+    
+    public ConfiguredValidationResultSeverityLevel(String codeSeverityLevel) {
+    	this.codeSeverityLevel = codeSeverityLevel;
+    }
+
     public String getCodeSeverityLevel() {
         return codeSeverityLevel;
     }
