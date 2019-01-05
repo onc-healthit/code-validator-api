@@ -12,3 +12,5 @@ Also, please see the CodeValidatorApiConfiguration class to get more details on 
 
 
 See https://github.com/siteadmin/referenceccdavalidator for an example implementation and instructions.
+
+See https://github.com/mieweb/vagrant-ccda-validator for a vagrant up quick start to start validating in no time.
