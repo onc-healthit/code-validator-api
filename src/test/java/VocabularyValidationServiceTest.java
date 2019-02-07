@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -22,6 +23,7 @@ import org.sitenv.vocabularies.configuration.ConfiguredValidator;
 import org.sitenv.vocabularies.configuration.ValidationConfigurationLoader;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.validation.NodeValidatorFactory;
+import org.sitenv.vocabularies.validation.dto.GlobalCodeValidatorResults;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.springframework.mock.web.MockServletContext;
@@ -39,6 +41,7 @@ public class VocabularyValidationServiceTest {
 	XPathFactory xPathFactory;
 	NodeValidatorFactory vocabularyValidatorFactory;
 	ServletContext context;
+    GlobalCodeValidatorResults globalCodeValidatorResults;
 
 	private static final int MISSING_UNIT_ATTRIBUTE = 0, HAS_UNIT_ATTRIBUTE = 1;
 	private static URI[] CCDA_FILES = new URI[0];
@@ -76,6 +79,7 @@ public class VocabularyValidationServiceTest {
 		vocabularyValidatorFactory = codeValidatorConfig.vocabularyValidatorFactory();
 		xPathFactory = codeValidatorConfig.xPathFactory();
 		context = new MockServletContext();
+		globalCodeValidatorResults = new GlobalCodeValidatorResults();
 	}
 
 	private void setupInitParameters(boolean isFileBasedConfig) {
@@ -115,6 +119,7 @@ public class VocabularyValidationServiceTest {
 		ReflectionTestUtils.setField(vocabularyValidationService, "vocabularyValidatorFactory",
 				vocabularyValidatorFactory);
 		ReflectionTestUtils.setField(vocabularyValidationService, "context", context);
+		ReflectionTestUtils.setField(vocabularyValidationService, "globalCodeValidatorResults", globalCodeValidatorResults);
 	}
 
 	@Test
@@ -273,7 +278,22 @@ public class VocabularyValidationServiceTest {
 		Assert.assertFalse(ASSERT_MSG_HAS_VOCABULARY_ISSUE_BUT_SHOULD_NOT, results.size() > 1);
 		Assert.assertFalse(ASSERT_MSG_SEVERITY_WITH_MESSAGE_MATCHES_BUT_SHOULD_NOT,
 				isResultMatchingExpectedResult(results, VocabularyValidationResultLevel.SHOULD, expectedMessage));		
-	}	
+	}
+	
+	@Test
+	public void VocabularyValidationConfigurationsCountTest() {
+		setupInitParameters(true);
+		injectDependencies();
+			
+		testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE], "requiredNodeValidatorMissingElementConfig");
+		
+		final int expectedConfigCount = 2;
+		int configCount = globalCodeValidatorResults.getVocabularyValidationConfigurationsCount();
+		println("vocabularyValidationConfigurationsCount: " + configCount);
+		Assert.assertTrue("VocabularyValidationConfigurationsCount should be more than 0", configCount > 0);
+		Assert.assertTrue("VocabularyValidationConfigurationsCount should equal to " + expectedConfigCount + " as per the content of "
+				+ "requiredNodeValidatorMissingElementConfig", configCount == expectedConfigCount);		
+	}
 
 	private List<VocabularyValidationResult> testVocabularyValidator(URI filePath) {
 		return testVocabularyValidator(filePath, VocabularyConstants.Config.DEFAULT);

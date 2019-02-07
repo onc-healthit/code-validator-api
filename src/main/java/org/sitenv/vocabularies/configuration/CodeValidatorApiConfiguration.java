@@ -3,6 +3,7 @@ package org.sitenv.vocabularies.configuration;
 import org.sitenv.vocabularies.loader.VocabularyLoadRunner;
 import org.sitenv.vocabularies.loader.VocabularyLoaderFactory;
 import org.sitenv.vocabularies.validation.NodeValidatorFactory;
+import org.sitenv.vocabularies.validation.dto.GlobalCodeValidatorResults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.context.annotation.Bean;
@@ -158,5 +159,10 @@ public class CodeValidatorApiConfiguration {
         map.put("jaxb.formatted.output", true);
         jaxb2Marshaller.setMarshallerProperties(map);
         return jaxb2Marshaller;
+    }
+    
+    @Bean
+    public static GlobalCodeValidatorResults globalCodeValidatorResults() {    	
+    	return new GlobalCodeValidatorResults();
     }
 }
