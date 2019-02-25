@@ -28,6 +28,7 @@ import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.constants.VocabularyConstants.LogSeverity;
 import org.sitenv.vocabularies.validation.NodeValidation;
 import org.sitenv.vocabularies.validation.NodeValidatorFactory;
+import org.sitenv.vocabularies.validation.dto.GlobalCodeValidatorResults;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.utils.CCDADocumentNamespaces;
@@ -53,6 +54,8 @@ public class VocabularyValidationService {
     NodeValidatorFactory vocabularyValidatorFactory;
     @Autowired
     private ServletContext context;
+    @Resource(name="globalCodeValidatorResults")
+    GlobalCodeValidatorResults globalCodeValidatorResults;
     
     private static Logger logger = Logger.getLogger(VocabularyValidationService.class);
     private static final boolean FULL_LOG = false;
@@ -112,7 +115,10 @@ public class VocabularyValidationService {
     }
     
 	private void validate(Map<String, ArrayList<VocabularyValidationResult>> vocabularyValidationResultMap,
-			String configuredXpathExpression, XPath xpath, Document doc) throws XPathExpressionException {
+			String configuredXpathExpression, XPath xpath, Document doc) throws XPathExpressionException {		
+		globalCodeValidatorResults.setVocabularyValidationConfigurationsCount(
+				vocabularyValidationConfigurations != null ? vocabularyValidationConfigurations.size() : 0);
+		
         for (ConfiguredExpression configuredExpression : vocabularyValidationConfigurations) {
             configuredXpathExpression = configuredExpression.getConfiguredXpathExpression();
             NodeList nodes = findAllDocumentNodesByXpathExpression(xpath, configuredXpathExpression, doc);
@@ -143,6 +149,10 @@ public class VocabularyValidationService {
 
         }
     }
+	
+	public GlobalCodeValidatorResults getGlobalCodeValidatorResults() {
+		return globalCodeValidatorResults;
+	}
 	
 	protected NodeValidation selectVocabularyValidator(ConfiguredValidator configuredValidator) {
 		return vocabularyValidatorFactory.getVocabularyValidator(configuredValidator.getName());
