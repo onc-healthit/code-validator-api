@@ -56,4 +56,8 @@ public class VocabularyConstants {
 	public enum LogSeverity {
 		ERROR, WARN, INFO
 	}
+	
+	public enum SeverityLevel {
+		INFO, WARNING, ERROR
+	}
 }
