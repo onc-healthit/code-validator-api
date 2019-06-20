@@ -1,5 +1,6 @@
 package org.sitenv.vocabularies.test.other;
-import static org.sitenv.vocabularies.test.other.ValidationLogger.*;
+
+import static org.sitenv.vocabularies.test.other.ValidationLogger.println;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,6 +19,7 @@ import org.sitenv.vocabularies.configuration.ConfiguredExpression;
 import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
+import org.sitenv.vocabularies.constants.VocabularyConstants.SeverityLevel;
 import org.sitenv.vocabularies.validation.NodeValidatorFactory;
 import org.sitenv.vocabularies.validation.dto.GlobalCodeValidatorResults;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
@@ -37,14 +39,14 @@ public class VocabularyValidationTester {
 	XPathFactory xPathFactory;
 	NodeValidatorFactory vocabularyValidatorFactory;
 	ServletContext context;
-    GlobalCodeValidatorResults globalCodeValidatorResults;
-    
+	GlobalCodeValidatorResults globalCodeValidatorResults;
+
 	@Before
-	public void initialize() {		
+	public void initialize() {
 		codeValidatorConfig = new CodeValidatorApiConfiguration();
 		intializeVocabularyValidationServiceFields();
 	}
-	
+
 	private void intializeVocabularyValidationServiceFields() {
 		vocabularyValidationConfigurations = new ArrayList<ConfiguredExpression>();
 		try {
@@ -59,20 +61,21 @@ public class VocabularyValidationTester {
 	}
 
 	public void setupInitParameters(boolean isFileBasedConfig) {
-		if(isFileBasedConfig) {
+		if (isFileBasedConfig) {
 			println("Setting up for file based config...");
 			final String resourcePath = "src/test/resources";
-	        context.setInitParameter("vocabulary.localCodeRepositoryDir", "C:/Programming/SITE/code_repository");
-	        context.setInitParameter("vocabulary.localValueSetRepositoryDir", "C:/Programming/SITE/valueset_repository");
-	        context.setInitParameter("referenceccda.isDynamicVocab", "true");
-	        context.setInitParameter("referenceccda.configFolder", resourcePath);
-	        context.setInitParameter("content.scenariosDir", "C:/Programming/SITE/scenarios");
+			context.setInitParameter("vocabulary.localCodeRepositoryDir", "C:/Programming/SITE/code_repository");
+			context.setInitParameter("vocabulary.localValueSetRepositoryDir",
+					"C:/Programming/SITE/valueset_repository");
+			context.setInitParameter("referenceccda.isDynamicVocab", "true");
+			context.setInitParameter("referenceccda.configFolder", resourcePath);
+			context.setInitParameter("content.scenariosDir", "C:/Programming/SITE/scenarios");
 		} else {
 			println("Setting up for programmable config...");
-			context.setInitParameter("referenceccda.isDynamicVocab", "false");	
+			context.setInitParameter("referenceccda.isDynamicVocab", "false");
 		}
 	}
-		
+
 	public void programmaticallyConfigureRequiredNodeValidator(ConfiguredValidationResultSeverityLevel severity,
 			String requiredNodeName, String validationMessage, String configuredXpathExpression) {
 		ConfiguredValidator configuredValidator = new ConfiguredValidator();
@@ -97,17 +100,23 @@ public class VocabularyValidationTester {
 		ReflectionTestUtils.setField(vocabularyValidationService, "vocabularyValidatorFactory",
 				vocabularyValidatorFactory);
 		ReflectionTestUtils.setField(vocabularyValidationService, "context", context);
-		ReflectionTestUtils.setField(vocabularyValidationService, "globalCodeValidatorResults", globalCodeValidatorResults);
+		ReflectionTestUtils.setField(vocabularyValidationService, "globalCodeValidatorResults",
+				globalCodeValidatorResults);
 	}
 
 	public List<VocabularyValidationResult> testVocabularyValidator(URI filePath) {
 		return testVocabularyValidator(filePath, VocabularyConstants.Config.DEFAULT);
 	}
-	
+
 	public List<VocabularyValidationResult> testVocabularyValidator(URI filePath, String vocabularyConfig) {
+		return testVocabularyValidator(filePath, vocabularyConfig, SeverityLevel.INFO);
+	}
+
+	public List<VocabularyValidationResult> testVocabularyValidator(URI filePath, String vocabularyConfig,
+			SeverityLevel severityLevel) {
 		List<VocabularyValidationResult> results = new ArrayList<>();
 		try {
-			results = vocabularyValidationService.validate(filePath.toString(), vocabularyConfig);
+			results = vocabularyValidationService.validate(filePath.toString(), vocabularyConfig, severityLevel);
 			println("results.size(): " + results.size());
 			for (VocabularyValidationResult result : results) {
 				println(result.toString());
@@ -140,20 +149,20 @@ public class VocabularyValidationTester {
 		}
 		return isMatching;
 	}
-	
+
 	public GlobalCodeValidatorResults getGlobalCodeValidatorResults() {
 		return globalCodeValidatorResults;
 	}
-	
+
 	/**
 	 * 
-	 * @return a testable version of VocabularyValidationService. *Note*:
-	 *         This is NULL without initialize(), setupInitParameters(x),
+	 * @return a testable version of VocabularyValidationService. *Note*: This
+	 *         is NULL without initialize(), setupInitParameters(x),
 	 *         injectDependencies(); i.e. it must be setup the same as any other
 	 *         test
 	 */
 	public VocabularyValidationService getVocabularyValidationService() {
 		return vocabularyValidationService;
-	}	
+	}
 
 }
