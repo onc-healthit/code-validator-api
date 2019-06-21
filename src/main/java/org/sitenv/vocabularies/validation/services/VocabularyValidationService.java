@@ -81,8 +81,13 @@ public class VocabularyValidationService {
     
 	public List<VocabularyValidationResult> validate(InputStream stream, String vocabularyConfig)
 			throws IOException, SAXException {
+		return validate(stream, vocabularyConfig, SeverityLevel.INFO);
+    }
+	
+	public List<VocabularyValidationResult> validate(InputStream stream, String vocabularyConfig, SeverityLevel severityLevel)
+			throws IOException, SAXException {
         Document doc = documentBuilder.parse(stream);
-        return this.validate(doc, vocabularyConfig);
+        return this.validate(doc, vocabularyConfig, severityLevel);
     }
 
 	public List<VocabularyValidationResult> validate(Document doc) {
