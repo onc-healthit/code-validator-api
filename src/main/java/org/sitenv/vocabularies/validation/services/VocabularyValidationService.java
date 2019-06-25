@@ -26,12 +26,14 @@ import org.sitenv.vocabularies.configuration.ConfiguredValidator;
 import org.sitenv.vocabularies.configuration.ValidationConfigurationLoader;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.constants.VocabularyConstants.LogSeverity;
+import org.sitenv.vocabularies.constants.VocabularyConstants.SeverityLevel;
 import org.sitenv.vocabularies.validation.NodeValidation;
 import org.sitenv.vocabularies.validation.NodeValidatorFactory;
 import org.sitenv.vocabularies.validation.dto.GlobalCodeValidatorResults;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.utils.CCDADocumentNamespaces;
+import org.sitenv.vocabularies.validation.validators.nodetypes.NodeCodeSystemMatchesConfiguredCodeSystemValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -62,11 +64,16 @@ public class VocabularyValidationService {
     
     public List<VocabularyValidationResult> validate(String uri) throws IOException, SAXException {
     	return this.validate(uri, VocabularyConstants.Config.DEFAULT);
-    } 
-
+    }
+    
     public List<VocabularyValidationResult> validate(String uri, String vocabularyConfig) throws IOException, SAXException {
+    	return validate(uri, vocabularyConfig, SeverityLevel.INFO);
+    }
+
+	public List<VocabularyValidationResult> validate(String uri, String vocabularyConfig, SeverityLevel severityLevel)
+			throws IOException, SAXException {
         Document doc = documentBuilder.parse(uri);
-        return this.validate(doc, vocabularyConfig);
+        return this.validate(doc, vocabularyConfig, severityLevel);
     }
 
     public List<VocabularyValidationResult> validate(InputStream stream) throws IOException, SAXException {
@@ -75,15 +82,24 @@ public class VocabularyValidationService {
     
 	public List<VocabularyValidationResult> validate(InputStream stream, String vocabularyConfig)
 			throws IOException, SAXException {
+		return validate(stream, vocabularyConfig, SeverityLevel.INFO);
+    }
+	
+	public List<VocabularyValidationResult> validate(InputStream stream, String vocabularyConfig, SeverityLevel severityLevel)
+			throws IOException, SAXException {
         Document doc = documentBuilder.parse(stream);
-        return this.validate(doc, vocabularyConfig);
+        return this.validate(doc, vocabularyConfig, severityLevel);
     }
 
 	public List<VocabularyValidationResult> validate(Document doc) {
 		return this.validate(doc, VocabularyConstants.Config.DEFAULT);
 	}
 	
-    public List<VocabularyValidationResult> validate(Document doc, String vocabularyConfig) {
+	public List<VocabularyValidationResult> validate(Document doc, String vocabularyConfig) {
+		return this.validate(doc, vocabularyConfig, SeverityLevel.INFO);
+	}
+	
+    public List<VocabularyValidationResult> validate(Document doc, String vocabularyConfig, SeverityLevel severityLevel) {
         Map<String, ArrayList<VocabularyValidationResult>> vocabularyValidationResultMap = getInitializedResultMap();
         if (doc != null) {
             String configuredXpathExpression = "";
@@ -103,7 +119,7 @@ public class VocabularyValidationService {
                 }
                 
                 if (vocabularyValidationConfigurations != null) {
-                	validate(vocabularyValidationResultMap, configuredXpathExpression, xpath, doc);
+                	validate(vocabularyValidationResultMap, configuredXpathExpression, xpath, doc, severityLevel);
                 } else {
                 	logger.error("Vocabulary validation was not run as vocabularyValidationConfigurations is null");
                 }
@@ -111,11 +127,61 @@ public class VocabularyValidationService {
                 System.err.println("ERROR VALIDATING DOCUMENT FOR THE FOLLOWING CONFIGURED EXPRESSION: " + configuredXpathExpression);
             }
         }
-        return convertMapToList(vocabularyValidationResultMap);
+        return convertMapToList(vocabularyValidationResultMap, severityLevel);
     }
     
+	private void limitConfiguredExpressionsBySeverity(SeverityLevel severityLevelLimit) {
+		// This improves performance since it is run before the expressions are processed
+		logger.info("limiting configured expressions by severity level: " + severityLevelLimit.name());
+		for (ConfiguredExpression configuredExpression : vocabularyValidationConfigurations) {
+			Iterator<ConfiguredValidator> validatorIter = configuredExpression.getConfiguredValidators().iterator();
+			while (validatorIter.hasNext()) {		
+				ConfiguredValidator configuredValidator = validatorIter.next();
+				// NodeCodeSystemMatchesConfiguredCodeSystemValidator defaults to ERROR severity dynamically
+				if (!configuredValidator.getName().equalsIgnoreCase("NodeCodeSystemMatchesConfiguredCodeSystemValidator")) {
+					SeverityLevel configuredSeverityLevelConversion = configuredValidator
+							.getConfiguredValidationResultSeverityLevel().getSeverityLevelConversion();
+					switch (severityLevelLimit) {
+					case INFO:
+						// no changes required as we process everything
+						break;
+					case WARNING:
+						if (configuredSeverityLevelConversion == SeverityLevel.INFO) {
+							// remove may/info configurations so we only process
+							// warnings and errors
+							validatorIter.remove();
+						}
+						break;
+					case ERROR:
+						if (configuredSeverityLevelConversion == SeverityLevel.INFO
+								|| configuredSeverityLevelConversion == SeverityLevel.WARNING) {
+							// remove may/info and should/warning configurations so
+							// we only process warnings and errors						
+							validatorIter.remove();
+						}
+						break;
+					}					
+				}
+			}			
+		}
+		
+		Iterator<ConfiguredExpression> expressionIter = vocabularyValidationConfigurations.iterator();
+		while (expressionIter.hasNext()) {
+			ConfiguredExpression configuredExpression = expressionIter.next();
+			if (configuredExpression.getConfiguredValidators().isEmpty()) {
+				expressionIter.remove();
+			}
+		}
+		
+	}
+    
 	private void validate(Map<String, ArrayList<VocabularyValidationResult>> vocabularyValidationResultMap,
-			String configuredXpathExpression, XPath xpath, Document doc) throws XPathExpressionException {		
+			String configuredXpathExpression, XPath xpath, Document doc, SeverityLevel severityLevel)
+			throws XPathExpressionException {
+		if(severityLevel != SeverityLevel.INFO) {
+			limitConfiguredExpressionsBySeverity(severityLevel);
+		}
+		
 		globalCodeValidatorResults.setVocabularyValidationConfigurationsCount(
 				vocabularyValidationConfigurations != null ? vocabularyValidationConfigurations.size() : 0);
 		
@@ -130,20 +196,24 @@ public class VocabularyValidationService {
                 while(configIterator.hasNext() && !validNode){
                     ConfiguredValidator configuredValidator = (ConfiguredValidator) configIterator.next();
                     NodeValidation vocabularyValidator = selectVocabularyValidator(configuredValidator);
-                    List<VocabularyValidationResult> tempResults = vocabularyValidator.validateNode(configuredValidator, xpath, node, i);
-                    if(foundValidationError(tempResults)) {
-                        vocabularyValidationResults.addAll(tempResults);
-                    }else {
-                        vocabularyValidationResults.clear();
-                        vocabularyValidationResults.addAll(tempResults);
-                        validNode = true;
-                    }
+					List<VocabularyValidationResult> tempResults = vocabularyValidator.validateNode(configuredValidator,
+							xpath, node, i);
+					if (foundValidationError(tempResults)) {
+						vocabularyValidationResults.addAll(tempResults);
+					} else {
+						vocabularyValidationResults.clear();
+						vocabularyValidationResults.addAll(tempResults);
+						validNode = true;
+					}
                 }
 
-                for (VocabularyValidationResult vocabularyValidationResult : vocabularyValidationResults) {
-                    vocabularyValidationResult.getNodeValidationResult().setConfiguredXpathExpression(configuredXpathExpression);
-                    vocabularyValidationResultMap.get(vocabularyValidationResult.getVocabularyValidationResultLevel().getResultType()).add(vocabularyValidationResult);
-                }
+				for (VocabularyValidationResult vocabularyValidationResult : vocabularyValidationResults) {
+					vocabularyValidationResult.getNodeValidationResult()
+							.setConfiguredXpathExpression(configuredXpathExpression);
+					vocabularyValidationResultMap
+							.get(vocabularyValidationResult.getVocabularyValidationResultLevel().getResultType())
+							.add(vocabularyValidationResult);
+				}
 
             }
 
@@ -320,11 +390,40 @@ public class VocabularyValidationService {
         return false;
     }
 
-    private  List<VocabularyValidationResult> convertMapToList(Map<String, ArrayList<VocabularyValidationResult>> resultMap) {
+    private List<VocabularyValidationResult> convertMapToList(Map<String, ArrayList<VocabularyValidationResult>> resultMap, 
+    		SeverityLevel severityLevel) {
         List<VocabularyValidationResult> results = new ArrayList<>();
         for(ArrayList<VocabularyValidationResult> resultList : resultMap.values()){
             results.addAll(resultList);
         }
+        limitSeverityForDynamicallySetValidators(results, severityLevel);
         return results;
     }
+    
+	private void limitSeverityForDynamicallySetValidators(List<VocabularyValidationResult> results,
+			SeverityLevel severityLevelLimit) {
+		// This cannot improve performance since it is run after the expressions are processed
+		// This is an exception to cleanup after dynamically set configurations which require processing to determine their severity
+		Iterator<VocabularyValidationResult> resultsIter = results.iterator();
+		while (resultsIter.hasNext()) {
+			VocabularyValidationResult result = resultsIter.next();
+			VocabularyValidationResultLevel resultLevel = result.getVocabularyValidationResultLevel();
+			switch (severityLevelLimit) {
+			case INFO:
+				break;
+			case WARNING:
+				if (resultLevel == VocabularyValidationResultLevel.MAY) {
+					resultsIter.remove();
+				}
+				break;
+			case ERROR:
+				if (resultLevel == VocabularyValidationResultLevel.MAY
+						|| resultLevel == VocabularyValidationResultLevel.SHOULD) {
+					resultsIter.remove();
+				}
+				break;
+			}
+		}
+	}	
+	
 }
