@@ -60,4 +60,8 @@ public class VocabularyConstants {
 	public enum SeverityLevel {
 		INFO, WARNING, ERROR
 	}
+	
+	public enum ConfiguredSeverityLevel {
+		MAY, SHOULD, SHALL
+	}
 }
