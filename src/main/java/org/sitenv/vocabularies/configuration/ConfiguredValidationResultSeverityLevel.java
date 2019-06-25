@@ -33,7 +33,7 @@ public class ConfiguredValidationResultSeverityLevel {
 
 	public SeverityLevel getSeverityLevelConversion() {
 		return convertConfiguredValidationResultSeverityLevelToSeverityLevel(
-				ConfiguredSeverityLevel.valueOf(codeSeverityLevel));
+				ConfiguredSeverityLevel.valueOf(codeSeverityLevel.toUpperCase()));
 	}
 	
 	private SeverityLevel convertConfiguredValidationResultSeverityLevelToSeverityLevel(

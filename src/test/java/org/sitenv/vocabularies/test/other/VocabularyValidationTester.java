@@ -75,11 +75,11 @@ public class VocabularyValidationTester {
 			context.setInitParameter("referenceccda.isDynamicVocab", "false");
 		}
 	}
-
-	public void programmaticallyConfigureRequiredNodeValidator(ConfiguredValidationResultSeverityLevel severity,
+	
+	public static ConfiguredExpression createConfiguredExpression(String validatorName, ConfiguredValidationResultSeverityLevel severity,
 			String requiredNodeName, String validationMessage, String configuredXpathExpression) {
 		ConfiguredValidator configuredValidator = new ConfiguredValidator();
-		configuredValidator.setName("RequiredNodeValidator");
+		configuredValidator.setName(validatorName);
 		configuredValidator.setConfiguredValidationResultSeverityLevel(severity);
 		configuredValidator.setRequiredNodeName(requiredNodeName);
 		configuredValidator.setValidationMessage(validationMessage);
@@ -87,8 +87,20 @@ public class VocabularyValidationTester {
 		configuredExpression
 				.setConfiguredValidators(new ArrayList<ConfiguredValidator>(Arrays.asList(configuredValidator)));
 		configuredExpression.setConfiguredXpathExpression(configuredXpathExpression);
+		return configuredExpression;
+	}
+
+	public void programmaticallyConfigureRequiredNodeValidator(ConfiguredValidationResultSeverityLevel severity,
+			String requiredNodeName, String validationMessage, String configuredXpathExpression) {		
+		ConfiguredExpression configuredExpression = createConfiguredExpression("RequiredNodeValidator", severity,
+				requiredNodeName, validationMessage, configuredXpathExpression);		
 		vocabularyValidationConfigurations = new ArrayList<ConfiguredExpression>();
 		vocabularyValidationConfigurations.addAll(Arrays.asList(configuredExpression));
+	}
+	
+	public void addConfiguredExpressionsToVocabularyValidationConfigurations (List<ConfiguredExpression> configuredExpressions) {
+		vocabularyValidationConfigurations = new ArrayList<ConfiguredExpression>();
+		vocabularyValidationConfigurations.addAll(configuredExpressions);
 	}
 
 	public void injectDependencies() {
