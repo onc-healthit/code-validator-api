@@ -11,4 +11,4 @@ The following environment properties are expected:
 Also, please see the CodeValidatorApiConfiguration class to get more details on how these environment properties are used.
 
 
-See https://github.com/siteadmin/referenceccdavalidator for an example implementation and instructions.
+See https://github.com/onc-healthit/referenceccdavalidator for an example implementation and instructions.
