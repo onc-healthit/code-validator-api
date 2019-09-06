@@ -33,7 +33,6 @@ import org.sitenv.vocabularies.validation.dto.GlobalCodeValidatorResults;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.utils.CCDADocumentNamespaces;
-import org.sitenv.vocabularies.validation.validators.nodetypes.NodeCodeSystemMatchesConfiguredCodeSystemValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -174,7 +173,30 @@ public class VocabularyValidationService {
 		}
 		
 	}
-    
+	
+	private int determineConfigurationsErrorCount() {
+		int errorCount = 0;
+		for (ConfiguredExpression expression : vocabularyValidationConfigurations) {
+			for (ConfiguredValidator validator : expression.getConfiguredValidators()) {
+				// NodeCodeSystemMatchesConfiguredCodeSystemValidator dynamically resolves to
+				// SHALL/does not have codeSeverityLevel in the config / may be null
+				if (validator.getName().equalsIgnoreCase("NodeCodeSystemMatchesConfiguredCodeSystemValidator")) {
+					errorCount++;
+				} else {
+					if (validator.getConfiguredValidationResultSeverityLevel() != null
+							&& validator.getConfiguredValidationResultSeverityLevel().getCodeSeverityLevel() != null) {
+						SeverityLevel configuredSeverityLevelConversion = validator
+								.getConfiguredValidationResultSeverityLevel().getSeverityLevelConversion();
+						if (configuredSeverityLevelConversion == SeverityLevel.ERROR) {
+							errorCount++;
+						}
+					}
+				}
+			}
+		}
+		return errorCount;
+	}
+	
 	private void validate(Map<String, ArrayList<VocabularyValidationResult>> vocabularyValidationResultMap,
 			String configuredXpathExpression, XPath xpath, Document doc, SeverityLevel severityLevel)
 			throws XPathExpressionException {
@@ -184,7 +206,9 @@ public class VocabularyValidationService {
 		
 		globalCodeValidatorResults.setVocabularyValidationConfigurationsCount(
 				vocabularyValidationConfigurations != null ? vocabularyValidationConfigurations.size() : 0);
-		
+		globalCodeValidatorResults.setVocabularyValidationConfigurationsErrorCount(
+				vocabularyValidationConfigurations != null ? determineConfigurationsErrorCount() : 0);		
+				
         for (ConfiguredExpression configuredExpression : vocabularyValidationConfigurations) {
             configuredXpathExpression = configuredExpression.getConfiguredXpathExpression();
             NodeList nodes = findAllDocumentNodesByXpathExpression(xpath, configuredXpathExpression, doc);

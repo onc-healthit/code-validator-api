@@ -208,13 +208,14 @@ public class VocabularyValidationServiceTest extends VocabularyValidationTester 
 		injectDependencies();
 
 		testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE], "requiredNodeValidatorMissingElementConfig");
-		countTestHelper(2);
+		countTestHelper(2, getGlobalCodeValidatorResults().getVocabularyValidationConfigurationsCount());
 	}
 
-	private void countTestHelper(final int expectedConfigCount) {
-		final int configCount = getGlobalCodeValidatorResults().getVocabularyValidationConfigurationsCount();
+	private void countTestHelper(final int expectedConfigCount, int configCount) {
 		println("vocabularyValidationConfigurationsCount: " + configCount);
-		Assert.assertTrue("VocabularyValidationConfigurationsCount should be more than 0", configCount > 0);
+		if(expectedConfigCount > 0) {
+			Assert.assertTrue("VocabularyValidationConfigurationsCount should be more than 0", configCount > 0);
+		}
 		Assert.assertTrue(
 				"VocabularyValidationConfigurationsCount should equal to " + expectedConfigCount
 						+ " as per the content of " + "requiredNodeValidatorMissingElementConfig",
@@ -227,15 +228,15 @@ public class VocabularyValidationServiceTest extends VocabularyValidationTester 
 		injectDependencies();
 
 		testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE], "severityLevelCountTestConfig", SeverityLevel.INFO);
-		countTestHelper(3);
+		countTestHelper(3, getGlobalCodeValidatorResults().getVocabularyValidationConfigurationsCount());
 
 		testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE], "severityLevelCountTestConfig",
 				SeverityLevel.WARNING);
-		countTestHelper(2);
+		countTestHelper(2, getGlobalCodeValidatorResults().getVocabularyValidationConfigurationsCount());
 
 		testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE], "severityLevelCountTestConfig",
 				SeverityLevel.ERROR);
-		countTestHelper(1);
+		countTestHelper(1, getGlobalCodeValidatorResults().getVocabularyValidationConfigurationsCount());
 	}
 
 	private SeverityCount severityLevelLimitTestHelper(List<VocabularyValidationResult> results) {
@@ -280,6 +281,47 @@ public class VocabularyValidationServiceTest extends VocabularyValidationTester 
 				severityCount.getShallCount() > 0 && severityCount.getShouldCount() < 1
 						&& severityCount.getMayCount() < 1);
 	}
+	
+
+	@Test
+	public void vocabularyValidationConfigurationsErrorCountZeroWhenNoShallsTest() {
+		setupInitParameters(true);
+		injectDependencies();
+	
+		testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE], "requiredNodeValidatorMissingElementConfig");
+		countTestHelper(0, getGlobalCodeValidatorResults().getVocabularyValidationConfigurationsErrorCount());
+	}
+	
+	@Test
+	public void vocabularyValidationConfigurationsErrorCountWithShallsTest() {
+		setupInitParameters(true);
+		injectDependencies();
+	
+		testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE], "requiredNodeValidatorMissingAttributeConfig");
+		countTestHelper(1, getGlobalCodeValidatorResults().getVocabularyValidationConfigurationsErrorCount());
+	}
+	
+	@Test
+	public void vocabularyValidationConfigurationsErrorCountWithShallShouldAndMayTest() {
+		setupInitParameters(true);
+		injectDependencies();
+	
+		testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE], "severityLevelCountTestConfig");
+		countTestHelper(1, getGlobalCodeValidatorResults().getVocabularyValidationConfigurationsErrorCount());
+		
+		testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE], "severityLevelLimitTestConfig");
+		countTestHelper(3, getGlobalCodeValidatorResults().getVocabularyValidationConfigurationsErrorCount());			
+	}
+	
+	@Test
+	public void vocabularyValidationConfigurationsErrorCountMixedSeveritiesAndDynamicValidatorTest() {
+		setupInitParameters(true);
+		injectDependencies();
+	
+		testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE], "mixedSeveritiesAndValidators");
+		countTestHelper(6, getGlobalCodeValidatorResults().getVocabularyValidationConfigurationsErrorCount());
+	}
+	
 }
 
 class SeverityCount {

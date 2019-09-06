@@ -127,6 +127,9 @@ public class VocabularyValidationTester {
 	public List<VocabularyValidationResult> testVocabularyValidator(URI filePath, String vocabularyConfig,
 			SeverityLevel severityLevel) {
 		List<VocabularyValidationResult> results = new ArrayList<>();
+		if (vocabularyConfig.endsWith(".xml")) {
+			vocabularyConfig = vocabularyConfig.replace(".xml", "");
+		}
 		try {
 			results = vocabularyValidationService.validate(filePath.toString(), vocabularyConfig, severityLevel);
 			println("results.size(): " + results.size());
