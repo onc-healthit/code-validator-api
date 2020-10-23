@@ -52,19 +52,29 @@ public class VsacLoader extends BaseCodeLoader implements VocabularyLoader {
                             	rowlabel = row.getCell(0).getStringCellValue().trim();
 								// Switching to use labels in the first column to look for meta info 
                                 if (rowlabel.equalsIgnoreCase("VALUE SET NAME")) {
-                                    valueSetName = row.getCell(1).getStringCellValue().toUpperCase().trim();
+                                    if(row.getCell(1).getStringCellValue() != null){
+                                        valueSetName = row.getCell(1).getStringCellValue().toUpperCase().trim();
+                                    }
                                 }
                                 if (rowlabel.equalsIgnoreCase("OID")) {
-                                    valueSetOid = row.getCell(1).getStringCellValue().toUpperCase().trim();
+                                    if(row.getCell(1) != null) {
+                                        valueSetOid = row.getCell(1).getStringCellValue().toUpperCase().trim();
+                                    }
                                 }
                                 if (rowlabel.equalsIgnoreCase("TYPE")) {
-                                    valueSetType = row.getCell(1).getStringCellValue().toUpperCase().trim();
+                                    if(row.getCell(1) != null) {
+                                        valueSetType = row.getCell(1).getStringCellValue().toUpperCase().trim();
+                                    }
                                 }
                                 if (rowlabel.equalsIgnoreCase("DEFINITION VERSION")) {
-                                    valueSetVersion = row.getCell(1).getStringCellValue().toUpperCase().trim();
+                                    if(row.getCell(1) != null) {
+                                        valueSetVersion = row.getCell(1).getStringCellValue().toUpperCase().trim();
+                                    }
                                 }
                                 if (rowlabel.equalsIgnoreCase("STEWARD")) {
-                                    valueSetSteward = row.getCell(1).getStringCellValue().toUpperCase().trim();
+                                    if(row.getCell(1) != null) {
+                                        valueSetSteward = row.getCell(1).getStringCellValue().toUpperCase().trim();
+                                    }
                                 }
                             }
 
