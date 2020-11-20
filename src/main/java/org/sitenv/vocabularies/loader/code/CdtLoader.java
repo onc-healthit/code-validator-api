@@ -46,15 +46,15 @@ import java.util.List;
                         String code;
                         String displayName;
 
-                        for(Row row : sheet){
-                            if(headerRowFound && canProcessRow(row)){
+                        for (Row row : sheet) {
+                            if (headerRowFound && canProcessRow(row)) {
                                 code = row.getCell(0).getStringCellValue().toUpperCase().trim();
                                 displayName = row.getCell(1).getStringCellValue().toUpperCase().trim();
                                 buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, CodeSystemOIDs.CDT.codesystemOID(), true);
                             }
 
-                            if(!headerRowFound){
-                                if(hasValueInCell(row, 0) && row.getCell(0).getStringCellValue().toUpperCase().trim().equals(HEADER_ROW_FINDER_KEY)){
+                            if (!headerRowFound) {
+                                if (hasValueInCell(row, 0) && row.getCell(0).getStringCellValue().toUpperCase().trim().equals(HEADER_ROW_FINDER_KEY)) {
                                     headerRowFound = true;
                                 }
                             }
@@ -68,10 +68,10 @@ import java.util.List;
                     e.printStackTrace();
                 } finally {
                     try {
-                        if(workBook != null) {
+                        if (workBook != null) {
                             workBook.close();
                         }
-                        if(inputStream != null) {
+                        if (inputStream != null) {
                             inputStream.close();
                         }
                     } catch (IOException e) {
@@ -83,7 +83,7 @@ import java.util.List;
     }
 
     public static boolean isRowEmpty(Row row) {
-        if(row != null){
+        if (row != null) {
             for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
                 Cell cell = row.getCell(c);
                 if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK)
@@ -101,7 +101,7 @@ import java.util.List;
         return hasCodevalueInFirstCell(row) && hasExpectedNumberOfCellsInRow(row);
     }
 
-    private boolean hasCodevalueInFirstCell(Row row){
+    private boolean hasCodevalueInFirstCell(Row row) {
         return hasValueInCell(row, CODE_CELL_INDEX_IN_ROW);
     }
 
