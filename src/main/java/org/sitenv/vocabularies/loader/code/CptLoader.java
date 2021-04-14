@@ -43,7 +43,7 @@ public class CptLoader extends BaseCodeLoader {
                     while ((line = br.readLine()) != null) {
                         if (!line.isEmpty()) {
                             String code = line.substring(0, 5);
-                            String displayName = line.substring(line.indexOf(" "));
+                            String displayName = isTabDelimitedFile(line) ? line.substring(line.indexOf('\t')) : line.substring(line.indexOf(" "));
                             buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, oid, CODES_IN_THIS_SYSTEM_ARE_ALWAYS_ACTIVE);
 
                             if ((++totalCount % BATCH_SIZE) == 0) {
@@ -74,4 +74,8 @@ public class CptLoader extends BaseCodeLoader {
             }
         }
     }
+
+	private boolean isTabDelimitedFile(String line) {
+		return line.indexOf('\t') != -1;
+	}
 }
