@@ -158,7 +158,7 @@
 				<configuration>
 					<installProject>false</installProject>
 					<verbose>true</verbose>
-
+					<useSnapshotInRelease>true</useSnapshotInRelease>
 					<gitFlowConfig>
 						<productionBranch>master</productionBranch>
 						<developmentBranch>master</developmentBranch>
