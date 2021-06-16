@@ -31,7 +31,8 @@ public class CptLoader extends BaseCodeLoader {
         FileReader fileReader = null;
         try {
             StrBuilder insertQueryBuilder = new StrBuilder(codeTableInsertSQLPrefix);
-            int totalCount = 0, pendingCount = 0;
+            int totalCount = 0; 
+            boolean isPending = false;
 
             for (File file : filesToLoad) {
                 if (file.isFile() && !file.isHidden()) {
@@ -45,18 +46,19 @@ public class CptLoader extends BaseCodeLoader {
                             String code = line.substring(0, 5);
                             String displayName = isTabDelimitedFile(line) ? line.substring(line.indexOf('\t')) : line.substring(line.indexOf(" "));
                             buildCodeInsertQueryString(insertQueryBuilder, code, displayName, codeSystem, oid, CODES_IN_THIS_SYSTEM_ARE_ALWAYS_ACTIVE);
+                            isPending = true;
 
                             if ((++totalCount % BATCH_SIZE) == 0) {
                                 insertCode(insertQueryBuilder.toString(), connection);
                                 insertQueryBuilder.clear();
                                 insertQueryBuilder.append(codeTableInsertSQLPrefix);
-                                pendingCount = 0;
+                                isPending = false;
                             }
                         }
                     }
                 }
             }
-            if (pendingCount > 0) {
+            if (isPending) {
                 insertCode(insertQueryBuilder.toString(), connection);
             }
         } catch (IOException e) {
