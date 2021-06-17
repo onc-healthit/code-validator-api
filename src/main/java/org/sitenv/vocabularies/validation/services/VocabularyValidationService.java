@@ -56,7 +56,7 @@ public class VocabularyValidationService {
     @Autowired
     private ServletContext context;
     @Resource(name="globalCodeValidatorResults")
-    GlobalCodeValidatorResults globalCodeValidatorResults;
+    private ThreadLocal<GlobalCodeValidatorResults> globalCodeValidatorResults;
     
     private static Logger logger = Logger.getLogger(VocabularyValidationService.class);
     private static final boolean FULL_LOG = false;
@@ -203,11 +203,13 @@ public class VocabularyValidationService {
 		if(severityLevel != SeverityLevel.INFO) {
 			limitConfiguredExpressionsBySeverity(severityLevel);
 		}
-		
-		globalCodeValidatorResults.setVocabularyValidationConfigurationsCount(
+
+		GlobalCodeValidatorResults temporaryGlobalValidatorResults =new GlobalCodeValidatorResults();
+		temporaryGlobalValidatorResults.setVocabularyValidationConfigurationsCount(
 				vocabularyValidationConfigurations != null ? vocabularyValidationConfigurations.size() : 0);
-		globalCodeValidatorResults.setVocabularyValidationConfigurationsErrorCount(
-				vocabularyValidationConfigurations != null ? determineConfigurationsErrorCount() : 0);		
+		temporaryGlobalValidatorResults.setVocabularyValidationConfigurationsErrorCount(
+				vocabularyValidationConfigurations != null ? determineConfigurationsErrorCount() : 0);
+		globalCodeValidatorResults.set(temporaryGlobalValidatorResults);
 				
         for (ConfiguredExpression configuredExpression : vocabularyValidationConfigurations) {
             configuredXpathExpression = configuredExpression.getConfiguredXpathExpression();
@@ -245,7 +247,7 @@ public class VocabularyValidationService {
     }
 	
 	public GlobalCodeValidatorResults getGlobalCodeValidatorResults() {
-		return globalCodeValidatorResults;
+		return globalCodeValidatorResults.get();
 	}
 	
 	protected NodeValidation selectVocabularyValidator(ConfiguredValidator configuredValidator) {
