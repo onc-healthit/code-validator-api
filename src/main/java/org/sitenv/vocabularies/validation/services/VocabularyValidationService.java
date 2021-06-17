@@ -34,6 +34,8 @@ import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
 import org.sitenv.vocabularies.validation.utils.CCDADocumentNamespaces;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -44,6 +46,7 @@ import org.xml.sax.SAXException;
  * Created by Brian on 2/10/2016.
  */
 @Service
+@Scope(value = "prototype",proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class VocabularyValidationService {
     @Resource(name="vocabularyValidationConfigurations")
     List<ConfiguredExpression> vocabularyValidationConfigurations;
