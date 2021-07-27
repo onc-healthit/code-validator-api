@@ -5,7 +5,7 @@
 
 	<groupId>org.sitenv.vocabulary</groupId>
 	<artifactId>codevalidator-api</artifactId>
-	<version>1.0.29</version>
+	<version>latestVersion</version>
 	<name>Code Validator API</name>
 	<url>http://www.sitenv.org</url>
 
@@ -101,7 +101,7 @@
 		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
-			<version>2.11.0</version>
+			<version>2.12.1</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -122,7 +122,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>4.13.1</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- other -->
