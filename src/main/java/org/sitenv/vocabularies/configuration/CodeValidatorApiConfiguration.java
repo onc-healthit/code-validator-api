@@ -144,7 +144,7 @@ public class CodeValidatorApiConfiguration {
         domFactory.setNamespaceAware(true);
         return domFactory;
     }
-
+  
     @Bean
     public XPathFactory xPathFactory(){
         return XPathFactory.newInstance();
