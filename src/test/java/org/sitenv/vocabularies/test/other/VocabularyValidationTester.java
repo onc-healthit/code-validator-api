@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletContext;
-import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathFactory;
 
@@ -35,7 +35,7 @@ public class VocabularyValidationTester {
 	private TestableVocabularyValidationService vocabularyValidationService;
 
 	List<ConfiguredExpression> vocabularyValidationConfigurations;
-	DocumentBuilder documentBuilder;
+	private DocumentBuilderFactory documentBuilderFactory;
 	XPathFactory xPathFactory;
 	NodeValidatorFactory vocabularyValidatorFactory;
 	ServletContext context;
@@ -50,7 +50,7 @@ public class VocabularyValidationTester {
 	private void intializeVocabularyValidationServiceFields() {
 		vocabularyValidationConfigurations = new ArrayList<ConfiguredExpression>();
 		try {
-			documentBuilder = codeValidatorConfig.documentBuilder();
+			documentBuilderFactory = codeValidatorConfig.documentBuilderFactory();
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
@@ -107,7 +107,7 @@ public class VocabularyValidationTester {
 		vocabularyValidationService = new TestableVocabularyValidationService();
 		ReflectionTestUtils.setField(vocabularyValidationService, "vocabularyValidationConfigurations",
 				vocabularyValidationConfigurations);
-		ReflectionTestUtils.setField(vocabularyValidationService, "documentBuilder", documentBuilder);
+		ReflectionTestUtils.setField(vocabularyValidationService, "documentBuilderFactory", documentBuilderFactory);
 		ReflectionTestUtils.setField(vocabularyValidationService, "xPathFactory", xPathFactory);
 		ReflectionTestUtils.setField(vocabularyValidationService, "vocabularyValidatorFactory",
 				vocabularyValidatorFactory);
