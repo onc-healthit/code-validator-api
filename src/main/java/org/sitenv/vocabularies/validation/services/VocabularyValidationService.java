@@ -92,7 +92,8 @@ public class VocabularyValidationService {
 		return validate(stream, vocabularyConfig, SeverityLevel.INFO);
     }
 
-	public List<VocabularyValidationResult> validate(InputStream stream, String vocabularyConfig, SeverityLevel severityLevel)
+	public List<VocabularyValidationResult> validate(InputStream stream, String vocabularyConfig,
+			SeverityLevel severityLevel)
 			throws IOException, SAXException {
 		DocumentBuilder documentBuilder;
 		try {
@@ -414,7 +415,8 @@ public class VocabularyValidationService {
         return xpath;
     }
 
-    private static NodeList findAllDocumentNodesByXpathExpression(XPath xpath, String configuredXpath, Document doc) throws XPathExpressionException {
+	private static NodeList findAllDocumentNodesByXpathExpression(XPath xpath, String configuredXpath, Document doc)
+			throws XPathExpressionException {
         NodeList result = (NodeList) xpath.compile(configuredXpath).evaluate(doc, XPathConstants.NODESET);
         return result;
     }
@@ -428,7 +430,8 @@ public class VocabularyValidationService {
         return false;
     }
 
-    private List<VocabularyValidationResult> convertMapToList(Map<String, ArrayList<VocabularyValidationResult>> resultMap, 
+	private List<VocabularyValidationResult> convertMapToList(
+			Map<String, ArrayList<VocabularyValidationResult>> resultMap, 
     		SeverityLevel severityLevel) {
         List<VocabularyValidationResult> results = new ArrayList<>();
         for(ArrayList<VocabularyValidationResult> resultList : resultMap.values()){
