@@ -24,7 +24,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathFactory;
@@ -131,23 +130,21 @@ public class CodeValidatorApiConfiguration {
         return configurationLoader.getConfigurations().getExpressions();
     }
 
-	@Bean
-	public DocumentBuilder documentBuilder() throws ParserConfigurationException {
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance(
-				"com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl",
-				ClassLoader.getSystemClassLoader());
-		domFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-		domFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-		domFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-		domFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-		domFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-		domFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-		domFactory.setXIncludeAware(false);
-		domFactory.setExpandEntityReferences(false);
-		domFactory.setNamespaceAware(true);
-		return domFactory.newDocumentBuilder();
-	}
-
+    @Bean
+    public DocumentBuilderFactory documentBuilderFactory() throws ParserConfigurationException {
+        DocumentBuilderFactory domFactory =  DocumentBuilderFactory.newInstance("com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl", ClassLoader.getSystemClassLoader());
+        domFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        domFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        domFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        domFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        domFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        domFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        domFactory.setXIncludeAware(false);
+        domFactory.setExpandEntityReferences(false);
+        domFactory.setNamespaceAware(true);
+        return domFactory;
+    }
+  
     @Bean
     public XPathFactory xPathFactory(){
         return XPathFactory.newInstance();

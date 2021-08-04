@@ -13,6 +13,8 @@ import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -47,8 +49,8 @@ import org.xml.sax.SAXException;
 public class VocabularyValidationService {
     @Resource(name="vocabularyValidationConfigurations")
     List<ConfiguredExpression> vocabularyValidationConfigurations;
-    @Resource(name="documentBuilder")
-    DocumentBuilder documentBuilder;
+	@Autowired
+	private DocumentBuilderFactory documentBuilderFactory;
     @Resource(name="xPathFactory")
     XPathFactory xPathFactory;
     @Autowired
@@ -58,7 +60,7 @@ public class VocabularyValidationService {
     @Resource(name="globalCodeValidatorResults")
     GlobalCodeValidatorResults globalCodeValidatorResults;
     
-    private static Logger logger = Logger.getLogger(VocabularyValidationService.class);
+    private static final Logger logger = Logger.getLogger(VocabularyValidationService.class);
     private static final boolean FULL_LOG = false;
     
     public List<VocabularyValidationResult> validate(String uri) throws IOException, SAXException {
@@ -71,9 +73,15 @@ public class VocabularyValidationService {
 
 	public List<VocabularyValidationResult> validate(String uri, String vocabularyConfig, SeverityLevel severityLevel)
 			throws IOException, SAXException {
-        Document doc = documentBuilder.parse(uri);
-        return this.validate(doc, vocabularyConfig, severityLevel);
-    }
+		DocumentBuilder documentBuilder;
+		try {
+			documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			throw new RuntimeException("ERROR creating DocumentBuilder " + e.getMessage());
+		}
+		Document doc = documentBuilder.parse(uri);
+		return this.validate(doc, vocabularyConfig, severityLevel);
+	}
 
     public List<VocabularyValidationResult> validate(InputStream stream) throws IOException, SAXException {
     	return this.validate(stream, VocabularyConstants.Config.DEFAULT);
@@ -83,12 +91,18 @@ public class VocabularyValidationService {
 			throws IOException, SAXException {
 		return validate(stream, vocabularyConfig, SeverityLevel.INFO);
     }
-	
+
 	public List<VocabularyValidationResult> validate(InputStream stream, String vocabularyConfig, SeverityLevel severityLevel)
 			throws IOException, SAXException {
-        Document doc = documentBuilder.parse(stream);
-        return this.validate(doc, vocabularyConfig, severityLevel);
-    }
+		DocumentBuilder documentBuilder;
+		try {
+			documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			throw new RuntimeException("ERROR creating DocumentBuilder " + e.getMessage());
+		}
+		Document doc = documentBuilder.parse(stream);
+		return this.validate(doc, vocabularyConfig, severityLevel);
+	}
 
 	public List<VocabularyValidationResult> validate(Document doc) {
 		return this.validate(doc, VocabularyConstants.Config.DEFAULT);
