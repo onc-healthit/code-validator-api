@@ -1,18 +1,5 @@
 package org.sitenv.vocabularies.test.other;
 
-import static org.sitenv.vocabularies.test.other.ValidationLogger.println;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathFactory;
-
 import org.junit.Before;
 import org.sitenv.vocabularies.configuration.CodeValidatorApiConfiguration;
 import org.sitenv.vocabularies.configuration.ConfiguredExpression;
@@ -29,12 +16,22 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.xml.sax.SAXException;
 
+import javax.servlet.ServletContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathFactory;
+import java.io.IOException;
+import java.net.URI;
+import java.util.*;
+
+import static org.sitenv.vocabularies.test.other.ValidationLogger.println;
+
 public class VocabularyValidationTester {
 
 	private CodeValidatorApiConfiguration codeValidatorConfig;
 	private TestableVocabularyValidationService vocabularyValidationService;
 
-	List<ConfiguredExpression> vocabularyValidationConfigurations;
+	Map<SeverityLevel, List<ConfiguredExpression>> vocabularyValidationConfigurations;
 	DocumentBuilder documentBuilder;
 	XPathFactory xPathFactory;
 	NodeValidatorFactory vocabularyValidatorFactory;
@@ -48,7 +45,7 @@ public class VocabularyValidationTester {
 	}
 
 	private void intializeVocabularyValidationServiceFields() {
-		vocabularyValidationConfigurations = new ArrayList<ConfiguredExpression>();
+		vocabularyValidationConfigurations = new HashMap<>();
 		try {
 			documentBuilder = codeValidatorConfig.documentBuilder();
 		} catch (ParserConfigurationException e) {
@@ -75,7 +72,7 @@ public class VocabularyValidationTester {
 			context.setInitParameter("referenceccda.isDynamicVocab", "false");
 		}
 	}
-	
+
 	public static ConfiguredExpression createConfiguredExpression(String validatorName, ConfiguredValidationResultSeverityLevel severity,
 			String requiredNodeName, String validationMessage, String configuredXpathExpression) {
 		ConfiguredValidator configuredValidator = new ConfiguredValidator();
@@ -85,22 +82,17 @@ public class VocabularyValidationTester {
 		configuredValidator.setValidationMessage(validationMessage);
 		ConfiguredExpression configuredExpression = new ConfiguredExpression();
 		configuredExpression
-				.setConfiguredValidators(new ArrayList<ConfiguredValidator>(Arrays.asList(configuredValidator)));
+				.setConfiguredValidators(new ArrayList<>(Collections.singletonList(configuredValidator)));
 		configuredExpression.setConfiguredXpathExpression(configuredXpathExpression);
 		return configuredExpression;
 	}
 
 	public void programmaticallyConfigureRequiredNodeValidator(ConfiguredValidationResultSeverityLevel severity,
-			String requiredNodeName, String validationMessage, String configuredXpathExpression) {		
+															   String requiredNodeName, String validationMessage, String configuredXpathExpression) {
 		ConfiguredExpression configuredExpression = createConfiguredExpression("RequiredNodeValidator", severity,
-				requiredNodeName, validationMessage, configuredXpathExpression);		
-		vocabularyValidationConfigurations = new ArrayList<ConfiguredExpression>();
-		vocabularyValidationConfigurations.addAll(Arrays.asList(configuredExpression));
-	}
-	
-	public void addConfiguredExpressionsToVocabularyValidationConfigurations (List<ConfiguredExpression> configuredExpressions) {
-		vocabularyValidationConfigurations = new ArrayList<ConfiguredExpression>();
-		vocabularyValidationConfigurations.addAll(configuredExpressions);
+				requiredNodeName, validationMessage, configuredXpathExpression);
+		vocabularyValidationConfigurations = new HashMap<>();
+		vocabularyValidationConfigurations.put(severity.getSeverityLevelConversion(), Collections.singletonList(configuredExpression));
 	}
 
 	public void injectDependencies() {
@@ -124,6 +116,10 @@ public class VocabularyValidationTester {
 		return testVocabularyValidator(filePath, vocabularyConfig, SeverityLevel.INFO);
 	}
 
+	public List<VocabularyValidationResult> testVocabularyValidator(URI filePath, SeverityLevel severityLevel) {
+		return testVocabularyValidator(filePath, VocabularyConstants.Config.DEFAULT, severityLevel);
+	}
+
 	public List<VocabularyValidationResult> testVocabularyValidator(URI filePath, String vocabularyConfig,
 			SeverityLevel severityLevel) {
 		List<VocabularyValidationResult> results = new ArrayList<>();
@@ -136,9 +132,7 @@ public class VocabularyValidationTester {
 			for (VocabularyValidationResult result : results) {
 				println(result.toString());
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
+		} catch (IOException | SAXException e) {
 			e.printStackTrace();
 		}
 		return results;
@@ -170,7 +164,7 @@ public class VocabularyValidationTester {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return a testable version of VocabularyValidationService. *Note*: This
 	 *         is NULL without initialize(), setupInitParameters(x),
 	 *         injectDependencies(); i.e. it must be setup the same as any other

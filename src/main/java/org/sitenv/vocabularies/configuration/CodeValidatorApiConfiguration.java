@@ -1,5 +1,6 @@
 package org.sitenv.vocabularies.configuration;
 
+import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.loader.VocabularyLoadRunner;
 import org.sitenv.vocabularies.loader.VocabularyLoaderFactory;
 import org.sitenv.vocabularies.validation.NodeValidatorFactory;
@@ -27,10 +28,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathFactory;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Created by Brian on 2/5/2016.
@@ -126,8 +124,44 @@ public class CodeValidatorApiConfiguration {
     }
 
     @Bean
-    public static List<ConfiguredExpression> vocabularyValidationConfigurations(ValidationConfigurationLoader configurationLoader){
-        return configurationLoader.getConfigurations().getExpressions();
+    public static Map<VocabularyConstants.SeverityLevel, List<ConfiguredExpression>> vocabularyValidationConfigurations(ValidationConfigurationLoader configurationLoader){
+        // This improves performance since it is run before the expressions are processed
+        List<ConfiguredExpression> configuredExpressionList = configurationLoader.getConfigurations().getExpressions();
+
+        Map<VocabularyConstants.SeverityLevel, List<ConfiguredExpression>> expressionsMap = new HashMap<>();
+        expressionsMap.put(VocabularyConstants.SeverityLevel.INFO, configuredExpressionList);
+        expressionsMap.put(VocabularyConstants.SeverityLevel.WARNING, new ArrayList<>());
+        expressionsMap.put(VocabularyConstants.SeverityLevel.ERROR, new ArrayList<>());
+
+        List<ConfiguredExpression> warningLevelConfiguredExpressions = expressionsMap.get(VocabularyConstants.SeverityLevel.WARNING);
+        List<ConfiguredExpression> errorLevelConfiguredExpressions = expressionsMap.get(VocabularyConstants.SeverityLevel.ERROR);
+
+        for (ConfiguredExpression configuredExpression : configuredExpressionList) {
+            // NodeCodeSystemMatchesConfiguredCodeSystemValidator defaults to ERROR severity dynamically
+            configuredExpression.getConfiguredValidators().parallelStream()
+                    .filter(configuredValidator -> !configuredValidator.getName().equalsIgnoreCase("NodeCodeSystemMatchesConfiguredCodeSystemValidator"))
+                    .map(configuredValidator -> configuredValidator.getConfiguredValidationResultSeverityLevel().getSeverityLevelConversion())
+                    .forEach(configuredSeverityLevelConversion -> {
+                        // skip may/info configurations so we only process warnings and errors
+                        if (configuredSeverityLevelConversion != VocabularyConstants.SeverityLevel.INFO) {
+                            warningLevelConfiguredExpressions.add(configuredExpression);
+                        }
+                        // skip may/info and should/warnings configurations so we only process errors
+                        if (configuredSeverityLevelConversion == VocabularyConstants.SeverityLevel.ERROR) {
+                            errorLevelConfiguredExpressions.add(configuredExpression);
+                        }
+                    });
+        }
+        expressionsMap.forEach((k, v) -> {
+            Iterator<ConfiguredExpression> expressionIter = v.iterator();
+            while (expressionIter.hasNext()) {
+                ConfiguredExpression configuredExpression = expressionIter.next();
+                if (configuredExpression.getConfiguredValidators().isEmpty()) {
+                    expressionIter.remove();
+                }
+            }
+        });
+        return expressionsMap;
     }
 
     @Bean
