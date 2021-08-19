@@ -1,7 +1,11 @@
 package org.sitenv.vocabularies.validation.services;
 
 import org.apache.log4j.Logger;
-import org.sitenv.vocabularies.configuration.*;
+import org.sitenv.vocabularies.configuration.CodeValidatorApiConfiguration;
+import org.sitenv.vocabularies.configuration.Configurations;
+import org.sitenv.vocabularies.configuration.ConfiguredExpression;
+import org.sitenv.vocabularies.configuration.ConfiguredValidator;
+import org.sitenv.vocabularies.configuration.ValidationConfigurationLoader;
 import org.sitenv.vocabularies.constants.VocabularyConstants;
 import org.sitenv.vocabularies.constants.VocabularyConstants.LogSeverity;
 import org.sitenv.vocabularies.constants.VocabularyConstants.SeverityLevel;
@@ -29,7 +33,11 @@ import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Brian on 2/10/2016.
