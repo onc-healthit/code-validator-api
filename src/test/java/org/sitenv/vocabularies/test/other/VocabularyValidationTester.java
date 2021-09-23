@@ -34,7 +34,7 @@ public class VocabularyValidationTester {
 
 	private CodeValidatorApiConfiguration codeValidatorConfig;
 	private TestableVocabularyValidationService vocabularyValidationService;
-
+  
 	Map<SeverityLevel, List<ConfiguredExpression>> vocabularyValidationConfigurations;
 	DocumentBuilder documentBuilder;
 	XPathFactory xPathFactory;
@@ -51,7 +51,7 @@ public class VocabularyValidationTester {
 	private void intializeVocabularyValidationServiceFields() {
 		vocabularyValidationConfigurations = new HashMap<>();
 		try {
-			documentBuilder = codeValidatorConfig.documentBuilder();
+			documentBuilderFactory = codeValidatorConfig.documentBuilderFactory();
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
@@ -103,7 +103,7 @@ public class VocabularyValidationTester {
 		vocabularyValidationService = new TestableVocabularyValidationService();
 		ReflectionTestUtils.setField(vocabularyValidationService, "vocabularyValidationConfigurations",
 				vocabularyValidationConfigurations);
-		ReflectionTestUtils.setField(vocabularyValidationService, "documentBuilder", documentBuilder);
+		ReflectionTestUtils.setField(vocabularyValidationService, "documentBuilderFactory", documentBuilderFactory);
 		ReflectionTestUtils.setField(vocabularyValidationService, "xPathFactory", xPathFactory);
 		ReflectionTestUtils.setField(vocabularyValidationService, "vocabularyValidatorFactory",
 				vocabularyValidatorFactory);
