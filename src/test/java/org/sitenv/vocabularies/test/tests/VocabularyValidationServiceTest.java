@@ -1,5 +1,12 @@
 package org.sitenv.vocabularies.test.tests;
 
+import static org.sitenv.vocabularies.test.other.ValidationLogger.logResults;
+import static org.sitenv.vocabularies.test.other.ValidationLogger.println;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,13 +19,6 @@ import org.sitenv.vocabularies.test.other.ValidationTest;
 import org.sitenv.vocabularies.test.other.VocabularyValidationTester;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-
-import static org.sitenv.vocabularies.test.other.ValidationLogger.logResults;
-import static org.sitenv.vocabularies.test.other.ValidationLogger.println;
 
 public class VocabularyValidationServiceTest extends VocabularyValidationTester implements ValidationTest {
 

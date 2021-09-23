@@ -1,5 +1,20 @@
 package org.sitenv.vocabularies.test.other;
 
+import static org.sitenv.vocabularies.test.other.ValidationLogger.println;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathFactory;
+
 import org.junit.Before;
 import org.sitenv.vocabularies.configuration.CodeValidatorApiConfiguration;
 import org.sitenv.vocabularies.configuration.ConfiguredExpression;
@@ -15,20 +30,6 @@ import org.sitenv.vocabularies.validation.services.VocabularyValidationService;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.xml.sax.SAXException;
-
-import javax.servlet.ServletContext;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathFactory;
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.sitenv.vocabularies.test.other.ValidationLogger.println;
 
 public class VocabularyValidationTester {
 
