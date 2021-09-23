@@ -93,11 +93,12 @@ public class VocabularyValidationTester {
 	}
 
 	public void programmaticallyConfigureRequiredNodeValidator(ConfiguredValidationResultSeverityLevel severity,
-															   String requiredNodeName, String validationMessage, String configuredXpathExpression) {
+			String requiredNodeName, String validationMessage, String configuredXpathExpression) {
 		ConfiguredExpression configuredExpression = createConfiguredExpression("RequiredNodeValidator", severity,
 				requiredNodeName, validationMessage, configuredXpathExpression);
 		vocabularyValidationConfigurations = new HashMap<>();
-		vocabularyValidationConfigurations.put(severity.getSeverityLevelConversion(), Collections.singletonList(configuredExpression));
+		vocabularyValidationConfigurations.put(severity.getSeverityLevelConversion(),
+				Collections.singletonList(configuredExpression));
 	}
 
 	public void injectDependencies() {

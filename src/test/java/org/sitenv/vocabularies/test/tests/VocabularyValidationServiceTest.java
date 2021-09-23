@@ -67,7 +67,8 @@ public class VocabularyValidationServiceTest extends VocabularyValidationTester 
 				validationMessage, configuredXpathExpression);
 		injectDependencies();
 
-		List<VocabularyValidationResult> results = testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE], severityLevel.getSeverityLevelConversion());
+		List<VocabularyValidationResult> results = testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE],
+				severityLevel.getSeverityLevelConversion());
 
 		Assert.assertTrue(ASSERT_MSG_NO_VOCABULARY_ISSUE_BUT_SHOULD, hasVocabularyIssue(results));
 		String expectedMessage = "The node '@unit' does not exist at the expected path "

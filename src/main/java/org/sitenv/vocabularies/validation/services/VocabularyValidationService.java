@@ -48,7 +48,7 @@ import org.xml.sax.SAXException;
 @Service
 public class VocabularyValidationService {
     @Resource(name="vocabularyValidationConfigurations")
-    Map<SeverityLevel, List<ConfiguredExpression>> vocabularyValidationConfigurations;
+	Map<SeverityLevel, List<ConfiguredExpression>> vocabularyValidationConfigurations;
 	@Autowired
 	private DocumentBuilderFactory documentBuilderFactory;
     @Resource(name="xPathFactory")
@@ -167,11 +167,16 @@ public class VocabularyValidationService {
 		return errorCount;
 	}
 
-	private void validate(Map<String, ArrayList<VocabularyValidationResult>> vocabularyValidationResultMap, String configuredXpathExpression, XPath xpath, Document doc, SeverityLevel severityLevel) throws XPathExpressionException {
-		List<ConfiguredExpression> configuredExpressionsBySeverityLevel = vocabularyValidationConfigurations.get(severityLevel);
+	private void validate(Map<String, ArrayList<VocabularyValidationResult>> vocabularyValidationResultMap,
+			String configuredXpathExpression, XPath xpath, Document doc, SeverityLevel severityLevel)
+			throws XPathExpressionException {
+		List<ConfiguredExpression> configuredExpressionsBySeverityLevel = vocabularyValidationConfigurations
+				.get(severityLevel);
 
-		globalCodeValidatorResults.setVocabularyValidationConfigurationsCount(configuredExpressionsBySeverityLevel.size());
-		globalCodeValidatorResults.setVocabularyValidationConfigurationsErrorCount(determineConfigurationsErrorCount(configuredExpressionsBySeverityLevel));
+		globalCodeValidatorResults
+				.setVocabularyValidationConfigurationsCount(configuredExpressionsBySeverityLevel.size());
+		globalCodeValidatorResults.setVocabularyValidationConfigurationsErrorCount(
+				determineConfigurationsErrorCount(configuredExpressionsBySeverityLevel));
 
 		for (ConfiguredExpression configuredExpression : configuredExpressionsBySeverityLevel) {
 			configuredXpathExpression = configuredExpression.getConfiguredXpathExpression();
@@ -180,8 +185,9 @@ public class VocabularyValidationService {
 				Node node = nodes.item(i);
 				List<VocabularyValidationResult> vocabularyValidationResults = new ArrayList<>();
 				boolean validNode = false;
-				Iterator<ConfiguredValidator> configIterator = configuredExpression.getConfiguredValidators().iterator();
-				while(configIterator.hasNext() && !validNode){
+				Iterator<ConfiguredValidator> configIterator = configuredExpression.getConfiguredValidators()
+						.iterator();
+				while (configIterator.hasNext() && !validNode) {
 					ConfiguredValidator configuredValidator = configIterator.next();
 					NodeValidation vocabularyValidator = selectVocabularyValidator(configuredValidator);
 					List<VocabularyValidationResult> tempResults = vocabularyValidator.validateNode(configuredValidator,
@@ -284,15 +290,16 @@ public class VocabularyValidationService {
     
     private boolean overwriteVocabularyValidationConfigurations(ValidationConfigurationLoader validationConfigurationLoader) {
     	if (validationConfigurationLoader.getConfigurations().getExpressions() != null) {
-	        Map<SeverityLevel, List<ConfiguredExpression>> tempVocabularyValidationExpressions =
-	        		CodeValidatorApiConfiguration.vocabularyValidationConfigurations(validationConfigurationLoader);
+			Map<SeverityLevel, List<ConfiguredExpression>> tempVocabularyValidationExpressions = CodeValidatorApiConfiguration
+					.vocabularyValidationConfigurations(validationConfigurationLoader);
 	        if (tempVocabularyValidationExpressions != null && !tempVocabularyValidationExpressions.isEmpty()) {
 	        	logger.info("overwriteVocabularyValidationConfigurations() in progress: "
 	        			+ "List of tempVocabularyValidationExpressions are neither null nor empty.");
-	        	this.vocabularyValidationConfigurations = new HashMap<>(tempVocabularyValidationExpressions);
+				vocabularyValidationConfigurations = new HashMap<>(tempVocabularyValidationExpressions);
 	        	if (FULL_LOG) {
 		        	logger.info("Configured Expressions:");
-					vocabularyValidationConfigurations.forEach((k, v) -> v.forEach(configuredExpression -> logger.info(configuredExpression.toString())));
+					vocabularyValidationConfigurations.forEach(
+							(k, v) -> v.forEach(configuredExpression -> logger.info(configuredExpression.toString())));
 				}
 	        	return true;
 	        } else {
