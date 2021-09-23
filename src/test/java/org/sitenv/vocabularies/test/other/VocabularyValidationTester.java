@@ -17,7 +17,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.xml.sax.SAXException;
 
 import javax.servlet.ServletContext;
-import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class VocabularyValidationTester {
 	private TestableVocabularyValidationService vocabularyValidationService;
   
 	Map<SeverityLevel, List<ConfiguredExpression>> vocabularyValidationConfigurations;
-	DocumentBuilder documentBuilder;
+	private DocumentBuilderFactory documentBuilderFactory;
 	XPathFactory xPathFactory;
 	NodeValidatorFactory vocabularyValidatorFactory;
 	ServletContext context;

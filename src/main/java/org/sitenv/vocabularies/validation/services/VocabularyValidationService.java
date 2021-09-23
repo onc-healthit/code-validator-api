@@ -26,6 +26,8 @@ import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -46,8 +48,8 @@ import java.util.Map;
 public class VocabularyValidationService {
     @Resource(name="vocabularyValidationConfigurations")
     Map<SeverityLevel, List<ConfiguredExpression>> vocabularyValidationConfigurations;
-    @Resource(name="documentBuilder")
-    DocumentBuilder documentBuilder;
+	@Autowired
+	private DocumentBuilderFactory documentBuilderFactory;
     @Resource(name="xPathFactory")
     XPathFactory xPathFactory;
     @Autowired
