@@ -1,12 +1,5 @@
 package org.sitenv.vocabularies.test.tests;
 
-import static org.sitenv.vocabularies.test.other.ValidationLogger.logResults;
-import static org.sitenv.vocabularies.test.other.ValidationLogger.println;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,6 +12,13 @@ import org.sitenv.vocabularies.test.other.ValidationTest;
 import org.sitenv.vocabularies.test.other.VocabularyValidationTester;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+
+import static org.sitenv.vocabularies.test.other.ValidationLogger.logResults;
+import static org.sitenv.vocabularies.test.other.ValidationLogger.println;
 
 public class VocabularyValidationServiceTest extends VocabularyValidationTester implements ValidationTest {
 
@@ -62,11 +62,12 @@ public class VocabularyValidationServiceTest extends VocabularyValidationTester 
 		String configuredXpathExpression = "//v3:observation/v3:templateId[@root='2.16.840.1.113883.10.20.22.4.2' and @extension='2015-08-01']"
 				+ "/ancestor::v3:observation[1]/v3:value"
 				+ "[@xsi:type='PQ' and not(@nullFlavor) and ancestor::v3:section[not(@nullFlavor)]]";
-		programmaticallyConfigureRequiredNodeValidator(new ConfiguredValidationResultSeverityLevel("SHALL"), "@unit",
+		ConfiguredValidationResultSeverityLevel severityLevel = new ConfiguredValidationResultSeverityLevel("SHALL");
+		programmaticallyConfigureRequiredNodeValidator(severityLevel, "@unit",
 				validationMessage, configuredXpathExpression);
 		injectDependencies();
 
-		List<VocabularyValidationResult> results = testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE]);
+		List<VocabularyValidationResult> results = testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE], severityLevel.getSeverityLevelConversion());
 
 		Assert.assertTrue(ASSERT_MSG_NO_VOCABULARY_ISSUE_BUT_SHOULD, hasVocabularyIssue(results));
 		String expectedMessage = "The node '@unit' does not exist at the expected path "
@@ -80,7 +81,7 @@ public class VocabularyValidationServiceTest extends VocabularyValidationTester 
 		 * classCode="OBS" moodCode="EVN"> ... <value xsi:type="PQ"
 		 * value="1.015" unit="someUnit"/> ... </observation>
 		 */
-		results = testVocabularyValidator(CCDA_FILES[HAS_UNIT_ATTRIBUTE]);
+		results = testVocabularyValidator(CCDA_FILES[HAS_UNIT_ATTRIBUTE], severityLevel.getSeverityLevelConversion());
 
 		Assert.assertFalse(ASSERT_MSG_HAS_VOCABULARY_ISSUE_BUT_SHOULD_NOT, hasVocabularyIssue(results));
 		Assert.assertFalse(ASSERT_MSG_SEVERITY_WITH_MESSAGE_MATCHES_BUT_SHOULD_NOT,
@@ -135,7 +136,7 @@ public class VocabularyValidationServiceTest extends VocabularyValidationTester 
 		programmaticallyConfigureRequiredNodeValidator(severity, element, validationMessage, configuredXpathExpression);
 		injectDependencies();
 
-		List<VocabularyValidationResult> results = testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE]);
+		List<VocabularyValidationResult> results = testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE], severity.getSeverityLevelConversion());
 
 		Assert.assertTrue(ASSERT_MSG_NO_VOCABULARY_ISSUE_BUT_SHOULD, hasVocabularyIssue(results));
 		String expectedMessage = "The node 'v3:prefix' does not exist at the expected path "
@@ -154,7 +155,7 @@ public class VocabularyValidationServiceTest extends VocabularyValidationTester 
 		programmaticallyConfigureRequiredNodeValidator(severity, element, validationMessage, configuredXpathExpression);
 		injectDependencies();
 
-		results = testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE]);
+		results = testVocabularyValidator(CCDA_FILES[MISSING_UNIT_ATTRIBUTE], severity.getSeverityLevelConversion());
 
 		Assert.assertFalse(ASSERT_MSG_HAS_VOCABULARY_ISSUE_BUT_SHOULD_NOT, hasVocabularyIssue(results));
 		expectedMessage = "The node 'v3:prefix' does not exist at the expected path "
