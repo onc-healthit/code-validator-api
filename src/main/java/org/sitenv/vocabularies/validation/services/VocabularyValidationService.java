@@ -172,11 +172,20 @@ public class VocabularyValidationService {
 			throws XPathExpressionException {
 		List<ConfiguredExpression> configuredExpressionsBySeverityLevel = vocabularyValidationConfigurations
 				.get(severityLevel);
-
+		
+//		configuredExpressionsBySeverityLevel is null, why?
+		
+		globalCodeValidatorResults.setVocabularyValidationConfigurationsCount(
+				configuredExpressionsBySeverityLevel != null ? configuredExpressionsBySeverityLevel.size() : 0);
 		globalCodeValidatorResults
-				.setVocabularyValidationConfigurationsCount(configuredExpressionsBySeverityLevel.size());
-		globalCodeValidatorResults.setVocabularyValidationConfigurationsErrorCount(
-				determineConfigurationsErrorCount(configuredExpressionsBySeverityLevel));
+				.setVocabularyValidationConfigurationsErrorCount(configuredExpressionsBySeverityLevel != null
+						? determineConfigurationsErrorCount(configuredExpressionsBySeverityLevel)
+						: 0);
+		
+//		globalCodeValidatorResults.setVocabularyValidationConfigurationsCount(
+//				vocabularyValidationConfigurations != null ? vocabularyValidationConfigurations.size() : 0);
+//		globalCodeValidatorResults.setVocabularyValidationConfigurationsErrorCount(
+//				vocabularyValidationConfigurations != null ? determineConfigurationsErrorCount() : 0);			
 
 		for (ConfiguredExpression configuredExpression : configuredExpressionsBySeverityLevel) {
 			configuredXpathExpression = configuredExpression.getConfiguredXpathExpression();

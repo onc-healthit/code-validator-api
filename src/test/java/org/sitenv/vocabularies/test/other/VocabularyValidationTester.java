@@ -96,10 +96,19 @@ public class VocabularyValidationTester {
 			String requiredNodeName, String validationMessage, String configuredXpathExpression) {
 		ConfiguredExpression configuredExpression = createConfiguredExpression("RequiredNodeValidator", severity,
 				requiredNodeName, validationMessage, configuredXpathExpression);
-		vocabularyValidationConfigurations = new HashMap<>();
+		vocabularyValidationConfigurations = new HashMap<SeverityLevel, List<ConfiguredExpression>>();
 		vocabularyValidationConfigurations.put(severity.getSeverityLevelConversion(),
 				Collections.singletonList(configuredExpression));
 	}
+	
+	/** 
+	 * Note: Can be used in external projects
+	 */
+	public void addConfiguredExpressionsToVocabularyValidationConfigurations(
+			Map<SeverityLevel, List<ConfiguredExpression>> configuredExpressions) {
+		vocabularyValidationConfigurations = new HashMap<SeverityLevel, List<ConfiguredExpression>>();
+		vocabularyValidationConfigurations.putAll(configuredExpressions);
+	}	
 
 	public void injectDependencies() {
 		vocabularyValidationService = new TestableVocabularyValidationService();
