@@ -170,22 +170,21 @@ public class VocabularyValidationService {
 	private void validate(Map<String, ArrayList<VocabularyValidationResult>> vocabularyValidationResultMap,
 			String configuredXpathExpression, XPath xpath, Document doc, SeverityLevel severityLevel)
 			throws XPathExpressionException {
-		List<ConfiguredExpression> configuredExpressionsBySeverityLevel = vocabularyValidationConfigurations
-				.get(severityLevel);
-		
-//		configuredExpressionsBySeverityLevel is null, why?
+		List<ConfiguredExpression> configuredExpressionsBySeverityLevel;
+		if (vocabularyValidationConfigurations.get(severityLevel) != null) {
+			configuredExpressionsBySeverityLevel = vocabularyValidationConfigurations.get(severityLevel);
+		} else {
+			logger.info("vocabularyValidationConfigurations does not contain the requested severityLevel of "
+					+ severityLevel);
+			configuredExpressionsBySeverityLevel = new ArrayList<ConfiguredExpression>();
+		}
 		
 		globalCodeValidatorResults.setVocabularyValidationConfigurationsCount(
 				configuredExpressionsBySeverityLevel != null ? configuredExpressionsBySeverityLevel.size() : 0);
 		globalCodeValidatorResults
 				.setVocabularyValidationConfigurationsErrorCount(configuredExpressionsBySeverityLevel != null
 						? determineConfigurationsErrorCount(configuredExpressionsBySeverityLevel)
-						: 0);
-		
-//		globalCodeValidatorResults.setVocabularyValidationConfigurationsCount(
-//				vocabularyValidationConfigurations != null ? vocabularyValidationConfigurations.size() : 0);
-//		globalCodeValidatorResults.setVocabularyValidationConfigurationsErrorCount(
-//				vocabularyValidationConfigurations != null ? determineConfigurationsErrorCount() : 0);			
+						: 0);					
 
 		for (ConfiguredExpression configuredExpression : configuredExpressionsBySeverityLevel) {
 			configuredXpathExpression = configuredExpression.getConfiguredXpathExpression();
