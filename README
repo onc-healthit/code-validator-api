@@ -12,3 +12,5 @@ Also, please see the CodeValidatorApiConfiguration class to get more details on 
 
 
 See https://github.com/onc-healthit/reference-ccda-validator for an example implementation and instructions.
+
+See https://github.com/onc-healthit/code-validator-api/tree/master/codevalidator-api/docs for vocabulary configuration and sourcing information
