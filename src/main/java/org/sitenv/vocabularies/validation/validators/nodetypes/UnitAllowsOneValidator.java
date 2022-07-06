@@ -10,7 +10,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
@@ -25,7 +26,7 @@ import org.w3c.dom.Node;
 
 @Component(value = "UnitAllowsOneValidator")
 public class UnitAllowsOneValidator extends NodeValidator {
-	private static final Logger logger = Logger.getLogger(UnitAllowsOneValidator.class);
+	private static final Logger logger = LoggerFactory.getLogger(UnitAllowsOneValidator.class);
 	private VsacValuesSetRepository vsacValuesSetRepository;
 	private static final String UNIT_EXCEPTION = "1";
 

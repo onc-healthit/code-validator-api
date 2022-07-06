@@ -1,7 +1,8 @@
 package org.sitenv.vocabularies.loader.code;
 
 import org.apache.commons.lang3.text.StrBuilder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sitenv.vocabularies.loader.BaseCodeLoader;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,7 @@ import java.util.List;
  */
 @Component(value = "CPT")
 public class CptLoader extends BaseCodeLoader {
-    private static Logger logger = Logger.getLogger(CptLoader.class);
+    private static Logger logger = LoggerFactory.getLogger(CptLoader.class);
     private String oid;
 
     public CptLoader() {
@@ -62,7 +63,7 @@ public class CptLoader extends BaseCodeLoader {
                 insertCode(insertQueryBuilder.toString(), connection);
             }
         } catch (IOException e) {
-            logger.error(e);
+            logger.error(e.getMessage());
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -71,7 +72,7 @@ public class CptLoader extends BaseCodeLoader {
                     fileReader.close();
                     br.close();
                 } catch (IOException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage());
                 }
             }
         }
