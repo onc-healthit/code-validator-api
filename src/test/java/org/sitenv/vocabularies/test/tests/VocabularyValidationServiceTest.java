@@ -7,7 +7,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import org.apache.log4j.BasicConfigurator;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.DefaultConfiguration;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +36,7 @@ public class VocabularyValidationServiceTest extends VocabularyValidationTester 
 				e.printStackTrace();
 		}
 
-		BasicConfigurator.configure();
+		Configuration config = new DefaultConfiguration();
 	}
 
 	private static final String ASSERT_MSG_NO_VOCABULARY_ISSUE_BUT_SHOULD = "A vocabulary issue does not exist when it should";
