@@ -20,7 +20,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sitenv.vocabularies.configuration.CodeValidatorApiConfiguration;
 import org.sitenv.vocabularies.configuration.Configurations;
 import org.sitenv.vocabularies.configuration.ConfiguredExpression;
@@ -60,7 +61,7 @@ public class VocabularyValidationService {
     @Resource(name="globalCodeValidatorResults")
     GlobalCodeValidatorResults globalCodeValidatorResults;
     
-    private static final Logger logger = Logger.getLogger(VocabularyValidationService.class);
+    private static final Logger logger = LoggerFactory.getLogger(VocabularyValidationService.class);
     private static final boolean FULL_LOG = false;
     
     public List<VocabularyValidationResult> validate(String uri) throws IOException, SAXException {

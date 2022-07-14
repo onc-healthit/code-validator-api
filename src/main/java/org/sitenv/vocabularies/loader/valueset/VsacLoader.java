@@ -1,7 +1,8 @@
 package org.sitenv.vocabularies.loader.valueset;
 
 import com.monitorjbl.xlsx.StreamingReader;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -20,7 +21,7 @@ import java.util.List;
 
 @Component(value = "VSAC")
 public class VsacLoader extends BaseCodeLoader implements VocabularyLoader {
-    private static Logger logger = Logger.getLogger(VsacLoader.class);
+    private static Logger logger = LoggerFactory.getLogger(VsacLoader.class);
     private static final int MIN_EXPECTED_NUMBER_OF_CELLS_IN_ROW = 6;
     private static final int CODE_CELL_INDEX_IN_ROW = 0;
     private static final int BATCH_SIZE = 1000;
