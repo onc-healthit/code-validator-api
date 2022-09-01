@@ -1,7 +1,8 @@
 package org.sitenv.vocabularies.loader.code;
 
 import org.apache.commons.lang3.text.StrBuilder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,7 +16,7 @@ import java.util.List;
  * Created by Brian on 2/7/2016.
  */
 public abstract class Icd10BaseLoader extends IcdLoader {
-    private static Logger logger = Logger.getLogger(Icd10BaseLoader.class);
+    private static Logger logger = LoggerFactory.getLogger(Icd10BaseLoader.class);
     protected String oid;
 
     @Override
@@ -55,7 +56,7 @@ public abstract class Icd10BaseLoader extends IcdLoader {
                 insertCode(insertQueryBuilder.toString(), connection);
             }
         } catch (IOException e) {
-            logger.error(e);
+            logger.error(e.getMessage());
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -64,7 +65,7 @@ public abstract class Icd10BaseLoader extends IcdLoader {
                     fileReader.close();
                     br.close();
                 } catch (IOException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage());
                 }
             }
         }

@@ -10,5 +10,6 @@ The following environment properties are expected:
 
 Also, please see the CodeValidatorApiConfiguration class to get more details on how these environment properties are used.
 
+See https://github.com/onc-healthit/code-validator-api/tree/master/codevalidator-api/docs for vocabulary configuration and sourcing information
 
 See https://github.com/onc-healthit/reference-ccda-validator for an example implementation and instructions.

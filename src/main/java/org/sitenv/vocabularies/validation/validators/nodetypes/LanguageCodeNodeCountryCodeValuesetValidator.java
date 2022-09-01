@@ -1,7 +1,8 @@
 package org.sitenv.vocabularies.validation.validators.nodetypes;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
@@ -24,7 +25,7 @@ import java.util.List;
 
 @Component(value = "LanguageCodeNodeCountryCodeValuesetValidator")
 public class LanguageCodeNodeCountryCodeValuesetValidator extends NodeValidator {
-	private static final Logger logger = Logger.getLogger(LanguageCodeNodeCountryCodeValuesetValidator.class);
+	private static final Logger logger = LoggerFactory.getLogger(LanguageCodeNodeCountryCodeValuesetValidator.class);
 	private VsacValuesSetRepository vsacValuesSetRepository;
 
 	@Autowired

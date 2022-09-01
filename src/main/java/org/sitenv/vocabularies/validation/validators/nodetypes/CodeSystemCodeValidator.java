@@ -12,7 +12,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sitenv.vocabularies.configuration.ConfiguredValidationResultSeverityLevel;
 import org.sitenv.vocabularies.configuration.ConfiguredValidator;
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
@@ -27,7 +28,7 @@ import org.w3c.dom.Node;
 
 @Component(value = "CodeSystemCodeValidator")
 public class CodeSystemCodeValidator extends NodeValidator {
-    private static final Logger logger = Logger.getLogger(CodeSystemCodeValidator.class);
+    private static final Logger logger = LoggerFactory.getLogger(CodeSystemCodeValidator.class);
     private CodeRepository codeRepository;
 
 

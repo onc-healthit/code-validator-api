@@ -1,6 +1,7 @@
 package org.sitenv.vocabularies.loader;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -16,7 +17,7 @@ import java.util.Arrays;
  */
 public class VocabularyLoadRunner implements InitializingBean, DisposableBean {
     private VocabularyLoaderFactory vocabularyLoaderFactory;
-    private static Logger logger = Logger.getLogger(VocabularyLoadRunner.class);
+    private static Logger logger = LoggerFactory.getLogger(VocabularyLoadRunner.class);
     private String codeDirectory = null;
     private String valueSetDirectory = null;
     private boolean recursive = true;
