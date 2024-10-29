@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.NonUniqueResultException;
 import javax.xml.xpath.XPath;
@@ -19,6 +20,7 @@ import org.sitenv.vocabularies.configuration.ConfiguredValidator;
 import org.sitenv.vocabularies.validation.dto.NodeValidationResult;
 import org.sitenv.vocabularies.validation.dto.VocabularyValidationResult;
 import org.sitenv.vocabularies.validation.dto.enums.VocabularyValidationResultLevel;
+import org.sitenv.vocabularies.validation.entities.Code;
 import org.sitenv.vocabularies.validation.repositories.CodeRepository;
 import org.sitenv.vocabularies.validation.utils.XpathUtils;
 import org.sitenv.vocabularies.validation.validators.NodeValidator;
@@ -73,19 +75,31 @@ public class CodeSystemCodeValidator extends NodeValidator {
                 nodeValidationResult.setCodeSystemFound(true);
                 if(codeRepository.foundCodeInCodesystems(nodeCode, allowedConfiguredCodeSystemNames)){
                     nodeValidationResult.setNodeCodeFound(true);
-					try {
-						if (!codeRepository.codeIsActive(nodeCode, allowedConfiguredCodeSystemNames)) {
-							nodeValidationResult.setNodeCodeIsActive(false);
-						}
-					} catch (NonUniqueResultException nonUniqueResultException) {
-						nodeValidationResult.setNodeCodeIsActive(false);
-						logger.error(
-								"The following error was encountered when trying to check codeRepository.codeIsActive(...). "
-										+ "It will be handled internally and considered inactive as the source is likely corrupt "
-										+ "since it is returning multiple values.",
-								nonUniqueResultException);
+                    try {
+                        logger.info("Code :: "+nodeCode+" :: Code System names :: "+allowedConfiguredCodeSystemNames);
+                        List<String> configuredCodeSystemList= allowedConfiguredCodeSystemNames.stream().collect(Collectors.toList());
+                        List<Code> codeList = codeRepository.findByCodeAndCodeSystemIn(nodeCode, configuredCodeSystemList);
+                        boolean foundActiveRecord = false;
+                        for(Code code :codeList ) {
+                            if (codeList.size() > 0) {
+                                logger.info("Multiple codes found for code :: "+code.getCode()+" :: Code System name :: "+code.getCodeSystem() +" :: isActive :: "+code.isActive());
+                            }                           
+                            if (code.isActive()) {
+                                foundActiveRecord = true;
+                            }
+                        }
+                        if (!foundActiveRecord) {
+                            nodeValidationResult.setNodeCodeIsActive(false);
+                        }   
+                    } catch (NonUniqueResultException nonUniqueResultException) {
+                        nodeValidationResult.setNodeCodeIsActive(false);
+                        logger.error(
+                                "The following error was encountered when trying to check codeRepository.codeIsActive(...). "
+                                        + "It will be handled internally and considered inactive as the source is likely corrupt "
+                                        + "since it is returning multiple values.",
+                                nonUniqueResultException);
 
-					}
+                    }
                 }
                 if(codeRepository.foundDisplayNameInCodesystems(nodeDisplayName, allowedConfiguredCodeSystemNames)){
                     nodeValidationResult.setNodeDisplayNameFound(true);
