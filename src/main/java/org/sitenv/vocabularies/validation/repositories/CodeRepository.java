@@ -34,6 +34,6 @@ public interface CodeRepository extends JpaRepository<Code, Integer> {
 
     List<Code> findByCodeAndCodeSystemIn(String code, List<String> codesystems);
 
-    @Query("SELECT c.active FROM Code c WHERE c.code = :code and c.codeSystem in (:codesystems)")
+    @Query("SELECT c.active FROM Code c WHERE c.code = :code and c.codeSystem in (:codesystems) and c.active = true and ROWNUM() < 2 ")
     boolean codeIsActive(@Param("code")String code, @Param("codesystems")Set<String> codesystems);
 }
